@@ -1,0 +1,22 @@
+
+
+# List stacks that are building
+aws cloudformation list-stacks --profile personal --stack-status-filter "CREATE_IN_PROGRESS" --output table
+
+# List stacks that are built and ready to access
+aws cloudformation list-stacks --profile personal --stack-status-filter "CREATE_COMPLETE" --output table
+# Alternate forms to just return the names
+aws cloudformation list-stacks --profile personal --stack-status-filter "CREATE_COMPLETE" --output text | cut -f 4 -d '     '
+aws cloudformation list-stacks --profile personal --stack-status-filter "CREATE_COMPLETE" --output json|grep StackName
+
+CREATES='CREATE_IN_PROGRESS CREATE_FAILED CREATE_COMPLETE'
+ROLLBACKS='ROLLBACK_IN_PROGRESS ROLLBACK_FAILED ROLLBACK_COMPLETE'
+aws cloudformation list-stacks --profile personal --stack-status-filter $CREATES $ROLLBACKS --output json | grep -E 'StackName|StackStatus'
+
+# Returns the public IP Addr and DNS hostname
+aws cloudformation describe-stacks --profile personal --stack-name 'gpsummit-01' \
+     --query 'Stacks[0].Outputs[?OutputKey==`MasterHost`].OutputValue' \
+     --output text
+
+# Same info but in JSON format and a bit more extensive
+aws cloudformation describe-stack-resource --profile personal --stack-name 'gpsummit-01' --logical-resource-id 'ElasticIP'
