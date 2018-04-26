@@ -1,7 +1,6 @@
 #!/bin/bash -l
 
 source ~/.bashrc
-#check_user gpuser
 [ $(id -un) != "gpuser" ] && { echo 'Must be run by gpuser.'; exit 1; }
 
 echo "This script will drop the existing 'faa' schema if it exists."

@@ -1,15 +1,7 @@
-source /usr/local/greenplum-db/greenplum_path.sh
-
-PYTHON_CONTAINER=/data4/software/plcontainer-python-images-1.1.0.tar.gz
-
-plcontainer image-add -f $PYTHON_CONTAINER
-plcontainer runtime-add -r plc_py -i pivotaldata/plcontainer_python_shared:devel -l python
-
-exit
-
-#####
-
 Troubleshooting:
+
+-----------------------------------------------------------------------------------
+PLContainer
 -----------------------------------------------------------------------------------
 If you run into this error:
 ###########################

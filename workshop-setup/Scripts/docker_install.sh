@@ -1,6 +1,12 @@
+#!/usr/bin/env bash
+
 #
 # Move the /var/lib/docker directory to another location to ease the disk space
 # crunch on the root volume.
+# NOTE: Jon is working on increasing the root volume space in the AWS AMIs. When this
+#       is completed, this relocation will not be necessary. However, we still would
+#       want to add a docker group and add the gpadmin and gpuser accounts to that group.
+#       This may not be needed for CentOS 7.
 #
 
 [[ $(id -ru) -ne 0 ]] && { echo Must be run by root; exit 1; }
