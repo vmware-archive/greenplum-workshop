@@ -41,5 +41,9 @@ gptext-installsql gpadmin
 gptext-installsql $WORKSHOP_USER
 gptext-start
 
-psql -d $WORKSHOP_USER -e -c "GRANT USAGE ON SCHEMA gptext TO $WORKSHOP_USER"
-psql -d $WORKSHOP_USER -e -c "GRANT SELECT ON gptext.gptext_envs TO $WORKSHOP_USER"
+psql -d $WORKSHOP_USER -e  << _EOF
+GRANT USAGE ON SCHEMA gptext TO $WORKSHOP_USER;
+GRANT SELECT ON gptext.gptext_envs TO $WORKSHOP_USER;
+GRANT SELECT ON public.plcontainer_show_config TO $WORKSHOP_USER;
+GRANT SELECT ON public.plcontainer_refresh_config TO $WORKSHOP_USER;
+_EOF
