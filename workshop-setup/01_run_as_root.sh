@@ -3,7 +3,7 @@
 #############################################################################################
 # Execute as the root user
 #
-# Configure an AWS Greenplum cluster for the Greenplum workshop.
+# Configure an AWS/GCP Greenplum cluster for the Greenplum workshop.
 # The following activites are performed in this script:
 # - Add the gpuser Linux account and set the user's password.
 #    - Configure the .bashrc file for sourcing GP product environment scripts.
@@ -18,19 +18,20 @@
 # - Execute the docker install script. This is currently specific to CentOS 6.9.
 #############################################################################################
 
-[[ $(id -ru) -ne 0 ]] && { echo 'Must be run as root. Exiting'; exit 1; }
+source ./00_common_functions.sh
+
+echo_eval "check_user root"
 
 ####################################################################
 # Add and configure the Linux user account for this workshop
 function setup_workshop_user()
 {
     # Create the linux account used for the workshop and set the password
-    echo adduser gpuser -g users with password "_pivotal_conf_demo_"
-    adduser gpuser -g users 
-    echo "_pivotal_conf_demo_" | passwd gpuser --stdin
+    echo_eval "adduser $WORKSHOP_USER -g users"
+    echo "_pivotal_conf_demo_" | passwd $WORKSHOP_USER --stdin
 
-    # Add Greenplum db and text paths to gpuser's bashrc
-    cat << _EOF >> /home/gpuser/.bashrc
+    # Add Greenplum db and text paths to user's bashrc
+    cat << _EOF >> /home/$WORKSHOP_USER/.bashrc
 source /usr/local/greenplum-db/greenplum_path.sh
 source /usr/local/greenplum-text/greenplum-text_path.sh
 export PGPORT=6432;   # connect directly to GP not pgbouncer
@@ -42,24 +43,14 @@ _EOF
 function set_prompts()
 {
     # Set the PS1 prompt string to display the AWS Stack name instead of the hostname
-    stack_name=$(/usr/local/bin/get-stack-name.sh)
+    CLUSTER_NAME=${CLUSTER_NAME:-$STACK}
 
-    for user in gpuser gpadmin
+    for user in $WORKSHOP_USER gpadmin
     do
         cat << _EOF >> /home/$user/.bash_profile
-export PS1="[\u@$stack_name \W]\\$ "
+export PS1="[\u@${CLUSTER_NAME:-mdw} \W]\\$ "
 _EOF
     done
-}
-
-####################################################################
-# Add the Greenplum users to sudoers
-function modify_sudoers()
-{
-    # Add gpadmin and gpuser to the sudoers file
-    SUDO_FILE='/etc/sudoers.d/91-gp-workshop-users'
-    echo 'gpadmin ALL=(ALL)       NOPASSWD: ALL' >> $SUDO_FILE
-    echo 'gpuser  ALL=(ALL)       NOPASSWD: ALL' >> $SUDO_FILE
 }
 
 ####################################################################
@@ -67,44 +58,17 @@ function modify_sudoers()
 function allow_pw_auth()
 {
     # Turn on password authentication
-    sed -i -e 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-    service sshd restart
+    echo_eval "sed -i -e 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config"
+    echo_eval "service sshd restart"
 }
 
 ####################################################################
 # Install any utility scripts 
-function install_scripts()
+function install_scripts_aws()
 {
     # Download the Amazon's ec2-metadata utility
-    wget http://s3.amazonaws.com/ec2metadata/ec2-metadata -O /usr/local/bin/ec2-metadata
-    chmod +x /usr/local/bin/ec2-metadata
-
-    # Script to display the public IP address of the GP master host
-    cat << _EOF > /usr/local/bin/show-public-ip.sh
-curl http://169.254.169.254/latest/meta-data/public-ipv4
-echo
-
-# An alternate way to retrieve this info via the ec2-metadata utility:
-#  ec2-metadata --public-ipv4
-_EOF
-    chmod +x /usr/local/bin/show-public-ip.sh
-
-    # Script to display the CloudFormation stack name
-    cat << _EOF > /usr/local/bin/get-stack-name.sh
-#!/bin/bash
-# Don't use Greenplum's included python release
-unset PYTHONPATH PYTHONHOME
-
-REGION=\$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document|grep region|awk -F\" '{print \$4}')
-INSTANCE_ID=\$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-aws ec2 describe-instances --instance-id \$INSTANCE_ID --query 'Reservations[*].Instances[*].Tags[?Key==\`aws:cloudformation:stack-name\`].Value' --region \$REGION --output text
-
-
-# An alternate way to retrieve this info via the ec2-metadata utilty:
-#  ec2-metadata --security-groups | cut -f 2 -d ' ' | cut -f 1-2 -d'-'
-_EOF
-
-    chmod +x /usr/local/bin/get-stack-name.sh
+    echo_eval "wget --quiet http://s3.amazonaws.com/ec2metadata/ec2-metadata -O /usr/local/bin/ec2-metadata"
+    echo_eval "chmod +x /usr/local/bin/ec2-metadata"
 }
 
 ####################################################################
@@ -112,25 +76,27 @@ _EOF
 function yum_installs()
 {
     # Install OpenJDK 1.8 runtime
-    yum -q -y install java-1.8.0-openjdk.x86_64
+    echo_eval "yum -q -y install java-1.8.0-openjdk.x86_64"
 
     # Install expect. Used in the 02_run_as_gpadmin.sh script.
-    yum -q -y install expect
+    echo_eval "yum -q -y install expect"
 }
 
 ####################################################################
 # MAIN
 ####################################################################
 
+set_cloud_platform
 setup_workshop_user
 set_prompts
-modify_sudoers
+add_to_sudoers "gpadmin"
+add_to_sudoers "$WORKSHOP_USER"
 allow_pw_auth
-install_scripts
+[[ $PROVIDER == 'aws' ]] && install_scripts_aws
 yum_installs
 
 # Install docker
-sudo $PWD/Scripts/docker_install.sh
+./01a_docker_install.sh
 
 cat << _EOF
 ------ NOTE --------------------------------------------------------------

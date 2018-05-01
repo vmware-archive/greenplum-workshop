@@ -15,13 +15,14 @@
 #       simplified by storing the data files in the gpuser's data directory.
 #############################################################################################
 
-[[ $(id -ru) -ne 0 ]] && { echo 'Must be run as root. Exiting'; exit 1; }
+source ./00_common_functions.sh
 source /usr/local/greenplum-db/greenplum_path.sh
 
-#set -o errexit
+echo_eval "check_user root"
+[[ $? == 1 ]] && exit 1
 
-PSQLRC='/home/gpuser/.psqlrc'
-touch "$PSQLRC"
+PSQLRC="/home/$WORKSHOP_USER/.psqlrc"
+echo_eval "touch $PSQLRC"
 cat << _CMDS_ >> "$PSQLRC"
 -- Added for GP workshop
 \pset null NULL
@@ -29,18 +30,18 @@ cat << _CMDS_ >> "$PSQLRC"
 \set ECHO all
 set search_path = faa, madlib, pg_catalog, gp_toolkit, public;
 _CMDS_
-chown gpuser $PSQLRC
+echo_eval "chown $WORKSHOP_USER $PSQLRC"
 
-SRC=https://s3.amazonaws.com/gp-demo-workshop
-WORKSHOP_DATA=/data4/workshop-data/faa
-mkdir -p $WORKSHOP_DATA
+SRC="https://s3.amazonaws.com/gp-demo-workshop"
+WORKSHOP_DATA="/${DATA_DISK:-/disk1}/workshop-data/faa"
+echo_eval "mkdir -p $WORKSHOP_DATA"
 
 for yr in $(seq 2008 2010)
 do
     for mnth in $(seq 1 12)
     do
         FILE=On_Time_On_Time_Performance_${yr}_${mnth}.csv.bz2
-        wget ${SRC}/data/faa/$FILE -O $WORKSHOP_DATA/$FILE
+        echo_eval "wget --quiet ${SRC}/data/faa/$FILE -O $WORKSHOP_DATA/$FILE"
     done
 done
 
@@ -49,21 +50,21 @@ DIM_FILES_1="L_AIRLINE_ID.csv L_AIRPORTS.csv L_DISTANCE_GROUP_250.csv"
 DIM_FILES_2="L_PILOTS.csv L_WORLD_AREA_CODES.csv L_ONTIME_DELAY_GROUPS.csv"
 for FILE in $FACT_FILES $DIM_FILES_1 $DIM_FILES_2
 do
-    wget ${SRC}/data/faa/$FILE -O $WORKSHOP_DATA/$FILE
+    echo_eval "wget --quiet ${SRC}/data/faa/$FILE -O $WORKSHOP_DATA/$FILE"
 done
 
-chown -R gpuser $(dirname $WORKSHOP_DATA)
-chmod -R a+rw $(dirname $WORKSHOP_DATA)
+echo_eval "chown -R $WORKSHOP_USER $(dirname $WORKSHOP_DATA)"
+echo_eval "chmod -R a+rw $(dirname $WORKSHOP_DATA)"
+echo_eval "su - $WORKSHOP_USER -c 'mkdir -p /home/$WORKSHOP_USER/data'"
+echo_eval "su - $WORKSHOP_USER -c 'ln -s $WORKSHOP_DATA /home/$WORKSHOP_USER/data/faa'"
 
+# Download and extract the exercises
 ExercisesTar="GP-Workshop-Exercises.tgz"
-su - gpuser -c "wget $SRC/$ExercisesTar -O /home/gpuser/$ExercisesTar"
-su - gpuser -c "cd /home/gpuser; tar xzf $ExercisesTar"
+echo_eval "su - $WORKSHOP_USER -c 'wget $SRC/$ExercisesTar -O /home/$WORKSHOP_USER/$ExercisesTar'"
+echo_eval "su - $WORKSHOP_USER -c 'cd /home/$WORKSHOP_USER; tar xzf $ExercisesTar'"
 
-su - gpuser -c "mkdir -p /home/gpuser/data"
-su - gpuser -c "ln -s $WORKSHOP_DATA /home/gpuser/data/faa"
-
-# Move the recreate faa db script to gpuser's home directory. This script should really
+# Move the recreate faa db script to workshop user's home directory. This script should really
 # be added to the exercises tar bundle.
-mv ./recreate_faa_db.sh /home/gpuser
+echo_eval "mv ./recreate_faa_db.sh /home/$WORKSHOP_USER"
 
-chown -R gpuser /home/gpuser
+echo_eval "chown -R $WORKSHOP_USER /home/$WORKSHOP_USER"
