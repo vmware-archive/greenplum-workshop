@@ -1,0 +1,6 @@
+Did the query on the partitioned table run faster than the query on the unpartitioned table?  If you don't have the numbers, you can run the query again and run the one in the 03_First_Query directory.
+
+This is tedious:  Create a table with at least the following columns: query_name text, time float8.
+Using INSERT statements, manually enter the timing results.
+
+Less tedious:  How could you automate this so that each query run inserted a row?

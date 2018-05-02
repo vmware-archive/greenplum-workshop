@@ -1,0 +1,11 @@
+There is a difference between \copy and copy.  What is it?  When should you use which?
+
+Convert the insert_into_cancellation_codes from an INSERT to a COPY based version by creating a file with the appropriate entries.  Is it faster to do 5 INSERTs or to do it with COPY?
+
+
+What are the differences between otp_load and otp_r?  Why?
+
+What does the coalesce operator do?  Why is it used?  What would the difference be if it were not used in this example?
+
+
+

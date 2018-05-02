@@ -1,0 +1,207 @@
+SET
+Timing is on.
+set search_path=faa;
+SET
+Time: 0.392 ms
+\x 
+Expanded display is on.
+select *  from faa.otp_r where flightdate = '2008-01-03'::date and origin = 'BOS' and dest = 'LAX' limit 1;
+-[ RECORD 1 ]--------+----------------
+flt_year             | 2008
+flt_quarter          | 1
+flt_month            | 1
+flt_dayofmonth       | 3
+flt_dayofweek        | 4
+flightdate           | 2008-01-03
+uniquecarrier        | DL
+airlineid            | 19790
+carrier              | DL
+flightnum            | 1700
+origin               | BOS
+origincityname       | Boston, MA
+originstate          | MA
+originstatename      | Massachusetts
+dest                 | LAX
+destcityname         | Los Angeles, CA
+deststate            | CA
+deststatename        | California
+crsdeptime           | 17:30:00
+deptime              | 17:33:00
+depdelay             | 3
+depdelayminutes      | 3
+departuredelaygroups | 0
+taxiout              | 21
+wheelsoff            | 17:54:00
+wheelson             | 21:01:00
+taxiin               | 34
+crsarrtime           | 21:10:00
+arrtime              | 21:35:00
+arrdelay             | 25
+arrdelayminutes      | 25
+arrivaldelaygroups   | 1
+cancelled            | f
+cancellationcode     | 
+diverted             | f
+crselapsedtime       | 400
+actualelapsedtime    | 422
+airtime              | 367
+flights              | 1
+distance             | 2611
+distancegroup        | 11
+carrierdelay         | 0
+weatherdelay         | 0
+nasdelay             | 25
+securitydelay        | 0
+lateaircraftdelay    | 0
+
+Time: 181.909 ms
+select *  from faa.otp_c where flightdate = '2008-01-03'::date and origin = 'BOS' and dest = 'LAX' limit 1;
+-[ RECORD 1 ]--------+----------------
+flt_year             | 2008
+flt_quarter          | 1
+flt_month            | 1
+flt_dayofmonth       | 3
+flt_dayofweek        | 4
+flightdate           | 2008-01-03
+uniquecarrier        | AA
+airlineid            | 19805
+carrier              | AA
+flightnum            | 145
+origin               | BOS
+origincityname       | Boston, MA
+originstate          | MA
+originstatename      | Massachusetts
+dest                 | LAX
+destcityname         | Los Angeles, CA
+deststate            | CA
+deststatename        | California
+crsdeptime           | 16:30:00
+deptime              | 16:39:00
+depdelay             | 9
+depdelayminutes      | 9
+departuredelaygroups | 0
+taxiout              | 16
+wheelsoff            | 16:55:00
+wheelson             | 19:52:00
+taxiin               | 6
+crsarrtime           | 19:55:00
+arrtime              | 19:58:00
+arrdelay             | 3
+arrdelayminutes      | 3
+arrivaldelaygroups   | 0
+cancelled            | f
+cancellationcode     | 
+diverted             | f
+crselapsedtime       | 385
+actualelapsedtime    | 379
+airtime              | 357
+flights              | 1
+distance             | 2611
+distancegroup        | 11
+carrierdelay         | 0
+weatherdelay         | 0
+nasdelay             | 0
+securitydelay        | 0
+lateaircraftdelay    | 0
+
+Time: 1854.484 ms
+select *  from faa.otp_cc5 where flightdate = '2008-01-03'::date and origin = 'BOS' and dest = 'LAX' limit 1;
+-[ RECORD 1 ]--------+----------------
+flt_year             | 2008
+flt_quarter          | 1
+flt_month            | 1
+flt_dayofmonth       | 3
+flt_dayofweek        | 4
+flightdate           | 2008-01-03
+uniquecarrier        | AA
+airlineid            | 19805
+carrier              | AA
+flightnum            | 145
+origin               | BOS
+origincityname       | Boston, MA
+originstate          | MA
+originstatename      | Massachusetts
+dest                 | LAX
+destcityname         | Los Angeles, CA
+deststate            | CA
+deststatename        | California
+crsdeptime           | 16:30:00
+deptime              | 16:39:00
+depdelay             | 9
+depdelayminutes      | 9
+departuredelaygroups | 0
+taxiout              | 16
+wheelsoff            | 16:55:00
+wheelson             | 19:52:00
+taxiin               | 6
+crsarrtime           | 19:55:00
+arrtime              | 19:58:00
+arrdelay             | 3
+arrdelayminutes      | 3
+arrivaldelaygroups   | 0
+cancelled            | f
+cancellationcode     | 
+diverted             | f
+crselapsedtime       | 385
+actualelapsedtime    | 379
+airtime              | 357
+flights              | 1
+distance             | 2611
+distancegroup        | 11
+carrierdelay         | 0
+weatherdelay         | 0
+nasdelay             | 0
+securitydelay        | 0
+lateaircraftdelay    | 0
+
+Time: 3543.316 ms
+select *  from faa.otp_cc9 where flightdate = '2008-01-03'::date and origin = 'BOS' and dest = 'LAX' limit 1;
+-[ RECORD 1 ]--------+----------------
+flt_year             | 2008
+flt_quarter          | 1
+flt_month            | 1
+flt_dayofmonth       | 3
+flt_dayofweek        | 4
+flightdate           | 2008-01-03
+uniquecarrier        | AA
+airlineid            | 19805
+carrier              | AA
+flightnum            | 145
+origin               | BOS
+origincityname       | Boston, MA
+originstate          | MA
+originstatename      | Massachusetts
+dest                 | LAX
+destcityname         | Los Angeles, CA
+deststate            | CA
+deststatename        | California
+crsdeptime           | 16:30:00
+deptime              | 16:39:00
+depdelay             | 9
+depdelayminutes      | 9
+departuredelaygroups | 0
+taxiout              | 16
+wheelsoff            | 16:55:00
+wheelson             | 19:52:00
+taxiin               | 6
+crsarrtime           | 19:55:00
+arrtime              | 19:58:00
+arrdelay             | 3
+arrdelayminutes      | 3
+arrivaldelaygroups   | 0
+cancelled            | f
+cancellationcode     | 
+diverted             | f
+crselapsedtime       | 385
+actualelapsedtime    | 379
+airtime              | 357
+flights              | 1
+distance             | 2611
+distancegroup        | 11
+carrierdelay         | 0
+weatherdelay         | 0
+nasdelay             | 0
+securitydelay        | 0
+lateaircraftdelay    | 0
+
+Time: 3611.982 ms

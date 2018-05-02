@@ -1,0 +1,218 @@
+Null display is "NULL".
+Timing is on.
+set search_path = faa, madlib, public;
+SET
+Time: 11.167 ms
+explain analyze SELECT split_part(a.airline_desc, ':', 1) AS airline,
+       to_char(sum(f.flights)::integer, 'FM999,999') AS total_flights,
+       avg(depdelayminutes)::numeric(8,1) AS avg_dep_delay,
+       avg(arrdelayminutes)::numeric(8,1) AS avg_arr_delay,
+       avg(arrdelayminutes)::numeric(8,1)-avg(depdelayminutes)::numeric(8,1) AS delta_mins
+FROM faa.otp_c f
+INNER JOIN faa.d_airlines a ON a.airlineid = f.airlineid
+WHERE f.origin = 'BOS'
+  AND FlightDate > '2007-12-31'::date and FlightDate < '2009-01-01'::date
+GROUP BY a.airline_desc
+ORDER BY avg(depdelayminutes) DESC;
+                                                                                     QUERY PLAN                                                                                      
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Result  (cost=0.00..1376.35 rows=190 width=40)
+   Rows out:  15 rows with 2973 ms to end.
+   ->  Gather Motion 8:1  (slice3; segments: 8)  (cost=0.00..1376.35 rows=1514 width=40)
+         Merge Key: (pg_catalog.avg((avg(otp_c.depdelayminutes))))
+         Rows out:  15 rows at destination with 2973 ms to end.
+         ->  Result  (cost=0.00..1376.15 rows=190 width=48)
+               Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 2971 ms to end.
+               ->  Sort  (cost=0.00..1376.14 rows=190 width=73)
+                     Sort Key: (pg_catalog.avg((avg(otp_c.depdelayminutes))))
+                     Sort Method:  quicksort  Max Memory: 33KB  Avg Memory: 33KB (8 segments)
+                     Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 2971 ms to end.
+                     Executor memory:  58K bytes avg, 58K bytes max (seg0).
+                     Work_mem used:  58K bytes avg, 58K bytes max (seg0). Workfile: (0 spilling)
+                     ->  HashAggregate  (cost=0.00..1375.55 rows=190 width=73)
+                           Group By: d_airlines.airline_desc
+                           Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 2971 ms to end.
+                           Executor memory:  53K bytes avg, 89K bytes max (seg0).
+                           (seg0)   Hash chain length 1.0 avg, 1 max, using 3 of 32 buckets; total 0 expansions.
+                           (seg1)   Hash chain length 1.2 avg, 2 max, using 6 of 32 buckets; total 0 expansions.
+                           ->  Redistribute Motion 8:8  (slice2; segments: 8)  (cost=0.00..1375.52 rows=190 width=73)
+                                 Hash Key: d_airlines.airline_desc
+                                 Rows out:  Avg 3.8 rows x 4 workers at destination.  Max 7 rows (seg1) with 2971 ms to end.
+                                 ->  Result  (cost=0.00..1375.47 rows=190 width=73)
+                                       Rows out:  Avg 2.1 rows x 7 workers.  Max 5 rows (seg4) with 2970 ms to end.
+                                       ->  HashAggregate  (cost=0.00..1375.47 rows=190 width=73)
+                                             Group By: d_airlines.airline_desc
+                                             Rows out:  Avg 2.1 rows x 7 workers.  Max 5 rows (seg4) with 2970 ms to end.
+                                             Executor memory:  80K bytes avg, 89K bytes max (seg0).
+                                             (seg0)   Hash chain length 1.0 avg, 1 max, using 1 of 32 buckets; total 0 expansions.
+                                             (seg4)   Hash chain length 1.2 avg, 2 max, using 4 of 32 buckets; total 0 expansions.
+                                             ->  Hash Join  (cost=0.00..1374.67 rows=5370 width=43)
+                                                   Hash Cond: otp_c.airlineid = d_airlines.airlineid
+                                                   Rows out:  Avg 67380.0 rows x 7 workers.  Max 133968 rows (seg3) with 11 ms to first row, 2831 ms to end.
+                                                   Executor memory:  11K bytes avg, 11K bytes max (seg4).
+                                                   Work_mem used:  11K bytes avg, 11K bytes max (seg4). Workfile: (0 spilling)
+                                                   (seg3)   Hash chain length 1.0 avg, 2 max, using 190 of 131072 buckets.
+                                                   ->  Redistribute Motion 8:8  (slice1; segments: 8)  (cost=0.00..941.70 rows=5370 width=22)
+                                                         Hash Key: otp_c.airlineid
+                                                         Rows out:  Avg 67380.0 rows x 7 workers at destination.  Max 133968 rows (seg3) with 9.086 ms to first row, 2632 ms to end.
+                                                         ->  Table Scan on otp_c  (cost=0.00..941.33 rows=5370 width=22)
+                                                               Filter: origin = 'BOS'::text AND flightdate > '2007-12-31'::date AND flightdate < '2009-01-01'::date
+                                                               Rows out:  Avg 58957.5 rows x 8 workers.  Max 59476 rows (seg2) with 1.096 ms to first row, 2895 ms to end.
+                                                   ->  Hash  (cost=431.01..431.01 rows=190 width=29)
+                                                         Rows in:  Avg 189.2 rows x 8 workers.  Max 191 rows (seg0) with 0.441 ms to end, start offset by 16 ms.
+                                                         ->  Table Scan on d_airlines  (cost=0.00..431.01 rows=190 width=29)
+                                                               Rows out:  Avg 189.2 rows x 8 workers.  Max 191 rows (seg0) with 0.087 ms to first row, 0.212 ms to end.
+ Slice statistics:
+   (slice0)    Executor memory: 514K bytes.
+   (slice1)    Executor memory: 982K bytes avg x 8 workers, 982K bytes max (seg0).
+   (slice2)    Executor memory: 2488K bytes avg x 8 workers, 2512K bytes max (seg0).  Work_mem: 11K bytes max.
+   (slice3)    Executor memory: 320K bytes avg x 8 workers, 363K bytes max (seg0).  Work_mem: 58K bytes max.
+ Statement statistics:
+   Memory used: 128000K bytes
+ Optimizer status: PQO version 2.55.13
+ Total runtime: 2985.523 ms
+(55 rows)
+
+Time: 3121.480 ms
+explain analyze SELECT split_part(a.airline_desc, ':', 1) AS airline,
+       to_char(sum(f.flights)::integer, 'FM999,999') AS total_flights,
+       avg(depdelayminutes)::numeric(8,1) AS avg_dep_delay,
+       avg(arrdelayminutes)::numeric(8,1) AS avg_arr_delay,
+       avg(arrdelayminutes)::numeric(8,1)-avg(depdelayminutes)::numeric(8,1) AS delta_mins
+FROM faa.otp_cc5 f
+INNER JOIN faa.d_airlines a ON a.airlineid = f.airlineid
+WHERE f.origin = 'BOS'
+  AND FlightDate > '2007-12-31'::date and FlightDate < '2009-01-01'::date
+GROUP BY a.airline_desc
+ORDER BY avg(depdelayminutes) DESC;
+                                                                                    QUERY PLAN                                                                                    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Result  (cost=0.00..1376.29 rows=190 width=40)
+   Rows out:  15 rows with 3891 ms to end.
+   ->  Gather Motion 8:1  (slice3; segments: 8)  (cost=0.00..1376.29 rows=1514 width=40)
+         Merge Key: (pg_catalog.avg((avg(otp_cc5.depdelayminutes))))
+         Rows out:  15 rows at destination with 3891 ms to end.
+         ->  Result  (cost=0.00..1376.09 rows=190 width=48)
+               Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 3891 ms to end.
+               ->  Sort  (cost=0.00..1376.08 rows=190 width=73)
+                     Sort Key: (pg_catalog.avg((avg(otp_cc5.depdelayminutes))))
+                     Sort Method:  quicksort  Max Memory: 33KB  Avg Memory: 33KB (8 segments)
+                     Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 3891 ms to end.
+                     Executor memory:  33K bytes avg, 33K bytes max (seg0).
+                     Work_mem used:  33K bytes avg, 33K bytes max (seg0). Workfile: (0 spilling)
+                     ->  HashAggregate  (cost=0.00..1375.49 rows=190 width=73)
+                           Group By: d_airlines.airline_desc
+                           Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 3890 ms to end.
+                           Executor memory:  53K bytes avg, 89K bytes max (seg0).
+                           (seg0)   Hash chain length 1.0 avg, 1 max, using 3 of 32 buckets; total 0 expansions.
+                           (seg1)   Hash chain length 1.2 avg, 2 max, using 6 of 32 buckets; total 0 expansions.
+                           ->  Redistribute Motion 8:8  (slice2; segments: 8)  (cost=0.00..1375.46 rows=190 width=73)
+                                 Hash Key: d_airlines.airline_desc
+                                 Rows out:  Avg 3.8 rows x 4 workers at destination.  Max 7 rows (seg1) with 3890 ms to end.
+                                 ->  Result  (cost=0.00..1375.41 rows=190 width=73)
+                                       Rows out:  Avg 2.1 rows x 7 workers.  Max 5 rows (seg4) with 3889 ms to end.
+                                       ->  HashAggregate  (cost=0.00..1375.41 rows=190 width=73)
+                                             Group By: d_airlines.airline_desc
+                                             Rows out:  Avg 2.1 rows x 7 workers.  Max 5 rows (seg4) with 3889 ms to end.
+                                             Executor memory:  80K bytes avg, 89K bytes max (seg0).
+                                             (seg0)   Hash chain length 1.0 avg, 1 max, using 1 of 32 buckets; total 0 expansions.
+                                             (seg4)   Hash chain length 1.2 avg, 2 max, using 4 of 32 buckets; total 0 expansions.
+                                             ->  Hash Join  (cost=0.00..1374.63 rows=5275 width=43)
+                                                   Hash Cond: otp_cc5.airlineid = d_airlines.airlineid
+                                                   Rows out:  Avg 67380.0 rows x 7 workers.  Max 133968 rows (seg3) with 14 ms to first row, 3735 ms to end.
+                                                   Executor memory:  11K bytes avg, 11K bytes max (seg4).
+                                                   Work_mem used:  11K bytes avg, 11K bytes max (seg4). Workfile: (0 spilling)
+                                                   (seg3)   Hash chain length 1.0 avg, 2 max, using 190 of 131072 buckets.
+                                                   ->  Redistribute Motion 8:8  (slice1; segments: 8)  (cost=0.00..941.69 rows=5275 width=22)
+                                                         Hash Key: otp_cc5.airlineid
+                                                         Rows out:  Avg 67380.0 rows x 7 workers at destination.  Max 133968 rows (seg3) with 12 ms to first row, 3518 ms to end.
+                                                         ->  Table Scan on otp_cc5  (cost=0.00..941.32 rows=5275 width=22)
+                                                               Filter: origin = 'BOS'::text AND flightdate > '2007-12-31'::date AND flightdate < '2009-01-01'::date
+                                                               Rows out:  Avg 58957.5 rows x 8 workers.  Max 59476 rows (seg2) with 1.185 ms to first row, 2616 ms to end.
+                                                   ->  Hash  (cost=431.01..431.01 rows=190 width=29)
+                                                         Rows in:  Avg 189.2 rows x 8 workers.  Max 191 rows (seg0) with 0.384 ms to end, start offset by 5.937 ms.
+                                                         ->  Table Scan on d_airlines  (cost=0.00..431.01 rows=190 width=29)
+                                                               Rows out:  Avg 189.2 rows x 8 workers.  Max 191 rows (seg0) with 0.043 ms to first row, 0.174 ms to end.
+ Slice statistics:
+   (slice0)    Executor memory: 514K bytes.
+   (slice1)    Executor memory: 1174K bytes avg x 8 workers, 1174K bytes max (seg0).
+   (slice2)    Executor memory: 2488K bytes avg x 8 workers, 2512K bytes max (seg0).  Work_mem: 11K bytes max.
+   (slice3)    Executor memory: 315K bytes avg x 8 workers, 363K bytes max (seg0).  Work_mem: 33K bytes max.
+ Statement statistics:
+   Memory used: 128000K bytes
+ Optimizer status: PQO version 2.55.13
+ Total runtime: 3892.160 ms
+(55 rows)
+
+Time: 3982.013 ms
+explain analyze SELECT split_part(a.airline_desc, ':', 1) AS airline,
+       to_char(sum(f.flights)::integer, 'FM999,999') AS total_flights,
+       avg(depdelayminutes)::numeric(8,1) AS avg_dep_delay,
+       avg(arrdelayminutes)::numeric(8,1) AS avg_arr_delay,
+       avg(arrdelayminutes)::numeric(8,1)-avg(depdelayminutes)::numeric(8,1) AS delta_mins
+FROM faa.otp_cclz f
+INNER JOIN faa.d_airlines a ON a.airlineid = f.airlineid
+WHERE f.origin = 'BOS'
+  AND FlightDate > '2007-12-31'::date and FlightDate < '2009-01-01'::date
+GROUP BY a.airline_desc
+ORDER BY avg(depdelayminutes) DESC;
+                                                                                    QUERY PLAN                                                                                    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Result  (cost=0.00..1376.32 rows=190 width=40)
+   Rows out:  15 rows with 3110 ms to end.
+   ->  Gather Motion 8:1  (slice3; segments: 8)  (cost=0.00..1376.32 rows=1514 width=40)
+         Merge Key: (pg_catalog.avg((avg(otp_cclz.depdelayminutes))))
+         Rows out:  15 rows at destination with 3110 ms to end.
+         ->  Result  (cost=0.00..1376.12 rows=190 width=48)
+               Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 3111 ms to end.
+               ->  Sort  (cost=0.00..1376.11 rows=190 width=73)
+                     Sort Key: (pg_catalog.avg((avg(otp_cclz.depdelayminutes))))
+                     Sort Method:  quicksort  Max Memory: 33KB  Avg Memory: 33KB (8 segments)
+                     Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 3111 ms to end.
+                     Executor memory:  33K bytes avg, 33K bytes max (seg0).
+                     Work_mem used:  33K bytes avg, 33K bytes max (seg0). Workfile: (0 spilling)
+                     ->  HashAggregate  (cost=0.00..1375.52 rows=190 width=73)
+                           Group By: d_airlines.airline_desc
+                           Rows out:  Avg 3.8 rows x 4 workers.  Max 7 rows (seg1) with 3111 ms to end.
+                           Executor memory:  53K bytes avg, 89K bytes max (seg0).
+                           (seg0)   Hash chain length 1.0 avg, 1 max, using 3 of 32 buckets; total 0 expansions.
+                           (seg1)   Hash chain length 1.2 avg, 2 max, using 6 of 32 buckets; total 0 expansions.
+                           ->  Redistribute Motion 8:8  (slice2; segments: 8)  (cost=0.00..1375.48 rows=190 width=73)
+                                 Hash Key: d_airlines.airline_desc
+                                 Rows out:  Avg 3.8 rows x 4 workers at destination.  Max 7 rows (seg1) with 3110 ms to first row, 3111 ms to end.
+                                 ->  Result  (cost=0.00..1375.44 rows=190 width=73)
+                                       Rows out:  Avg 2.1 rows x 7 workers.  Max 5 rows (seg4) with 3109 ms to end.
+                                       ->  HashAggregate  (cost=0.00..1375.44 rows=190 width=73)
+                                             Group By: d_airlines.airline_desc
+                                             Rows out:  Avg 2.1 rows x 7 workers.  Max 5 rows (seg4) with 3109 ms to end.
+                                             Executor memory:  80K bytes avg, 89K bytes max (seg0).
+                                             (seg0)   Hash chain length 1.0 avg, 1 max, using 1 of 32 buckets; total 0 expansions.
+                                             (seg4)   Hash chain length 1.2 avg, 2 max, using 4 of 32 buckets; total 0 expansions.
+                                             ->  Hash Join  (cost=0.00..1374.65 rows=5317 width=43)
+                                                   Hash Cond: otp_cclz.airlineid = d_airlines.airlineid
+                                                   Rows out:  Avg 67380.0 rows x 7 workers.  Max 133968 rows (seg3) with 13 ms to first row, 2957 ms to end.
+                                                   Executor memory:  11K bytes avg, 11K bytes max (seg4).
+                                                   Work_mem used:  11K bytes avg, 11K bytes max (seg4). Workfile: (0 spilling)
+                                                   (seg3)   Hash chain length 1.0 avg, 2 max, using 190 of 131072 buckets.
+                                                   ->  Redistribute Motion 8:8  (slice1; segments: 8)  (cost=0.00..941.69 rows=5317 width=22)
+                                                         Hash Key: otp_cclz.airlineid
+                                                         Rows out:  Avg 67380.0 rows x 7 workers at destination.  Max 133968 rows (seg3) with 11 ms to first row, 2742 ms to end.
+                                                         ->  Table Scan on otp_cclz  (cost=0.00..941.32 rows=5317 width=22)
+                                                               Filter: origin = 'BOS'::text AND flightdate > '2007-12-31'::date AND flightdate < '2009-01-01'::date
+                                                               Rows out:  Avg 58957.5 rows x 8 workers.  Max 59476 rows (seg2) with 1.036 ms to first row, 2313 ms to end.
+                                                   ->  Hash  (cost=431.01..431.01 rows=190 width=29)
+                                                         Rows in:  Avg 189.2 rows x 8 workers.  Max 191 rows (seg0) with 0.405 ms to end, start offset by 2.706 ms.
+                                                         ->  Table Scan on d_airlines  (cost=0.00..431.01 rows=190 width=29)
+                                                               Rows out:  Avg 189.2 rows x 8 workers.  Max 191 rows (seg0) with 0.043 ms to first row, 0.195 ms to end.
+ Slice statistics:
+   (slice0)    Executor memory: 514K bytes.
+   (slice1)    Executor memory: 1358K bytes avg x 8 workers, 1358K bytes max (seg0).
+   (slice2)    Executor memory: 2492K bytes avg x 8 workers, 2512K bytes max (seg0).  Work_mem: 11K bytes max.
+   (slice3)    Executor memory: 315K bytes avg x 8 workers, 363K bytes max (seg0).  Work_mem: 33K bytes max.
+ Statement statistics:
+   Memory used: 128000K bytes
+ Optimizer status: PQO version 2.55.13
+ Total runtime: 3112.180 ms
+(55 rows)
+
+Time: 3200.070 ms

@@ -1,0 +1,7 @@
+There are a number of ways to populate a table with data.  In the Pivotal Greenplum Database, INSERT statements and COPY work just like they do in PostgreSQL.  These are appropriate for small amount of data, but are single threaded and do not enjoy the benefits of the Scatter Gather technology of parallel loading with the gpload utility or gpfdist, the parallel loading file server that lives on hosts containing data to be loaded into the database.
+
+In this exercise, the smaller dimension tables are loaded with INSERT or COPY statements, but the larger load table is loaded with both gpload and gpfdist.  Both do essentially the same, but gpload has a number of nice features.  These are discussed in the Pivotal Greenplum Load Tools document.  
+
+We also load from our staging table into our production fact table.  We take the data in opt_load and move some of it to otp_r, a row oriented version of the fact table.  Why not load it directly into the fact table?  For one, in the real world, data is often dirty and may not load properly. In our example, some 29000 rows out of 1.5 M had an incorrectly formatted data field.  You might want to run a fix-it script to recover that data.
+
+The second reason we did this is to do a simple ELT job.  We omitted many columns and also changed the data type of several fields from INTEGER to FLOAT8 because our analytic routines prefer FLOAT8s.  We could have used the cast operator :: each time we used the routines, but this would have been inefficient.  
