@@ -17,20 +17,26 @@ echo_eval "rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-
 echo_eval "yum -y install docker-io"
 echo_eval "chkconfig docker on"
 
-# Move the docker stuff out of the root directory since it has limited space
-# If you have a root filespace > 10GB, you may not need to do this.
+# The current Greenplum CloudFormation version (<= 2.2) on AWS has limited root filespace.
+# So we need to move docker off of the root space and to one of the data spaces.
+set_cloud_provider
 
-NEWDIR=/$DATA_DISK/var-lib-docker
+if [[ $PROVIDER == 'aws' ]]; then
+    # Move the docker stuff out of the root directory since it has limited space
+    # If you have a root filespace > 10GB, you may not need to do this.
 
-echo_eval "mkdir -p $NEWDIR"
-echo_eval "chown root:root $NEWDIR"
-echo_eval "chmod 700 $NEWDIR"
+    NEWDIR=/$DATA_DISK/var-lib-docker
 
-echo_eval "service docker stop"
+    echo_eval "mkdir -p $NEWDIR"
+    echo_eval "chown root:root $NEWDIR"
+    echo_eval "chmod 700 $NEWDIR"
 
-echo_eval "mv /var/lib/docker $NEWDIR"
-[[ $? -ne 0 ]] && { echo "Problems moving docker dir. Exiting."; exit 1; }
-echo_eval "ln -s $NEWDIR/docker /var/lib/docker"
+    echo_eval "service docker stop"
+
+    echo_eval "mv /var/lib/docker $NEWDIR"
+    [[ $? -ne 0 ]] && { echo "Problems moving docker dir. Exiting."; exit 1; }
+    echo_eval "ln -s $NEWDIR/docker /var/lib/docker"
+fi
 
 echo_eval "service docker start"
 

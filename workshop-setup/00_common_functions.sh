@@ -4,13 +4,34 @@
 # Library of parameters and functions that can be sourced into any script.
 #############################################################################################
 
+this_script=$BASH_SOURCE
+
 #### Parameters #############################################################################
-source /opt/pivotal/greenplum/variables.sh
+source /usr/local/greenplum-db/greenplum_path.sh
+
+if [ -r /opt/pivotal/greenplum/variables.sh ]; then
+    source /opt/pivotal/greenplum/variables.sh
+else
+    # Set reasonable defaults for env variables
+    CLUSTER_NAME=$(hostname -s)
+fi
 
 DATA_DISK=$(ls -d /data[0-9] | awk 'END {print $NF}')
+if [[ -z $DATA_DISK ]]; then
+    echo "$this_script: Set DATA_DISK in this script. This directory is used as the"
+    echo " repository for the downloaded software and db data for the workshop."
+    exit 1
+fi
+
 WORKSHOP_USER=gpuser
 WORKSHOP_DB=$WORKSHOP_USER
 PROVIDER=unknown
+
+HOST_ALL="/home/gpadmin/all_hosts.txt"
+if [[ ! -f $HOST_ALL ]]; then
+    echo "$this_script: File '$HOST_ALL' not found. Create this file before continuing"
+    exit 1
+fi
 
 
 #### Functions ##############################################################################

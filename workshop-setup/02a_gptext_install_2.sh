@@ -12,7 +12,7 @@ echo_eval "check_user gpadmin"
 
 GPTEXT_ENV="/usr/local/greenplum-text/greenplum-text_path.sh"
 if [[ ! -f $GPTEXT_ENV ]]; then
-    echo Run gptext_install_step1.sh script before proceeding. Exiting.
+    echo "$0: Run 02a_gptext_install_1.sh script before proceeding. Exiting."
     exit 1
 fi
 
@@ -21,9 +21,9 @@ source $GPTEXT_ENV
 # Check if zookeeper is running
 echo_eval "zkManager state > /dev/null 2>&1"
 if [[ $? != 0 ]]; then
-    echo "ZooKeeper does not appear to be running. Let's try and start it"
+    echo "$0: ZooKeeper does not appear to be running. Let's try and start it"
     echo_eval "zkManager start"
-    [[ $? != 0 ]] && { echo "Problems starting zkManager" ; exit 1; }
+    [[ $? != 0 ]] && { echo "$0: Problems starting zkManager" ; exit 1; }
 fi
 
 # Installing GPText schema in the gpuser database
@@ -31,8 +31,8 @@ fi
 
 echo_eval "psql -l | grep $WORKSHOP_USER > /dev/null 2>&1"
 if [[ $? != 0 ]]; then
-    echo "$WORKSHOP_USER database is not listed in 'psql -l' output"
-    echo "Create the db before proceeding"
+    echo "$0: $WORKSHOP_USER database is not listed in 'psql -l' output. Create the db before proceeding"
+    echo "Execute as gpadmin >>  createdb $WORKSHOP_USER --owner $WORKSHOP_USER <<"
     exit 1
 fi
 

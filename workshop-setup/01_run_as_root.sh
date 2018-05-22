@@ -34,7 +34,7 @@ function setup_workshop_user()
     cat << _EOF >> /home/$WORKSHOP_USER/.bashrc
 source /usr/local/greenplum-db/greenplum_path.sh
 source /usr/local/greenplum-text/greenplum-text_path.sh
-export PGPORT=6432;   # connect directly to GP not pgbouncer
+export PGPORT=${PGPORT:-5432}
 _EOF
 }
 
@@ -79,7 +79,8 @@ function yum_installs()
     echo_eval "yum -q -y install java-1.8.0-openjdk.x86_64"
 
     # Install expect. Used in the 02_run_as_gpadmin.sh script.
-    echo_eval "yum -q -y install expect"
+    # Install m4. Used by MADLIB
+    echo_eval "yum -q -y install expect m4"
 }
 
 ####################################################################

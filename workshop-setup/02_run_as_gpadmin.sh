@@ -7,7 +7,7 @@
 # The following activites are performed in this script:
 # - Create a directory for storing downloaded software packages.
 # - Run gpupgrade. We modifiy it slightly to pull from a development
-#    repository. Upgrades the cluster from GP 5.2 -> 5.7
+#    repository. Upgrades the cluster from GP 5.2 -> 5.7+
 # - Modify the pg_hba.conf file and reload changes or start up GP.
 # - Adds the gpuser role and creates the gpuser database.
 # - Download the Greenplum software packages used for this workshop.
@@ -16,7 +16,13 @@
 #############################################################################################
 
 source ./00_common_functions.sh
-source /usr/local/greenplum-db/greenplum_path.sh
+GP_ENV="/usr/local/greenplum-db/greenplum_path.sh"
+if [[ ! -x $GP_ENV ]]; then
+    echo "File '$GP_ENV' not found. Is Greenplum installed?"
+    exit 1
+else
+    source $GP_ENV
+fi
 
 echo_eval "check_user gpadmin"
 [[ $? == 1 ]] && exit 1
@@ -96,8 +102,7 @@ _EOF
 # Download the Greenplum software packages used for this workshop
 function download_software()
 {
-    FILES="plcontainer-1.1.0-rhel6-x86_64.gppkg greenplum-text-2.2.1-rhel6_x86_64.tar.gz plcontainer-python-images-1.1.0.tar.gz greenplum-cc-web-4.0.0-LINUX-x86_64.zip"
-    for f in $FILES
+    for f in $@
     do
         echo_eval "wget --quiet https://s3.amazonaws.com/gp-demo-workshop/$f -O ${SOFTWARE}/$f"
     done
@@ -107,10 +112,12 @@ function download_software()
 # Install Madlib
 function install_madlib()
 {
-    ml_pkg=$(find /opt/pivotal/greenplum/optional/pkg -name 'madlib-1*' | tail -1)
-    [[ ! -f $ml_pkg ]] && { echo "Madlib pkg not found"; return 0; }
+    PKG=$1
 
-    echo_eval "gppkg -i $ml_pkg"
+    echo_eval "tar xzf ${SOFTWARE}/$PKG -C ${SOFTWARE}"
+    MADLIB=$(basename $PKG .tar.gz)
+
+    echo_eval "gppkg -i ${SOFTWARE}/${MADLIB}/${MADLIB}.gppkg"
 
     # Install the madlib schema to the gpadmin and gpuser databases.
     master_host=$(hostname)
@@ -126,8 +133,10 @@ function install_madlib()
 # Install GPText
 function install_gptext()
 {
-    echo_eval "tar xzf ${SOFTWARE}/greenplum-text-2.2.1-rhel6_x86_64.tar.gz -C ${SOFTWARE}"
-    ./02a_gptext_install_1.sh
+    PKG=$1
+
+    echo_eval "tar xzf ${SOFTWARE}/$PKG -C ${SOFTWARE}"
+    ./02a_gptext_install_1.sh $PKG
     ./02a_gptext_install_2.sh
 }
 
@@ -135,9 +144,13 @@ function install_gptext()
 # Install PLContainer
 function install_plcontainer()
 {
-    echo_eval "gppkg -i $SOFTWARE/plcontainer-1.1.0-rhel6-x86_64.gppkg"
-    echo_eval "plcontainer image-add -f $SOFTWARE/plcontainer-python-images-1.1.0.tar.gz"
-    echo_eval "plcontainer runtime-add -r plc_py -i pivotaldata/plcontainer_python_shared:devel -l python"
+    PKG=$1
+    IMAGE=$2
+    LANG=$3
+
+    echo_eval "gppkg -i $SOFTWARE/$PKG"
+    echo_eval "plcontainer image-add -f $SOFTWARE/$IMAGE"
+    echo_eval "plcontainer runtime-add -r plc_${LANG} -i pivotaldata/plcontainer_${LANG}_shared:devel -l ${LANG}"
     for db in gpadmin $WORKSHOP_DB
     do
         echo_eval "psql -d $db -c 'create extension plcontainer'"
@@ -159,18 +172,23 @@ function upgrade_gpdb()
 # MAIN
 ####################################################################
 
+GPTEXT_INSTALLER="greenplum-text-2.2.1-rhel6_x86_64.tar.gz"
+GPCC_INSTALLER="greenplum-cc-web-4.0.0-LINUX-x86_64.zip"
+MADLIB_INSTALLER="madlib-1.14-gp5-rhel6-x86_64.tar.gz"
+PLC_INSTALLER="plcontainer-1.1.0-rhel6-x86_64.gppkg"
+PLC_IMAGE="plcontainer-python-images-1.1.0.tar.gz"
 
 [[ ! -d $SOFTWARE ]] && echo_eval "mkdir -p $SOFTWARE"
 
 upgrade_gpdb
 modify_pghba
 add_role_and_db
-download_software
+download_software $GPTEXT_INSTALLER $GPCC_INSTALLER $MADLIB_INSTALLER $PLC_INSTALLER $PLC_IMAGE
 
-install_madlib
-install_gptext
-install_plcontainer
+[[ ! -z $MADLIB_INSTALLER ]] && install_madlib $MADLIB_INSTALLER
+[[ ! -z $PLC_INSTALLER ]]    && install_plcontainer $PLC_INSTALLER $PLC_IMAGE python
+[[ ! -z $GPTEXT_INSTALLER ]] && install_gptext $GPTEXT_INSTALLER
 
-mv ./Scripts/cluster_st*.sh /home/gpadmin
+/bin/mv ./Scripts/cluster_st*.sh /home/gpadmin
 # Restart the database to make sure all the changes take effect
 echo_eval "gpstop -q -r -a -M fast"
