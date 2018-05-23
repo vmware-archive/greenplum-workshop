@@ -12,6 +12,7 @@
 source ./00_common_functions.sh
 
 echo_eval "check_user root"
+[[ $? != 0 ]] && exit 1
 
 echo_eval "rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
 echo_eval "yum -y install docker-io"
@@ -19,7 +20,7 @@ echo_eval "chkconfig docker on"
 
 # The current Greenplum CloudFormation version (<= 2.2) on AWS has limited root filespace.
 # So we need to move docker off of the root space and to one of the data spaces.
-set_cloud_provider
+set_cloud_platform
 
 if [[ $PROVIDER == 'aws' ]]; then
     # Move the docker stuff out of the root directory since it has limited space

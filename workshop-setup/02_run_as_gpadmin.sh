@@ -158,7 +158,7 @@ function install_plcontainer()
 }
 
 ####################################################################
-# Upgrade to latest release (5.7 as of Apr 2018)
+# Upgrade to latest release (5.8 as of May 2018)
 function upgrade_gpdb()
 {
     UPGRADE_SCRIPT=$(find /usr/local -name gpupgrade.sh | tail -1)
