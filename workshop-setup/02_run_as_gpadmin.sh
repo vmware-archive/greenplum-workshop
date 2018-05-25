@@ -104,7 +104,7 @@ function download_software()
 {
     for f in $@
     do
-        echo_eval "wget --quiet https://s3.amazonaws.com/gp-demo-workshop/$f -O ${SOFTWARE}/$f"
+        echo_eval "curl -s https://s3.amazonaws.com/gp-demo-workshop/$f -o ${SOFTWARE}/$f"
     done
 }
 

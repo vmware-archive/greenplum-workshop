@@ -2,3 +2,5 @@ tmp
 GP*tgz
 GP*tar
 refresh-s3.sh
+aws-testing-harness
+azure-testing-harness

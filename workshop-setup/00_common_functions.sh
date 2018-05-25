@@ -7,7 +7,7 @@
 this_script=$BASH_SOURCE
 
 #### Parameters #############################################################################
-source /usr/local/greenplum-db/greenplum_path.sh
+[[ $(id -un) != root ]] && source /usr/local/greenplum-db/greenplum_path.sh
 
 if [ -r /opt/pivotal/greenplum/variables.sh ]; then
     source /opt/pivotal/greenplum/variables.sh
