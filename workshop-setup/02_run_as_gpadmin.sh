@@ -95,6 +95,12 @@ _EOF
         echo_eval "psql -d $WORKSHOP_DB -e -c 'alter database $WORKSHOP_DB owner to $WORKSHOP_USER;'"
     fi
 
+    # add the $WORKSHOP_DB to pgbouncer
+    PGB_INI=$MASTER_DATA_DIRECTORY/pgbouncer/pgbouncer.ini
+    sed -i -e '/\[databases\]/a gpuser = host=127.0.0.1 port=6432 dbname=gpuser' \
+           -e 's/^auth_type.*/auth_type = trust/'   $PGB_INI
+    pgbouncer -d -R $PGB_INI
+
     echo_eval "psql -d $WORKSHOP_DB -e -c 'alter role $WORKSHOP_USER createexttable;'"
 }
 
@@ -163,7 +169,7 @@ function upgrade_gpdb()
 {
     UPGRADE_SCRIPT=$(find /usr/local -name gpupgrade.sh | tail -1)
     if [[ -x $UPGRADE_SCRIPT ]]; then
-        echo_eval "sudo sed -i 's?s3.amazonaws.com/pivotal-greenplum-bin?s3.amazonaws.com/pivotal-greenplum-dev?' $UPGRADE_SCRIPT"
+        echo_eval "sudo sed -i 's?s3.amazonaws.com/pivotal-greenplum-bin?s3.amazonaws.com/gp-demo-workshop/pivotal-greenplum-dev?' $UPGRADE_SCRIPT"
         [[ $? == 0 ]] && echo_eval "$UPGRADE_SCRIPT true"
     fi
 }
