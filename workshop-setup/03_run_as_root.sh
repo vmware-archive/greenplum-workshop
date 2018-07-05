@@ -63,8 +63,4 @@ ExercisesTar="GP-Workshop-Exercises.tgz"
 echo_eval "su - $WORKSHOP_USER -c 'wget $SRC/$ExercisesTar -O /home/$WORKSHOP_USER/$ExercisesTar'"
 echo_eval "su - $WORKSHOP_USER -c 'cd /home/$WORKSHOP_USER; tar xzf $ExercisesTar'"
 
-# Move the recreate faa db script to workshop user's home directory. This script should really
-# be added to the exercises tar bundle.
-echo_eval "mv ./recreate_faa_db.sh /home/$WORKSHOP_USER"
-
 echo_eval "chown -R $WORKSHOP_USER /home/$WORKSHOP_USER"

@@ -164,13 +164,18 @@ function install_plcontainer()
 }
 
 ####################################################################
-# Upgrade to latest release (5.8 as of May 2018)
+# Upgrade to latest release (5.9 as of July 2018)
 function upgrade_gpdb()
 {
     UPGRADE_SCRIPT=$(find /usr/local -name gpupgrade.sh | tail -1)
     if [[ -x $UPGRADE_SCRIPT ]]; then
         echo_eval "sudo sed -i 's?s3.amazonaws.com/pivotal-greenplum-bin?s3.amazonaws.com/gp-demo-workshop/pivotal-greenplum-dev?' $UPGRADE_SCRIPT"
         [[ $? == 0 ]] && echo_eval "$UPGRADE_SCRIPT true"
+        if [[ $? == 0 ]]; then
+            # Clean up by removing the RPM installer
+            rpm_file=$(tail -1 /tmp/greenplum_upgrade/control.txt | cut -d'|' -f3)
+            [[ ${rpm_file: -4} == '.rpm' ]] && sudo find / -name $rpm_file -exec rm -f {} \;
+        fi
     fi
 }
 
