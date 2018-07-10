@@ -1,3 +1,3 @@
 set search_path to faa;
-insert into otp_rpm select * from otp_r;
+insert into faa.otp_rpm select * from faa.otp_r;
 analyze rootpartition faa.otp_rpm;
