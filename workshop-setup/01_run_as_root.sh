@@ -91,7 +91,6 @@ set_cloud_platform
 setup_workshop_user
 set_prompts
 add_to_sudoers "gpadmin"
-add_to_sudoers "$WORKSHOP_USER"
 allow_pw_auth
 [[ $PROVIDER == 'aws' ]] && install_scripts_aws
 yum_installs
@@ -105,6 +104,7 @@ The gpadmin and gpuser accounts have been added to the 'docker' group.
 At this point, you should log out and log back in so that the gpadmin user
 can run docker commands.
 
-After logging back in, proceed with running the numbered scripts starting
-with 02_run_as_gpadmin.sh.
+After logging back in, proceed with running the numbered scripts:
+    02_run_as_gpadmin.sh and 
+    03_run_as_root.sh
 _EOF
