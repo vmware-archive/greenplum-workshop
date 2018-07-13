@@ -10,8 +10,9 @@ FORMAT 'CUSTOM' (formatter=fixedwidth_in,
 ```
 
 
-There is another fixed format file we received (survey_data.fixed) that needs to be loaded. For this exercise, we will load straight from the fixed format file into a relational table with six columns.
+There is another fixed format file we received (survey_data.fixed) that needs to be loaded.
+For this exercise, we will load straight from the fixed format file into a relational table with six columns.
 Look at the first few lines of the file and create an external table to map the data (there are 6 fields). Follow the format in the example above. Start a _gpfdist_ process. Execute a select query to read from the external table.
 NOTE: The ability to read from a local file using 'file:// ...' is reserved for users with Greenplum superuser privileges.
 
-ExtraExtra Credit: Use a string function to further parse the 6th field.
+Extra-Extra Credit: Use a string function to further parse the 6th field.

@@ -1,9 +1,9 @@
 # Offload a Partition to a Flat File
 
 The scenario for this exercise is that we have already dumped (or COPYed) old data from a partitioned table into a flat file (2009June_otp.dat).
-The goal is to illustrate the partition maintenance task of moving old data out of Greenplum to longer term storage (NFS file system, Hadoop, etc) but still allowing SQL access to that data from the partitioned table. So here we are going to create a readable external table and exchange it with an existing partition.
+The goal is to illustrate the partition maintenance task of moving old data out of Greenplum to longer term storage (NFS file system, Hadoop, etc) but still allow SQL access to that data from the partitioned table. So here we are going to create a readable external table and exchange it with an existing partition.
 
-The second part of this maintenance task would be to load new data into Greenplum and add it to the partitioned table. We don't cover this here.
+The second part of this maintenance task would be to load new data into Greenplum and add it to the partitioned table. This can be considered extra credit.
 
 
 Files in this directory:
