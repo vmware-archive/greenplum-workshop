@@ -8,7 +8,7 @@
 # - Add the gpuser Linux account and set the user's password.
 #    - Configure the .bashrc file for sourcing GP product environment scripts.
 # - Sets the PS1 prompt for gpadmin and gpuser.
-# - Adds gpadmin and gpuser to the sudoers file.
+# - Add gpadmin to the sudoers file.
 # - Turn on password authentication for ssh. This is so the gpuser account can login
 #    without having to have SSH key. Restart sshd.
 # - Installs several utilities in /usr/local/bin
@@ -34,7 +34,9 @@ function setup_workshop_user()
     cat << _EOF >> /home/$WORKSHOP_USER/.bashrc
 source /usr/local/greenplum-db/greenplum_path.sh
 source /usr/local/greenplum-text/greenplum-text_path.sh
-export PGPORT=${PGPORT:-5432}
+
+# Bypass pgbouncer for this user and connect directly to GP
+export PGPORT=${PGPORT:-6432}
 _EOF
 }
 
@@ -59,7 +61,7 @@ function allow_pw_auth()
 {
     # Turn on password authentication
     echo_eval "sed -i -e 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config"
-    echo_eval "service sshd restart"
+    echo_eval "systemctl restart sshd.service"
 }
 
 ####################################################################
@@ -76,11 +78,34 @@ function install_scripts_aws()
 function yum_installs()
 {
     # Install OpenJDK 1.8 runtime
-    echo_eval "yum -q -y install java-1.8.0-openjdk.x86_64"
+    yum list installed java-1.8.0* &> /dev/null
+    [[ $? != 0 ]] && echo_eval "yum -q -y install java-1.8.0-openjdk.x86_64"
 
     # Install expect. Used in the 02_run_as_gpadmin.sh script.
+    yum list installed expect* &> /dev/null
+    [[ $? != 0 ]] && echo_eval "yum -q -y install expect"
+
     # Install m4. Used by MADLIB
-    echo_eval "yum -q -y install expect m4"
+    yum list installed m4* &> /dev/null
+    [[ $? != 0 ]] && echo_eval "yum -q -y install m4"
+}
+
+####################################################################
+# Enable and start docker
+function enable_docker()
+{
+    # Check if Docker is install and install if necessary
+    yum list installed docker* &> /dev/null
+    [[ $? != 0 ]] && echo_eval "yum -y install docker-io"
+
+    echo_eval "systemctl enable docker.service"      #echo_eval "chkconfig docker on"
+    echo_eval "systemctl start docker.service"
+
+    echo_eval "chgrp docker /var/run/docker.sock"
+
+    # Add the gpadmin and gpuser users to the docker group
+    echo_eval "usermod  -aG docker gpadmin"
+    echo_eval "usermod  -aG docker gpuser"
 }
 
 ####################################################################
@@ -94,17 +119,14 @@ add_to_sudoers "gpadmin"
 allow_pw_auth
 [[ $PROVIDER == 'aws' ]] && install_scripts_aws
 yum_installs
-
-# Install docker
-./01a_docker_install.sh
+enable_docker
 
 cat << _EOF
 ------ NOTE --------------------------------------------------------------
 The gpadmin and gpuser accounts have been added to the 'docker' group.
-At this point, you should log out and log back in so that the gpadmin user
-can run docker commands.
+At this point, you may need to log out and log back in so that the gpadmin user
+can run docker commands. You can check by running:
+$ docker images
 
-After logging back in, proceed with running the numbered scripts:
-    02_run_as_gpadmin.sh and 
-    03_run_as_root.sh
+If this returns with no errors, no need to log out and back in.
 _EOF

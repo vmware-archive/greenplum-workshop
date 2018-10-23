@@ -17,6 +17,6 @@ Now for some analytic work in python and its open source mathematical libraries.
 Let's compute 3 measure of centrality in data, the arithmetic mean, the geometric mean, and then the harmonic mean.  They have some interesting properties you can explore on your own.
 
 First, let's create some data with numpy_setup.sql
-The create the functions in PL/Container wih=th numpy_define_means.sql
+Then create the functions in PL/Container with numpy_define_means.sql
 Then execute the functions with numpy_calculate_means.
 

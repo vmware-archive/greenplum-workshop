@@ -9,6 +9,11 @@
 #       This may not be needed for CentOS 7.
 #
 
+# This script is no longer used so just exit. Only keeping for documenting how to move
+# docker if needed
+
+exit 0
+
 source ./00_common_functions.sh
 
 echo_eval "check_user root"

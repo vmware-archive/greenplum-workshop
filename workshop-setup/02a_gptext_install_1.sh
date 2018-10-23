@@ -6,7 +6,7 @@
 # Install GPText 2.x binaries on all hosts
 #############################################################################################
 
-[[ $# != 1 ]] && { echo -E "$0: No pkg provided.\nUsage: $0 TARFILE"; exit 1; }
+[[ $# != 1 ]] && { echo -E "$0: No pkg provided.\nUsage: $0 <TARFILE>"; exit 1; }
 
 source ./00_common_functions.sh
 
@@ -15,7 +15,6 @@ echo_eval "check_user gpadmin"
 BIN_DIR=/${DATA_DISK:-/data1}/software
 #GPTEXT_INSTALL_BINARY='greenplum-text-2.2.1-rhel6_x86_64.bin'
 GPTEXT_INSTALL_BINARY=$(basename $1 .tar.gz).bin
-HOST_ALL=/home/gpadmin/all_hosts.txt
 
 echo_eval "psql -d template1 -c 'select 1' > /dev/null 2>&1"
 if [[ $? != 0 ]]; then

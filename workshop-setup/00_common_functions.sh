@@ -5,12 +5,13 @@
 #############################################################################################
 
 this_script=$BASH_SOURCE
+CLOUD_DIR=/opt/pivotal/greenplum
 
 #### Parameters #############################################################################
 [[ $(id -un) != root ]] && source /usr/local/greenplum-db/greenplum_path.sh
 
-if [ -r /opt/pivotal/greenplum/variables.sh ]; then
-    source /opt/pivotal/greenplum/variables.sh
+if [ -r ${CLOUD_DIR}/variables.sh ]; then
+    source ${CLOUD_DIR}/variables.sh
 else
     # Set reasonable defaults for env variables
     CLUSTER_NAME=$(hostname -s)
@@ -27,7 +28,7 @@ WORKSHOP_USER=gpuser
 WORKSHOP_DB=$WORKSHOP_USER
 PROVIDER=unknown
 
-HOST_ALL="/home/gpadmin/all_hosts.txt"
+HOST_ALL="${CLOUD_DIR}/all_hosts.txt"
 if [[ ! -f $HOST_ALL ]]; then
     echo "$this_script: File '$HOST_ALL' not found. Create this file before continuing"
     exit 1
