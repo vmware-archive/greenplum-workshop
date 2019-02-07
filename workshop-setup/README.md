@@ -22,7 +22,8 @@
   1. `$ sudo ./01_run_as_root.sh`
     - adds a Linux login account for the workshop user (gpuser) and sets the password
     - installs several utility scripts in /usr/local/bin
-    - yum installs required software, and makes changes to the docker install by moving _/var/lib/docker_ to _/data4/var-lib-docker_ and then soft linking back to _/var/lib/docker_. The last step is done because of limited space on the root volume.
+    - yum installs java-1.8, expect, and m4 if required
+    - yum installs docker if necessary (docker is used by plcontainer)
   2. `$ ./02_run_as_gpadmin.sh`
     - modifies the `pg_hba.conf` file
     - runs gpupgrade to install the latest GP 5.x release
@@ -35,11 +36,10 @@
   3. `$ sudo ./03_run_as_root.sh`
     - Configure the demo environment for the gpuser role.
     - Adds a `$HOME/.psqlrc` file for gpuser
-    - downloads the FAA ontime data files from a public S3 bucket and stores the files in a subdirectory of /data4
+    - downloads the FAA ontime data files from a public S3 bucket and stores the files in /home/gpuser/data/faa
     - downloads and extracts the workshop exercises in gpuser's home directory
 
 ### Things to note:
 * If you downloaded from the git repository (either cloned or downloaded zip), you can move the `workshop-exercises` directory to `/home/gpuser`. However, it is not necessary since the third step above will download and install the exercises.
-* By default, the Greenplum cloud formation setup in Amazon turns off password authentication. We have turned it back so that the gpuser account can login without requiring an SSH key. It is easier to share a password with participants in a training situation. You should strongly consider turning it off and using SSH key authentication.
-* Greenplum Command Center v4.x is downloaded but not installed. If you decide to install it, please read the installation guide carefully. Since we upgrade GP from 5.2->5.latest, you have to make the changes specified here:
-`http://gpcc.docs.pivotal.io/400/topics/install.html#setup_extensions`
+* By default, the Greenplum cloud formation setup in Amazon turns off password authentication. We have turned it back on so the gpuser account can login without requiring an SSH key. It is easier to share a password with participants in a training situation. You should strongly consider turning it off and using SSH key authentication if you don't have this need.
+* Greenplum Command Center v4.x is downloaded but not installed.

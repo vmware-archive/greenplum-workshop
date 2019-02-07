@@ -33,6 +33,7 @@ SOFTWARE=/${DATA_DISK:-/data1}/software
 # Modify the Greenplum pg_hba.conf file
 function modify_pghba() 
 {
+    rc=0
     PGHBA=$MASTER_DATA_DIRECTORY/pg_hba.conf
     echo_eval "cp ${PGHBA} ${PGHBA}.SAVED"
 
@@ -56,14 +57,17 @@ _EOF
     else
        echo "GPDB: Starting"
        echo_eval "gpstart -aq"
-       [[ $? -ne 0 ]] && { echo "Problems starting GPDB. Exiting." ; exit 1 ; }
     fi
+    [[ $? -ne 0 ]] && { echo "Problems running gpstop/gpstart. Exiting." ; rc=1 ; }
+
+    return $rc
 }
 
 ####################################################################
 # Add the workshop user (gpuser) role to Greenplum
 function add_role_and_db()
 {
+    rc=0
     # Add the gpuser role to the db if it doesn't already exist
     echo_eval "psql -d postgres -ec '\du $WORKSHOP_USER' | grep $WORKSHOP_USER"
     if [ $? -ne 0 ] ; then
@@ -87,21 +91,32 @@ _EOF
     fi
 
     # Create the gpuser DB if it doesn't already exist
-    dbname=$(psql -d postgres -Atc "select datname from pg_database where datname = '$WORKSHOP_DB'")
-    if [[ x$dbname == "x" ]] ; then
-        echo "Creating $WORKSHOP_DB database"
-        echo_eval "psql -d postgres -e -c 'create database $WORKSHOP_DB owner = $WORKSHOP_USER'"
-    else
-        echo_eval "psql -d $WORKSHOP_DB -e -c 'alter database $WORKSHOP_DB owner to $WORKSHOP_USER;'"
+    # This step must occur for the remainder of the install to work so
+    # we try 3 times in case something has a temporary lock on template1
+    for cnt in $(seq 1 3); do
+        dbname=$(psql -d postgres -Atc "select datname from pg_database where datname = '$WORKSHOP_DB'")
+        if [[ x$dbname == "x" ]] ; then
+            echo "Creating $WORKSHOP_DB database"
+            echo_eval "psql -d postgres -e -c 'create database $WORKSHOP_DB owner = $WORKSHOP_USER'"
+        else
+            echo_eval "psql -d $WORKSHOP_DB -e -c 'alter database $WORKSHOP_DB owner to $WORKSHOP_USER;'"
+        fi
+        rc=$?
+        [[ $rc == 0 ]] && { break ; }
+        sleep 2
+    done
+
+    if [[ $rc == 0 ]]; then
+        # add the $WORKSHOP_DB to pgbouncer
+        PGB_INI=$(find $(dirname $MASTER_DATA_DIRECTORY) -name pgbouncer.ini)
+        sed -i -e '/\[databases\]/a gpuser = host=127.0.0.1 port=6432 dbname=gpuser' \
+               -e 's/^auth_type.*/auth_type = trust/'   $PGB_INI
+        pgbouncer -d -R $PGB_INI
+
+        echo_eval "psql -d $WORKSHOP_DB -e -c 'alter role $WORKSHOP_USER createexttable;'"
     fi
 
-    # add the $WORKSHOP_DB to pgbouncer
-    PGB_INI=$MASTER_DATA_DIRECTORY/pgbouncer/pgbouncer.ini
-    sed -i -e '/\[databases\]/a gpuser = host=127.0.0.1 port=6432 dbname=gpuser' \
-           -e 's/^auth_type.*/auth_type = trust/'   $PGB_INI
-    pgbouncer -d -R $PGB_INI
-
-    echo_eval "psql -d $WORKSHOP_DB -e -c 'alter role $WORKSHOP_USER createexttable;'"
+    return $rc 
 }
 
 ####################################################################
@@ -161,10 +176,13 @@ function install_plcontainer()
     do
         echo_eval "psql -d $db -c 'create extension plcontainer'"
     done
+
+    psql -d gpadmin -ec "grant select on public.plcontainer_show_config,public.plcontainer_refresh_config to $WORKSHOP_USER;"
+    psql -d $WORKSHOP_DB -ec "grant select on public.plcontainer_show_config,public.plcontainer_refresh_config to $WORKSHOP_USER;"
 }
 
 ####################################################################
-# Upgrade to latest release (5.9 as of July 2018)
+# Upgrade to latest release (5.16 as of Feb 2019)
 function upgrade_gpdb()
 {
     UPGRADE_SCRIPT=$(find /usr/local -name gpupgrade.sh | tail -1)
@@ -183,17 +201,18 @@ function upgrade_gpdb()
 # MAIN
 ####################################################################
 
-GPTEXT_INSTALLER="greenplum-text-2.2.1-rhel6_x86_64.tar.gz"
-GPCC_INSTALLER="greenplum-cc-web-4.0.0-LINUX-x86_64.zip"
-MADLIB_INSTALLER="madlib-1.14-gp5-rhel6-x86_64.tar.gz"
-PLC_INSTALLER="plcontainer-1.1.0-rhel6-x86_64.gppkg"
-PLC_IMAGE="plcontainer-python-images-1.1.0.tar.gz"
+# Updated software list to latest versions as of 2019Feb04
+GPTEXT_INSTALLER="greenplum-text-3.1.0-rhel6_x86_64.tar.gz"
+GPCC_INSTALLER="greenplum-cc-web-4.5.1-LINUX-x86_64.zip"
+MADLIB_INSTALLER="madlib-1.15.1-gp5-rhel7-x86_64.tar.gz"
+PLC_INSTALLER="plcontainer-1.4.0-rhel7-x86_64.gppkg"
+PLC_IMAGE="plcontainer-python-images-1.4.0.tar.gz"
 
 [[ ! -d $SOFTWARE ]] && echo_eval "mkdir -p $SOFTWARE"
 
-upgrade_gpdb
-modify_pghba
-add_role_and_db
+upgrade_gpdb; [[ $? == 1 ]] && exit
+modify_pghba; [[ $? == 1 ]] && exit
+add_role_and_db; [[ $? == 1 ]] && exit
 download_software $GPTEXT_INSTALLER $GPCC_INSTALLER $MADLIB_INSTALLER $PLC_INSTALLER $PLC_IMAGE
 
 [[ ! -z $MADLIB_INSTALLER ]] && install_madlib $MADLIB_INSTALLER

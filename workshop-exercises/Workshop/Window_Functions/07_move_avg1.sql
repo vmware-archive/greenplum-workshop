@@ -1,1 +1,4 @@
-select month, unrate from demo.unemp order by random() limit 20;
+select month, unrate
+from demo.unemp
+order by random()
+limit 20;

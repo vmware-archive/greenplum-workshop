@@ -4,7 +4,7 @@ create or replace function reciprocal(p_num float) returns float as
 $$
 declare
 begin
-  RETURN (1.0/p_num);
+  return (1.0/p_num);
   exception when DIVISION_BY_ZERO   then return ('NaN'::float8);
 end;
 $$

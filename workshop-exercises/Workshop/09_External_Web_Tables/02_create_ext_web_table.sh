@@ -1,3 +1,6 @@
 source $HOME/.bash_profile
-psql -d gpuser -f /home/gpuser/Exercises/09_External_Web_Tables/02_create_ext_web_table.sql
+
+SQL=$(find $HOME -name 02_create_ext_web_table.sql | head -1)
+
+[[ -r $SQL ]] && psql -d gpuser -f $SQL
 

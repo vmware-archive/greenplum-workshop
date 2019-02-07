@@ -12,5 +12,7 @@ from (
    from demo.unemp) foo
 where unemp.month = foo.month;
 
-select month, unrate, mv5::numeric(6,2), mv12::numeric(6,2) from demo.unemp order by month desc limit 30;
-
+select month, unrate, mv5::numeric(6,2), mv12::numeric(6,2)
+from demo.unemp
+order by month desc
+limit 30;

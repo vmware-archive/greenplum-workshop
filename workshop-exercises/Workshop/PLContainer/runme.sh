@@ -14,9 +14,9 @@ read -p "Press Enter to Continue"
 psql -c "select * from public.os_cmd_container('cat /etc/system-release');" 
 read -p "Press Enter to Continue"
 psql -c "select * from public.os_cmd_container('whoami');"
-psql -f numpy_setup.sql 
-read -p "Press Enter to Continue"
-psql -f numpy_define_means.sql 
-read -p "Press Enter to Continue"
-psql -f numpy_calculate_means.sql 
 
+psql -f numpy_01_setup.sql 
+read -p "Press Enter to Continue"
+psql -f numpy_02_define_means.sql 
+read -p "Press Enter to Continue"
+psql -f numpy_03_calculate_means.sql 

@@ -1,12 +1,12 @@
 create or replace function foo(int) returns int as
 $$
-select $1*2
+    select $1 * 2
 $$ 
 language sql immutable;
 
 create or replace function foo(float) returns float as
 $$ 
-select $1*3.14159
+    select $1 * 3.14159
 $$
 language sql immutable;
 

@@ -12,8 +12,9 @@ read -p "Press Enter to Continue"
 echo "select * from public.os_cmd_container('cat /etc/system-release');" 
 read -p "Press Enter to Continue"
 echo "select * from public.os_cmd_container('whoami');"
-cat numpy_setup.sql 
+
+cat numpy_01_setup.sql 
 read -p "Press Enter to Continue"
-cat numpy_define_means.sql 
+cat numpy_02_define_means.sql 
 read -p "Press Enter to Continue"
-cat numpy_calculate_means.sql 
+cat numpy_03_calculate_means.sql 

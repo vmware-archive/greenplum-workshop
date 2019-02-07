@@ -10,7 +10,9 @@ RETURNS float8[] AS
 $$
 BEGIN
    --   create count and sum, place the two values into an array
-   return ARRAY [arr[1]+1, arr[2]+val]::float[];
+   if val is null then return ARRAY [arr[1], arr[2]]::float[];
+                  else return ARRAY [arr[1]+1, arr[2]+val]::float[];
+   end if;
 END;
 $$
 LANGUAGE 'plpgsql' IMMUTABLE;

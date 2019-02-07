@@ -2,7 +2,7 @@
 
 DB=gpuser
 
-psql $DB -ec "drop table if exists enron"
+psql $DB -ec "drop table if exists public.enron"
 psql $DB -f 02_enron.sql
 psql $DB -ec "select gptext.create_index('public', 'enron', 'id', 'content')"
 psql $DB -ec "select gptext.enable_terms('gpuser.public.enron', 'content')"

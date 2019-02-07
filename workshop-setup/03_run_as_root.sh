@@ -23,16 +23,16 @@ cat << _CMDS_ >> "${PSQLRC}"
 \pset null NULL
 \timing on
 \set ECHO all
-set search_path = faa, madlib, pg_catalog, gp_toolkit, public;
+set search_path = faa, madlib, public;
 _CMDS_
 
 echo_eval "chown ${WORKSHOP_USER} ${PSQLRC}"
 
 SRC="https://s3.amazonaws.com/gp-demo-workshop"
-#WORKSHOP_DATA="/${DATA_DISK:-/disk1}/workshop-data/faa"
 WORKSHOP_DATA="/${HOME}/data/faa"
 echo_eval "mkdir -p ${WORKSHOP_DATA}"
 
+# Download the data for on time performance table (the "fact" table)
 for yr in $(seq 2008 2010)
 do
     for mnth in $(seq 1 12)
@@ -41,15 +41,15 @@ do
         echo_eval "wget --quiet ${SRC}/data/faa/${FILE} -O ${WORKSHOP_DATA}/${FILE}"
     done
 done
-
 FACT_FILES="On_Time_On_Time_Performance_2011_1.csv.bz2 On_Time_On_Time_Performance_2011_2.csv.bz2"
+
+# Download the data for the supporting metadata tables (the "dimension" tables)
 DIM_FILES_1="L_AIRLINE_ID.csv L_AIRPORTS.csv L_DISTANCE_GROUP_250.csv"
 DIM_FILES_2="L_PILOTS.csv L_WORLD_AREA_CODES.csv L_ONTIME_DELAY_GROUPS.csv"
 for FILE in ${FACT_FILES} ${DIM_FILES_1} ${DIM_FILES_2}
 do
     echo_eval "wget --quiet ${SRC}/data/faa/${FILE} -O ${WORKSHOP_DATA}/${FILE}"
 done
-
 
 # Download and extract the exercises
 ExercisesTar="GP-Workshop-Exercises.tgz"

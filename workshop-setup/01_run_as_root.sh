@@ -74,7 +74,7 @@ function install_scripts_aws()
 }
 
 ####################################################################
-# Install yum packages
+# Install yum packages (if necessary)
 function yum_installs()
 {
     # Install OpenJDK 1.8 runtime

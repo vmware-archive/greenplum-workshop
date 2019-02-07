@@ -36,14 +36,11 @@ if [[ $? != 0 ]]; then
     exit 1
 fi
 
-echo_eval "gptext-installsql gpadmin"
-echo_eval "gptext-installsql $WORKSHOP_USER"
+echo_eval "gptext-installsql gpadmin $WORKSHOP_USER"
 echo_eval "gptext-start"
 
 echo "psql -d $WORKSHOP_USER -e "
 psql -d $WORKSHOP_USER -e  << _EOF
 GRANT USAGE ON SCHEMA gptext TO $WORKSHOP_USER;
 GRANT SELECT ON gptext.gptext_envs TO $WORKSHOP_USER;
-GRANT SELECT ON public.plcontainer_show_config TO $WORKSHOP_USER;
-GRANT SELECT ON public.plcontainer_refresh_config TO $WORKSHOP_USER;
 _EOF
