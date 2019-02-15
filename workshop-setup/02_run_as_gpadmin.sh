@@ -17,11 +17,11 @@
 
 source ./00_common_functions.sh
 GP_ENV="/usr/local/greenplum-db/greenplum_path.sh"
-if [[ ! -x $GP_ENV ]]; then
-    echo "File '$GP_ENV' not found. Is Greenplum installed?"
+if [[ ! -x ${GP_ENV} ]]; then
+    echo "File '${GP_ENV}' not found. Is Greenplum installed?"
     exit 1
 else
-    source $GP_ENV
+    source ${GP_ENV}
 fi
 
 echo_eval "check_user gpadmin"
@@ -30,6 +30,8 @@ echo_eval "check_user gpadmin"
 SOFTWARE=/${DATA_DISK:-/data1}/software
 
 ####################################################################
+# Usage: modify_pghba
+#
 # Modify the Greenplum pg_hba.conf file
 function modify_pghba() 
 {
@@ -64,14 +66,21 @@ _EOF
 }
 
 ####################################################################
-# Add the workshop user (gpuser) role to Greenplum
+# Usage: add_role_and_db <NEW ROLE> <NEW DB>
+#
+# Add the workshop user/role to Greenplum
 function add_role_and_db()
 {
+    ROLE=$1
+    NEWDB=$2
+
+    PASSWD="pivotal"
+
     rc=0
     # Add the gpuser role to the db if it doesn't already exist
-    echo_eval "psql -d postgres -ec '\du $WORKSHOP_USER' | grep $WORKSHOP_USER"
+    echo_eval "psql -d postgres -ec '\du' | grep -w $ROLE"
     if [ $? -ne 0 ] ; then
-        echo "Creating database role $WORKSHOP_USER"
+        echo "Creating database role ${ROLE}"
             expect << _EOF
 set timeout -1
 spawn bash -l
@@ -79,27 +88,27 @@ match_max 10000
 expect -exact "$ "
 send -- "createuser --echo --pwprompt --login --no-createdb --no-superuser --no-createrole\r"
 expect -exact "Enter name of role to add: "
-send -- "$WORKSHOP_USER\r"
+send -- "${ROLE}\r"
 expect -exact "Enter password for new role: "
-send -- "pivotal\r"
+send -- "${PASSWD}\r"
 expect -exact "Enter it again: "
-send -- "pivotal\r"
+send -- "${PASSWD}\r"
 expect -exact "$ "
 send -- "exit\r"
 expect -exact "$ "
 _EOF
     fi
 
-    # Create the gpuser DB if it doesn't already exist
+    # Create the $NEWDB database if it doesn't already exist
     # This step must occur for the remainder of the install to work so
     # we try 3 times in case something has a temporary lock on template1
     for cnt in $(seq 1 3); do
-        dbname=$(psql -d postgres -Atc "select datname from pg_database where datname = '$WORKSHOP_DB'")
-        if [[ x$dbname == "x" ]] ; then
-            echo "Creating $WORKSHOP_DB database"
-            echo_eval "psql -d postgres -e -c 'create database $WORKSHOP_DB owner = $WORKSHOP_USER'"
+        dbname=$(psql -d postgres -Atc "select datname from pg_database where datname = '${NEWDB}'")
+        if [[ "x${dbname}" == "x" ]] ; then
+            echo "Creating '${NEWDB}' database"
+            echo_eval "psql -d postgres -e -c 'create database ${NEWDB} owner = ${ROLE}'"
         else
-            echo_eval "psql -d $WORKSHOP_DB -e -c 'alter database $WORKSHOP_DB owner to $WORKSHOP_USER;'"
+            echo_eval "psql -d postgres -e -c 'alter database ${NEWDB} owner to ${ROLE};'"
         fi
         rc=$?
         [[ $rc == 0 ]] && { break ; }
@@ -109,17 +118,19 @@ _EOF
     if [[ $rc == 0 ]]; then
         # add the $WORKSHOP_DB to pgbouncer
         PGB_INI=$(find $(dirname $MASTER_DATA_DIRECTORY) -name pgbouncer.ini)
-        sed -i -e '/\[databases\]/a gpuser = host=127.0.0.1 port=6432 dbname=gpuser' \
-               -e 's/^auth_type.*/auth_type = trust/'   $PGB_INI
+        sed -i -e "/\[databases\]/a ${ROLE} = host=127.0.0.1 port=6432 dbname=${NEWDB}" \
+               -e "s/^auth_type.*/auth_type = trust/"   $PGB_INI
         pgbouncer -d -R $PGB_INI
 
-        echo_eval "psql -d $WORKSHOP_DB -e -c 'alter role $WORKSHOP_USER createexttable;'"
+        echo_eval "psql -d ${NEWDB} -e -c 'alter role ${ROLE} createexttable;'"
     fi
 
     return $rc 
 }
 
 ####################################################################
+# Usage: download_software <list of software delimited by a [space]
+#
 # Download the Greenplum software packages used for this workshop
 function download_software()
 {
@@ -130,38 +141,61 @@ function download_software()
 }
 
 ####################################################################
+# Usage: install_madlib_pkg <PKG>
+#
 # Install Madlib
-function install_madlib()
+function install_madlib_pkg()
 {
     PKG=$1
 
-    echo_eval "tar xzf ${SOFTWARE}/$PKG -C ${SOFTWARE}"
-    MADLIB=$(basename $PKG .tar.gz)
+    # Check if madlib is already installed
+    gppkg -q --all | grep madlib &> /dev/null
+    if [[ $? -ne 0 ]]; then
+        echo_eval "tar xzf ${SOFTWARE}/${PKG} -C ${SOFTWARE}"
+        MADLIB=$(basename ${PKG} .tar.gz)
 
-    echo_eval "gppkg -i ${SOFTWARE}/${MADLIB}/${MADLIB}.gppkg"
-
-    # Install the madlib schema to the gpadmin and gpuser databases.
-    master_host=$(hostname)
-
-    for db in gpadmin $WORKSHOP_USER
-    do
-        echo_eval "$GPHOME/madlib/bin/madpack install -s madlib -p greenplum -c gpadmin@$master_host:${PGPORT:-5432}/${db}"
-    done
-    echo_eval "psql -d $WORKSHOP_DB -ec 'grant all privileges on schema madlib to $WORKSHOP_USER;'"
+        echo_eval "gppkg -i ${SOFTWARE}/${MADLIB}/${MADLIB}.gppkg"
+    fi
 }
 
 ####################################################################
+# Usage: install_madlib_schema <DB> <USER>
+#
+# Install Madlib schema and functions in DB and grant usage to USER
+function install_madlib_schema()
+{
+    if [[ -z $1 ]] | [[ -z $2 ]]; then
+        echo 'Usage: install_madlib_schema <DB> <USER>'
+        return 1
+    fi
+
+    DB=$1
+    USER=$2
+
+    master_host=$(hostname)
+
+    if [[ ! -z $DB ]]; then
+        echo_eval "${GPHOME}/madlib/bin/madpack install -s madlib -p greenplum -c gpadmin@${master_host}:${PGPORT:-5432}/${DB}"
+        echo_eval "psql -d ${DB} -ec 'grant all privileges on schema madlib to ${USER};'"
+    fi
+}
+
+####################################################################
+# Usage: install_gptext <PKG>
+#
 # Install GPText
 function install_gptext()
 {
     PKG=$1
 
-    echo_eval "tar xzf ${SOFTWARE}/$PKG -C ${SOFTWARE}"
-    ./02a_gptext_install_1.sh $PKG
+    echo_eval "tar xzf ${SOFTWARE}/${PKG} -C ${SOFTWARE}"
+    ./02a_gptext_install_1.sh ${PKG}
     ./02a_gptext_install_2.sh
 }
 
 ####################################################################
+# Usage: install_plcontainer <PKG> <IMAGE> <LANGUAGE>
+#
 # Install PLContainer
 function install_plcontainer()
 {
@@ -169,20 +203,32 @@ function install_plcontainer()
     IMAGE=$2
     LANG=$3
 
-    echo_eval "gppkg -i $SOFTWARE/$PKG"
-    echo_eval "plcontainer image-add -f $SOFTWARE/$IMAGE"
-    echo_eval "plcontainer runtime-add -r plc_${LANG} -i pivotaldata/plcontainer_${LANG}_shared:devel -l ${LANG}"
-    for db in gpadmin $WORKSHOP_DB
-    do
-        echo_eval "psql -d $db -c 'create extension plcontainer'"
-    done
+    echo_eval "gppkg -i ${SOFTWARE}/${PKG}"
+    rc=$?
+    if [[ $rc == 0 ]]; then
+        echo_eval "plcontainer image-add -f ${SOFTWARE}/${IMAGE}"
+        echo_eval "plcontainer runtime-add -r plc_${LANG} -i pivotaldata/plcontainer_${LANG}_shared:devel -l ${LANG}"
+        for db in gpadmin ${WORKSHOP_DB}
+        do
+            echo_eval "psql -d ${db} -c 'create extension plcontainer'"
+        done
+    fi
 
-    psql -d gpadmin -ec "grant select on public.plcontainer_show_config,public.plcontainer_refresh_config to $WORKSHOP_USER;"
-    psql -d $WORKSHOP_DB -ec "grant select on public.plcontainer_show_config,public.plcontainer_refresh_config to $WORKSHOP_USER;"
+    PLC_TBLS="public.plcontainer_show_config,public.plcontainer_refresh_config"
+    psql -d gpadmin -ec "grant select on ${PLC_TBLS} to ${WORKSHOP_USER};"
+    psql -d ${WORKSHOP_DB} -ec "grant select on ${PLC_TBLS} to ${WORKSHOP_USER};"
+
+    return $rc
 }
 
 ####################################################################
+# Usage: upgrad_gpdb
+#
 # Upgrade to latest release (5.16 as of Feb 2019)
+# Modifies the gpupgrade.sh script to access a separate software
+# repository on S3 so we can incorporate newer release faster
+# than the marketplace offering.
+
 function upgrade_gpdb()
 {
     UPGRADE_SCRIPT=$(find /usr/local -name gpupgrade.sh | tail -1)
@@ -212,11 +258,17 @@ PLC_IMAGE="plcontainer-python-images-1.4.0.tar.gz"
 
 upgrade_gpdb; [[ $? == 1 ]] && exit
 modify_pghba; [[ $? == 1 ]] && exit
-add_role_and_db; [[ $? == 1 ]] && exit
+add_role_and_db $WORKSHOP_USER $WORKSHOP_DB; [[ $? == 1 ]] && exit
 download_software $GPTEXT_INSTALLER $GPCC_INSTALLER $MADLIB_INSTALLER $PLC_INSTALLER $PLC_IMAGE
 
-[[ ! -z $MADLIB_INSTALLER ]] && install_madlib $MADLIB_INSTALLER
-[[ ! -z $PLC_INSTALLER ]]    && install_plcontainer $PLC_INSTALLER $PLC_IMAGE python
+if [[ ! -z $MADLIB_INSTALLER ]]; then
+    install_madlib_pkg $MADLIB_INSTALLER
+    install_madlib_schema $WORKSHOP_DB $WORKSHOP_USER
+fi
+
+# Removing the installation of PLContainer since we are loading PostGIS
+# and as of Feb 2019 there is a bug where the two cannot be installed at the same time.
+#[[ ! -z $PLC_INSTALLER ]]    && install_plcontainer $PLC_INSTALLER $PLC_IMAGE python
 [[ ! -z $GPTEXT_INSTALLER ]] && install_gptext $GPTEXT_INSTALLER
 
 /bin/mv ./Scripts/cluster_st*.sh /home/gpadmin
