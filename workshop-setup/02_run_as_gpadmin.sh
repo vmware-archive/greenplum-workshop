@@ -106,7 +106,7 @@ _EOF
         dbname=$(psql -d postgres -Atc "select datname from pg_database where datname = '${NEWDB}'")
         if [[ "x${dbname}" == "x" ]] ; then
             echo "Creating '${NEWDB}' database"
-            echo_eval "psql -d postgres -e -c 'create database ${NEWDB} owner = ${ROLE}'"
+            echo_eval "psql -d postgres -e -c 'create database ${NEWDB} template=gpadmin owner = ${ROLE}'"
         else
             echo_eval "psql -d postgres -e -c 'alter database ${NEWDB} owner to ${ROLE};'"
         fi
@@ -174,10 +174,12 @@ function install_madlib_schema()
 
     master_host=$(hostname)
 
-    if [[ ! -z $DB ]]; then
-        echo_eval "${GPHOME}/madlib/bin/madpack install -s madlib -p greenplum -c gpadmin@${master_host}:${PGPORT:-5432}/${DB}"
-        echo_eval "psql -d ${DB} -ec 'grant all privileges on schema madlib to ${USER};'"
-    fi
+    # Let's check if the schema is already installed
+    echo_eval "psql -d ${DB} -c 'select madlib.version()' &> /dev/null "
+    [[ $? -ne 0 ]] && echo_eval "${GPHOME}/madlib/bin/madpack install -s madlib -p greenplum -c gpadmin@${master_host}:${PGPORT:-5432}/${DB}"
+
+    # Let's make sure the user has access
+    echo_eval "psql -d ${DB} -ec 'grant all privileges on schema madlib to ${USER};'"
 }
 
 ####################################################################
