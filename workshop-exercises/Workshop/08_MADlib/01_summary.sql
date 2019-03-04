@@ -6,8 +6,7 @@ select * from madlib.summary(
  NULL,
  FALSE,
  FALSE,
- NULL,
- 10,
- FALSE);
+ NULL
+ );
 \x on
 select * from faa.otp_summary;

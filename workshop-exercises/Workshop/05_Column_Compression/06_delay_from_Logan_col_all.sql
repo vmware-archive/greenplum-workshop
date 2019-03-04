@@ -18,7 +18,7 @@ SELECT split_part(a.airline_desc, ':', 1) AS airline,
        avg(depdelayminutes)::numeric(8,1) AS avg_dep_delay,
        avg(arrdelayminutes)::numeric(8,1) AS avg_arr_delay,
        avg(arrdelayminutes)::numeric(8,1)-avg(depdelayminutes)::numeric(8,1) AS delta_mins
-FROM faa.otp_cc5 f
+FROM faa.otp_ccz5 f
 INNER JOIN faa.d_airlines a ON a.airlineid = f.airlineid
 WHERE f.origin = 'BOS'
   AND FlightDate > '2007-12-31'::date and FlightDate < '2009-01-01'::date
@@ -31,7 +31,7 @@ SELECT split_part(a.airline_desc, ':', 1) AS airline,
        avg(depdelayminutes)::numeric(8,1) AS avg_dep_delay,
        avg(arrdelayminutes)::numeric(8,1) AS avg_arr_delay,
        avg(arrdelayminutes)::numeric(8,1)-avg(depdelayminutes)::numeric(8,1) AS delta_mins
-FROM faa.otp_cclz f
+FROM faa.otp_ccqlz f
 INNER JOIN faa.d_airlines a ON a.airlineid = f.airlineid
 WHERE f.origin = 'BOS'
   AND FlightDate > '2007-12-31'::date and FlightDate < '2009-01-01'::date
