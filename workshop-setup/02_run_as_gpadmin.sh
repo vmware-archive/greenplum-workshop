@@ -6,8 +6,6 @@
 # Configure an AWS Greenplum cluster for the Greenplum workshop.
 # The following activites are performed in this script:
 # - Create a directory for storing downloaded software packages.
-# - Run gpupgrade. We modifiy it slightly to pull from a development
-#    repository. Upgrades the cluster from GP 5.2 -> 5.7+
 # - Modify the pg_hba.conf file and reload changes or start up GP.
 # - Adds the gpuser role and creates the gpuser database.
 # - Download the Greenplum software packages used for this workshop.
@@ -227,13 +225,13 @@ function install_plcontainer()
 # Usage: upgrad_gpdb
 #
 # Upgrade to latest release (5.16 as of Feb 2019)
-# Modifies the gpupgrade.sh script to access a separate software
+# Modifies the gprelease.sh script to access a separate software
 # repository on S3 so we can incorporate newer release faster
 # than the marketplace offering.
 
 function upgrade_gpdb()
 {
-    UPGRADE_SCRIPT=$(find /usr/local -name gpupgrade.sh | tail -1)
+    UPGRADE_SCRIPT=$(find /usr/local -name gprelease.sh | tail -1)
     if [[ -x $UPGRADE_SCRIPT ]]; then
         echo_eval "sudo sed -i 's?s3.amazonaws.com/pivotal-greenplum-bin?s3.amazonaws.com/gp-demo-workshop/pivotal-greenplum-dev?' $UPGRADE_SCRIPT"
         [[ $? == 0 ]] && echo_eval "$UPGRADE_SCRIPT true"
@@ -251,19 +249,20 @@ function upgrade_gpdb()
 
 # Updated software list to latest versions as of 2019Feb04
 GPTEXT_INSTALLER="greenplum-text-3.1.0-rhel6_x86_64.tar.gz"
-GPCC_INSTALLER="greenplum-cc-web-4.5.1-LINUX-x86_64.zip"
+#GPCC_INSTALLER="greenplum-cc-web-4.5.1-LINUX-x86_64.zip"
 MADLIB_INSTALLER="madlib-1.15.1-gp5-rhel7-x86_64.tar.gz"
 PLC_INSTALLER="plcontainer-1.4.0-rhel7-x86_64.gppkg"
 PLC_IMAGE="plcontainer-python-images-1.4.0.tar.gz"
 
 [[ ! -d $SOFTWARE ]] && echo_eval "mkdir -p $SOFTWARE"
 
-upgrade_gpdb; [[ $? == 1 ]] && exit
+#upgrade_gpdb; [[ $? == 1 ]] && exit
 modify_pghba; [[ $? == 1 ]] && exit
 add_role_and_db $WORKSHOP_USER $WORKSHOP_DB; [[ $? == 1 ]] && exit
 download_software $GPTEXT_INSTALLER $GPCC_INSTALLER $MADLIB_INSTALLER $PLC_INSTALLER $PLC_IMAGE
 
 if [[ ! -z $MADLIB_INSTALLER ]]; then
+    # Install the pkg. The function checks if it is already installed.
     install_madlib_pkg $MADLIB_INSTALLER
     install_madlib_schema $WORKSHOP_DB $WORKSHOP_USER
 fi
