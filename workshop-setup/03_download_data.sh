@@ -7,7 +7,10 @@
 # The following activites are performed in this script:
 # - Create a $HOME/.psqlrc file for the gpuser account.
 # - Download the FAA fact and dimension data files
+# - Download the workshop exercises if necessary
 #############################################################################################
+
+set -o nounset
 
 source ./00_common_functions.sh
 source /usr/local/greenplum-db/greenplum_path.sh
@@ -51,10 +54,12 @@ do
     echo_eval "wget --quiet ${SRC}/data/faa/${FILE} -O ${WORKSHOP_DATA}/${FILE}"
 done
 
-# Download and extract the exercises
-ExercisesTar="GP-Workshop-Exercises.tgz"
-echo_eval "wget ${SRC}/${ExercisesTar} -O /${HOME}/${ExercisesTar}"
-echo_eval "cd /${HOME}; tar xzf ${ExercisesTar}"
+# Download and extract the exercises if they are not already there
+if [[ ! -d ${HOME}/Workshop ]]; then
+    ExercisesTar="GP-Workshop-Exercises.tgz"
+    echo_eval "wget ${SRC}/${ExercisesTar} -O /${HOME}/${ExercisesTar}"
+    echo_eval "cd /${HOME}; tar xzf ${ExercisesTar}"
+fi
 
 echo_eval "chmod -R u+rw $(dirname ${WORKSHOP_DATA})"
 echo_eval "chown -R ${WORKSHOP_USER}:users /${HOME}"
