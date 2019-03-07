@@ -98,14 +98,14 @@ function enable_docker()
     yum list installed docker* &> /dev/null
     [[ $? != 0 ]] && echo_eval "yum -y install docker-io"
 
-    echo_eval "systemctl enable docker.service"      #echo_eval "chkconfig docker on"
+    echo_eval "systemctl enable docker.service"
     echo_eval "systemctl start docker.service"
 
-    echo_eval "chgrp docker /var/run/docker.sock"
+    echo_eval "chmod o+rw /var/run/docker.sock"
 
     # Add the gpadmin and gpuser users to the docker group
-    echo_eval "usermod  -aG docker gpadmin"
-    echo_eval "usermod  -aG docker gpuser"
+    #echo_eval "usermod  -aG docker gpadmin"
+    #echo_eval "usermod  -aG docker gpuser"
 }
 
 ####################################################################
