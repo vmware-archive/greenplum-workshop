@@ -47,6 +47,13 @@ done
 #########################################################################
 # Load the staging and production fact tables
 #
+GPLOAD_YAML="./02_Load_Tables/gpload.yaml"
+
+# Modify the gpload.yaml file with the correct host and port settings
+HOST=$(hostname)
+PGPORT=${PGPORT:-6432}
+sed -i -e "s/^HOST: .*/HOST: ${HOST}/" -e "s/^PORT: .*/PORT: ${PGPORT}/" ${GPLOAD_YAML}
+
 gpload -v -f ./02_Load_Tables/gpload.yaml -l ./02_Load_Tables/gpload.log
 sleep 2
 

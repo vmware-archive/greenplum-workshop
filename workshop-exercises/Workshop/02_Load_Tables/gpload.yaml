@@ -12,7 +12,7 @@ GPLOAD:
    INPUT:
     - SOURCE:
          LOCAL_HOSTNAME:
-           - gpdb-mdw
+           - localhost
          PORT: 8089
          FILE:
            - /home/gpuser/data/faa/On_Time*.bz2
@@ -20,7 +20,6 @@ GPLOAD:
     - QUOTE: '"'
     - HEADER: true
     - ERROR_LIMIT: 50000
-    - ERROR_TABLE: faa.load_errors
    OUTPUT:
     - TABLE: faa.otp_load
     - MODE: INSERT
