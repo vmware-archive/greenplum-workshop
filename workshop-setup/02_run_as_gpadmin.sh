@@ -3,7 +3,7 @@
 #############################################################################################
 # Executed by the gpadmin user.
 #
-# Configure an AWS Greenplum cluster for the Greenplum workshop.
+# Configure a Greenplum cluster for the Greenplum workshop.
 # The following activites are performed in this script:
 # - Create a directory for storing downloaded software packages.
 # - Modify the pg_hba.conf file and reload changes or start up GP.
@@ -14,6 +14,11 @@
 #############################################################################################
 
 source ./00_common_functions.sh
+set -o nounset
+
+echo_eval "check_user gpadmin"
+[[ $? == 1 ]] && exit 1
+
 GP_ENV="/usr/local/greenplum-db/greenplum_path.sh"
 if [[ ! -x ${GP_ENV} ]]; then
     echo "File '${GP_ENV}' not found. Is Greenplum installed?"
@@ -22,10 +27,7 @@ else
     source ${GP_ENV}
 fi
 
-echo_eval "check_user gpadmin"
-[[ $? == 1 ]] && exit 1
-
-SOFTWARE=/${DATA_DISK:-/data1}/software
+SOFTWARE=/${DATA_DISK}/software
 
 ####################################################################
 # Usage: modify_pghba
@@ -114,7 +116,7 @@ _EOF
     done
 
     if [[ $rc == 0 ]]; then
-        # add the $WORKSHOP_DB to pgbouncer
+        # add the new database to pgbouncer
         PGB_INI=$(find $(dirname $MASTER_DATA_DIRECTORY) -name pgbouncer.ini)
         sed -i -e "/\[databases\]/a ${ROLE} = host=127.0.0.1 port=6432 dbname=${NEWDB}" \
                -e "s/^auth_type.*/auth_type = trust/"   $PGB_INI
@@ -244,12 +246,132 @@ function upgrade_gpdb()
 }
 
 ####################################################################
+# Usage: pxf_setup
+#
+# Install the core-site.xml and hdfs-site.xml files needed to
+# connect to our test Hadoop cluster. Also enable the PXF
+# extension in the required databases and for the user db,
+# grant access to the pxf protocol to the workshop user.
+
+function pxf_setup()
+{
+
+    if [[ -z $PXF_CONF ]]; then
+        echo PXF is not installed. Skipping ...
+        return 0
+    fi
+
+    DATAPROC_HOSTNAME="hadoop-m"
+    CORE_SITE="$PXF_CONF/servers/default/core-site.xml"
+    HDFS_SITE="$PXF_CONF/servers/default/hdfs-site.xml"
+    PXF_ENV="$PXF_CONF/conf/pxf-env.sh"
+    SEG_HOSTS="/opt/pivotal/greenplum/segment_hosts.txt"
+
+    # Add the IPs for the hadoop nodes to the /etc/hosts file
+    cat <<- EOF | sudo tee -a /etc/hosts
+	###################################################################
+	# Master and Data Nodes for Google DataProc cluster
+	# used for PXF testing
+	34.73.29.173  hadoop-m   hadoop-m.c.pde-csylvester.internal
+	35.243.226.57 hadoop-w-0 hadoop-w-0.c.pde-csylvester.internal
+	35.237.88.99  hadoop-w-1 hadoop-w-1.c.pde-csylvester.internal
+	EOF
+
+    # Propogate /etc/hosts changes to all nodes
+    gpscp -f $SEG_HOSTS /etc/hosts =:/tmp/hosts
+    gpssh -f $SEG_HOSTS 'sudo mv /tmp/hosts /etc/hosts'
+    
+    cat > $CORE_SITE <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://${DATAPROC_HOSTNAME}:8020</value>
+    </property>
+    <property>
+       <name>hadoop.security.key.provider.path</name>
+       <value>kms://http@${DATAPROC_HOSTNAME}:16000/kms</value>
+    </property>
+    <property>
+        <name>ipc.ping.interval</name>
+        <value>900000</value>
+    </property>
+    <property>
+        <name>dfs.client.use.datanode.hostname</name>
+        <value>true</value>
+        <description>Whether clients should use datanode hostnames when
+                       connecting to datanodes.
+        </description>
+    </property>
+</configuration>
+EOF
+    gpscp -f $SEG_HOSTS $CORE_SITE =:$CORE_SITE
+
+    cat > $HDFS_SITE <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+   <property>
+      <name>dfs.permissions</name>
+      <value>true</value>
+   </property>
+    <property>
+        <name>dfs.support.append</name>
+        <value>true</value>
+    </property>
+   <property>
+       <name>dfs.block.local-path-access.user</name>
+       <value>gpadmin</value>
+   </property>
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+   <property>
+       <name>dfs.datanode.socket.write.timeout</name>
+       <value>0</value>
+   </property>
+    <property>
+        <name>dfs.webhdfs.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.allow.truncate</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.encryption.key.provider.uri</name>
+        <value>kms://http@${DATAPROC_HOSTNAME}:16000/kms</value>
+    </property>
+</configuration>
+EOF
+    gpscp -f $SEG_HOSTS $HDFS_SITE =:$HDFS_SITE
+
+    # Turn off PXF user impersonation
+    echo 'export PXF_USER_IMPERSONATION=false' >> $PXF_ENV
+    gpscp -f $SEG_HOSTS $PXF_ENV =:$PXF_ENV
+
+    psql -d gpadmin -c "create extension pxf"
+    psql -d $WORKSHOP_DB -c "create extension pxf"
+    psql -d $WORKSHOP_DB -c "grant all on protocol pxf to $WORKSHOP_USER"
+
+    # Restart PXF
+    echo_eval "pxf cluster stop"
+    echo_eval "pxf cluster sync"
+    echo_eval "pxf cluster start"
+
+    return 0
+}
+
+####################################################################
 # MAIN
 ####################################################################
 
 # Updated software list to latest versions as of 2019Feb04
 GPTEXT_INSTALLER="greenplum-text-3.1.0-rhel6_x86_64.tar.gz"
 #GPCC_INSTALLER="greenplum-cc-web-4.5.1-LINUX-x86_64.zip"
+GPCC_INSTALLER=""
 MADLIB_INSTALLER="madlib-1.15.1-gp5-rhel7-x86_64.tar.gz"
 PLC_INSTALLER="plcontainer-1.4.0-rhel7-x86_64.gppkg"
 PLC_IMAGE="plcontainer-python-images-1.4.0.tar.gz"
@@ -271,6 +393,11 @@ fi
 # and as of Feb 2019 there is a bug where the two cannot be installed at the same time.
 #[[ ! -z $PLC_INSTALLER ]]    && install_plcontainer $PLC_INSTALLER $PLC_IMAGE python
 [[ ! -z $GPTEXT_INSTALLER ]] && install_gptext $GPTEXT_INSTALLER
+
+# Install the PXF configuration files for accessing the hadoop cluster
+# This step also modifies the /etc/hosts file for adding the hadoop node IPs
+
+pxf_setup
 
 /bin/mv ./Scripts/cluster_st*.sh /home/gpadmin
 # Restart the database to make sure all the changes take effect

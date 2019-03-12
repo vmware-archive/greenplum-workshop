@@ -19,7 +19,7 @@ fi
 source $GPTEXT_ENV
 
 # Check if zookeeper is running
-echo_eval "zkManager state > /dev/null 2>&1"
+echo_eval "zkManager state &> /dev/null"
 if [[ $? != 0 ]]; then
     echo "$0: ZooKeeper does not appear to be running. Let's try and start it"
     echo_eval "zkManager start"
@@ -29,9 +29,9 @@ fi
 # Installing GPText schema in the gpuser database
 # Make sure it has been created first.
 
-echo_eval "psql -l | grep $WORKSHOP_USER > /dev/null 2>&1"
+echo_eval "psql -At -d $WORKSHOP_USER -c 'select 1' &> /dev/null"
 if [[ $? != 0 ]]; then
-    echo "$0: $WORKSHOP_USER database is not listed in 'psql -l' output. Create the db before proceeding"
+    echo "$0: $WORKSHOP_USER database not found. Create the db before proceeding"
     echo "Execute as gpadmin >>  createdb $WORKSHOP_USER --owner $WORKSHOP_USER <<"
     exit 1
 fi

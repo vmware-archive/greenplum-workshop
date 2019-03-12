@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-#############################################################################################
-# Library of parameters and functions that can be sourced into any script.
-#############################################################################################
+###############################################################################
+# Library of parameters and functions that must be sourced by any wkshop script.
+###############################################################################
 
 this_script=$BASH_SOURCE
 CLOUD_DIR=/opt/pivotal/greenplum
 
-#### Parameters #############################################################################
+#### Parameters ###############################################################
 [[ $(id -un) != root ]] && source /usr/local/greenplum-db/greenplum_path.sh
 
 if [ -r ${CLOUD_DIR}/variables.sh ]; then
@@ -15,6 +15,7 @@ if [ -r ${CLOUD_DIR}/variables.sh ]; then
 else
     # Set reasonable defaults for env variables
     CLUSTER_NAME=$(hostname -s)
+    CLOUD="unknown"
 fi
 
 DATA_DISK=$(ls -d /data[0-9] | awk 'END {print $NF}')
@@ -26,7 +27,6 @@ fi
 
 WORKSHOP_USER=gpuser
 WORKSHOP_DB=$WORKSHOP_USER
-PROVIDER=unknown
 
 HOST_ALL="${CLOUD_DIR}/all_hosts.txt"
 if [[ ! -f $HOST_ALL ]]; then
@@ -34,8 +34,13 @@ if [[ ! -f $HOST_ALL ]]; then
     exit 1
 fi
 
+# Get the GP cluster configuration
+GP_MASTER_NODE=$(sudo -i -u gpadmin psql -At -c "select distinct(hostname) from gp_segment_configuration where content = -1 and role = 'p' ")
+GP_DATA_NODES=( $(sudo -i -u gpadmin psql -At -c 'select distinct(hostname) from gp_segment_configuration where content > -1 order by 1') )
 
-#### Functions ##############################################################################
+GP_DATA_NODES_COUNT=${#GP_DATA_NODES[@]}
+
+#### Functions ################################################################
 function echo_eval()
 {
     echo "$@"
@@ -54,14 +59,4 @@ function add_to_sudoers()
     # Add gpadmin and gpuser to the sudoers file
     SUDO_FILE='/etc/sudoers.d/91-gp-workshop-users'
     echo "$1 ALL=(ALL)       NOPASSWD: ALL" >> $SUDO_FILE
-}
-
-function set_cloud_platform()
-{
-    # Check and set the cloud platform we are running on.
-
-    [[ -x /usr/local/bin/aws ]]    &&  PROVIDER=aws
-    [[ -x /usr/local/bin/gcloud ]] &&  PROVIDER=gcp
-    [[ -x /usr/local/bin/azure ]]  &&  PROVIDER=azure
-
 }

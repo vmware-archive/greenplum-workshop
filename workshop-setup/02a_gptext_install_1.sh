@@ -9,10 +9,11 @@
 [[ $# != 1 ]] && { echo -E "$0: No pkg provided.\nUsage: $0 <TARFILE>"; exit 1; }
 
 source ./00_common_functions.sh
+set -o nounset
 
 echo_eval "check_user gpadmin"
 
-BIN_DIR=/${DATA_DISK:-/data1}/software
+BIN_DIR=/${DATA_DISK}/software
 #GPTEXT_INSTALL_BINARY='greenplum-text-2.2.1-rhel6_x86_64.bin'
 GPTEXT_INSTALL_BINARY=$(basename $1 .tar.gz).bin
 
@@ -44,15 +45,23 @@ if ! grep $GPTEXT_ENV_PATH $BASHRC; then
    echo "source $GPTEXT_ENV_PATH" >> $BASHRC
 fi
 
+if [[ $GP_DATA_NODES_COUNT -ge 3 ]]; then
+    data_directories="/data1/gptext/primary"
+    zk_hosts="${GP_DATA_NODES[@]:0:3}"
+else
+    data_directories="/data1/gptext/primary /data1/gptext/primary"
+    zk_hosts="${GP_DATA_NODES[0]} ${GP_DATA_NODES[0]} ${GP_DATA_NODES[0]}"
+fi
+
 GPT_CFG=/tmp/gptext_config
 cat << _EOF > $GPT_CFG
-declare -a GPTEXT_HOSTS=(localhost)
-declare -a DATA_DIRECTORY=(/data1/gptext/primary /data1/gptext/primary)
+declare -a GPTEXT_HOSTS="ALLSEGHOSTS"
+declare -a DATA_DIRECTORY=($data_directories)
 JAVA_OPTS="-Xms1024M -Xmx2048M"
 GPTEXT_PORT_BASE=18983
 GP_MAX_PORT_LIMIT=28983
 ZOO_CLUSTER="BINDING"
-declare -a ZOO_HOSTS=(localhost localhost localhost)
+declare -a ZOO_HOSTS=($zk_hosts)
 ZOO_DATA_DIR="/data1/gptext/master/"
 ZOO_GPTXTNODE="gptext"
 ZOO_PORT_BASE=2188
