@@ -3,7 +3,7 @@ VERSION: 1.0.0.1
 # Describe the Greenplum database parameters
 DATABASE: gpuser
 USER: gpuser
-HOST: gpdb-mdw
+HOST: mdw
 PORT: 5432
 # Describe the location of the source files
 # In this example, the database master lives on the same host as
@@ -12,7 +12,7 @@ GPLOAD:
    INPUT:
     - SOURCE:
          LOCAL_HOSTNAME:
-           - localhost
+           - mdw
          PORT: 8089
          FILE:
            - /home/gpuser/data/faa/On_Time*.bz2
