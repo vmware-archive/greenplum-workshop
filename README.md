@@ -12,6 +12,6 @@ Before proceeding, here are the base assumptions:
 * Slides - PDFs of the overview material.
 
 ### Things to note:
-* By default, the Greenplum cloud formation setup in Amazon turns off password authentication. We have turned it back on so that the gpuser account can login without requiring an SSH key. It is easier to share a password with participants in a training situation. You should strongly consider turning it off and using SSH key authentication if you are installing this for personal use.
-* Greenplum Command Center v4.0 is downloaded but not installed. If you decide to install it, please read the installation guide carefully. If you upgrade Greenplum from 5.x -> 5.7, you have to make the changes specified here:
-http://gpcc.docs.pivotal.io/400/topics/install.html#setup_extensions
+* By default, the Greenplum marketplace offerings turn off password authentication. We have turned it back on so that the gpuser account can login without requiring an SSH key. It is easier to share a password with participants in a training situation. You should strongly consider turning it off and using SSH key authentication if you are installing this for personal use.
+
+* This workshop has been tested and verified on the latest (as of Feb 2019) Pivotal Greenplum markeplace offerings on Amazon AWS and Google Cloud.
