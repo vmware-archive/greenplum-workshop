@@ -1,4 +1,4 @@
-Drop Table if exists faa.otp_rp;
+Drop Table if exists faa.otp_rpw;
 
 CREATE TABLE faa.otp_rpw (LIKE faa.otp_r)
 PARTITION BY RANGE(FlightDate) 

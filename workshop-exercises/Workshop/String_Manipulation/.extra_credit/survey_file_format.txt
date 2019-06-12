@@ -1,9 +1,0 @@
-123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789
-         1         2         3         4         5         6         7         8         9
-
-21.4              AGECHECKCOM      C V ZZ_X7005_Q15A1: EDT: R: CONFIRM - AGE                        
-32.4              Q16A2CHECKCOM    C V ZZ_X104_Q16A2: EDT: S/P: AGE?                                
-50001   XX1       UniqueID         N   XX1_UniqueID: MR_INTERVIEW PERMANENT CASE ID7
-50002   ALT_XX1   SU_ID            N   ALT_XX1_SU_ID: NORC CASE ID FOR SAMPLING PURPOSES
-50004   X6548     Q3               N   X6548_BEGDT: TIME ZZ FIRST ACCESSED
-50274   X6531A    Q10M2            N   X6531A_ZZQ10M2: CHILDREN 6 AND OVER PRESENT AT IW

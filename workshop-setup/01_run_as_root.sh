@@ -64,6 +64,10 @@ function yum_installs()
     # Install m4. Used by MADLIB
     yum list installed m4* &> /dev/null
     [[ $? != 0 ]] && echo_eval "yum -q -y install m4"
+
+    # Install sysstat utilities. Used in gpuser external web table exercises
+    yum list installed sysstat &> /dev/null
+    [[ $? != 0 ]] && echo_eval "yum -q -y install sysstat"
 }
 
 ####################################################################

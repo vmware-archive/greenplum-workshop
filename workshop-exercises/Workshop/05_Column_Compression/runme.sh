@@ -1,4 +1,4 @@
-psql -f  01_create_fact_table_col.sql
+psql -f 01_create_fact_table_col.sql
 read -p "Press enter to continue"
 psql -f 02_create_fact_table_col_compress5.sql
 read -p "Press enter to continue"

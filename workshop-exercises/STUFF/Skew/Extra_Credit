@@ -1,9 +1,0 @@
-Take a look at the following DDL. Pick a column to distribute on and write a query that would cause computational skew for that column.
-
-CREATE TABLE orders (
-order_id integer,
-customer_id integer,
-product_id integer,
-date date
-)
-DISTRIBUTED BY (?)
