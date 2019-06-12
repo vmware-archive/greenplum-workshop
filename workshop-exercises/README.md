@@ -1,3 +1,4 @@
+# Greenplum Workshop Exercises
 This workshop has a collection of exercises, some of which are of more interest to developers and users of the Pivotal Greenplum Database, some more of interested to DBAs, and some of interest to both groups.  
 
 The dataset used for most of the exercises is from the Federal Aviation Adminsistration (FAA) set of On Time Performance records for flights within the United States. It is set up as a traditional datawarehouse star schema with a fact table containing an entry for each flight and a set of supporting dimension tables.  
