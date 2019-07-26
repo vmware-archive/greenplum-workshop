@@ -1,0 +1,15 @@
+---
+
+greenplum_install_dir: "/usr/local/greenplum-db"
+greenplum_env_file:    "{{ greenplum_install_dir }}/greenplum_path.sh"
+greenplum_admin_user:  gpadmin
+greenplum_user:        gpuser
+greenplum_group:       greenplum
+
+gp_workshop_s3_bucket:     gp-demo-workshop
+url_gp_workshop_s3_bucket: "https://s3.amazonaws.com/{{ gp_workshop_s3_bucket }}"
+
+gp_workshop_git_repo:      "https://github.com/Pivotal-Data-Engineering/greenplum-workshop"
+gp_workshop_exercises:     "{{ gp_workshop_git_repo }}/trunk/workshop-exercises"
+
+pgport:                6432

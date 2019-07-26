@@ -1,0 +1,127 @@
+---
+
+- name: Install basic packages
+  package: name={{ item }} state=present
+  with_items:
+    - nc
+    - lsof
+
+- name: gp_packages | Check if GPText is installed
+  stat:
+    path: /usr/local/greenplum-solr
+  register: gptext_dir
+  tags: package_gptext
+
+- name: gp_packages | Temporarily change "/usr/local" permissions to 777
+  file:
+    dest: /usr/local
+    mode: 0777
+  tags: package_gptext
+
+- name: gp_packages | Install GPText
+  vars:
+    gptext_release:     "greenplum-text-3.1.0"
+    gptext_archive:     "{{ gptext_release }}-rhel6_x86_64.tar.gz"
+    gptext_installer:   "{{ gptext_archive.split('.tar.gz')[0] }}.bin"
+    admin_home:         "/home/{{ greenplum_admin_user }}"
+    gptext_config_file: "{{ admin_home }}/gptext_config"
+    gptext_data_dir:    "/data1/gptext/primary"
+    gptext_master_dir:  "/data1/gptext/master"
+
+  block:
+    - name: gp_packages | Create GPText data and master directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ greenplum_admin_user }}"
+      with_items:
+        - "{{ gptext_data_dir }}"
+        - "{{ gptext_master_dir }}"
+
+    #    - name: Retrieve the master hostname
+    #      postgresql_query:
+    #        db:         "{{ greenplum_admin_user }}"
+    #        port:       "{{ pgport }}"
+    #        login_user: "{{ greenplum_admin_user }}"
+    #        login_host: localhost
+    #        query:      select hostname from gp_segment_configuration where content = -1 and role = 'p'
+    #      register: select_return
+
+    - name: gp_packages | Download Greenplum Text
+      get_url:
+        url: "{{ url_gp_workshop_s3_bucket }}/{{ gptext_archive }}"
+        dest: "{{ admin_home }}/downloads/{{ gptext_archive }}"
+
+    - name: gp_packages | Unarchive GPtext tar file
+      unarchive:
+        src: "{{ admin_home }}/downloads/{{ gptext_archive }}"
+        remote_src: yes
+        dest: "{{ admin_home }}"
+
+    - name: gp_packages | Template the gptext install config file out to the server
+      template:
+        src:   template_gptext_config
+        dest:  "{{ gptext_config_file }}"
+        owner: "{{ greenplum_admin_user }}"
+      vars:
+        data_dirs:   "{{ gptext_data_dir }} {{ gptext_data_dir }}"
+        zk_hosts:     "localhost localhost localhost"
+        master_dir:  "{{ gptext_master_dir }}"
+
+    - name: gp_packages | Install gptext
+      shell: |
+             set timeout -1
+             spawn {{ admin_home }}/{{ gptext_installer }} -c {{ gptext_config_file }}
+             expect "More"
+             send -- "q"
+             expect "Do you accept the Pivotal license agreement"
+             send -- "yes\r"
+             expect "accept the default installation path:"
+             send -- "\r"
+             expect "Install Greenplum Text Search into"
+             send -- "yes\r"
+             expect "Selecting no will exit the installer*"
+             send -- "yes\r"
+             interact
+      args:
+        executable: /usr/bin/expect
+
+    - name: gp_packages | Create greenplum-text soft link
+      file:
+        src:  /usr/local/{{ gptext_release }}
+        dest: /usr/local/greenplum-text
+        state: link
+
+    - name: gp_packages | Create a GPText initialization script
+      template:
+        src:   template_gptext-initialize.sh
+        dest:  gptext-initialize.sh
+        owner: "{{ greenplum_admin_user }}"
+        mode:  0755
+      vars:
+        gpadmin_user:   "{{ greenplum_admin_user }}"
+        gpuser:         "{{ greenplum_user }}"
+
+  when: gptext_dir.stat.isdir is not defined
+  become: true
+  become_user: "{{ greenplum_admin_user }}"
+  become_method: sudo
+  tags: package_gptext
+
+- name: gp_packages | Change /usr/local permissions back to 755
+  file:
+    dest: /usr/local
+    mode: 0755
+  tags: package_gptext
+
+- name: gp_packages | Modify the user's .bashrc file
+  blockinfile:
+    path: /home/{{ item }}/.bashrc
+    create: no
+    block: |
+      source /usr/local/greenplum-text/greenplum-text_path.sh
+    marker: "# {mark} GP WORKSHOP - GPTEXT #"
+  with_items:
+    - "{{ greenplum_admin_user }}"
+    - "{{ greenplum_user }}"
+  tags: package_gptext

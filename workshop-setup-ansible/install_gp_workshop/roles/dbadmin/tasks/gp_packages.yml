@@ -1,0 +1,56 @@
+---
+
+- name: gp_packages | Install Greenplum packages
+  vars:
+    madlib_installer:  "madlib-1.15.1-gp5-rhel7-x86_64.gppkg"
+    postgis_installer: "postgis-2.1.5-pivotal.2-gp5-rhel7-x86_64.gppkg"
+    plc_installer:     "plcontainer-1.4.0-rhel7-x86_64.gppkg"
+    plc_py_image:      "plcontainer-python-images-1.4.0.tar.gz"
+    admin_home:        "/home/{{ greenplum_admin_user }}"
+
+  block:
+    - name: gp_packages | Create a download directory
+      file:
+        path: "{{ admin_home }}/downloads"
+        state: directory
+
+    - name: gp_packages | Download Greenplum software packages
+      get_url:
+        url: "{{ url_gp_workshop_s3_bucket }}/{{ item }}"
+        dest: "{{ admin_home }}/downloads/{{ item }}"
+      with_items:
+        - "{{ madlib_installer }}"
+        - "{{ postgis_installer }}"
+        - "{{ plc_installer }}"
+        - "{{ plc_py_image }}"
+
+    - name: gp_packages | Get list of installed Greenplum packages
+      shell: "source {{ greenplum_env_file }} && gppkg -q --all"
+      register: pkg_list
+
+    - set_fact:
+        madlib_installed: "{{ pkg_list.stdout_lines | select('search','madlib') | list | count > 0 }}"
+        postgis_installed: "{{ pkg_list.stdout_lines | select('search','postgis') | list | count > 0 }}"
+
+    - block:
+      - name: gp_packages | Install madlib
+        shell: "source {{ greenplum_env_file }} && gppkg -i {{ admin_home }}/downloads/{{ madlib_installer }}"
+
+      - name: gp_packages | Add madlib schema to gpadmin database
+        shell: "source {{ greenplum_env_file }} && ${GPHOME}/madlib/bin/madpack install -s madlib -p greenplum -c {{ greenplum_admin_user }}@mdw:{{pgport}}/{{ greenplum_admin_user }}"
+      when: madlib_installed == False
+      tags: [packages, madlib]
+
+    - block:
+      - name: gp_packages | Install postgis
+        shell: "source {{ greenplum_env_file }} && gppkg -i {{ admin_home }}/downloads/{{ postgis_installer }}"
+
+      - name: gp_packages | Add postgis schema to gpadmin database
+        shell: "source {{ greenplum_env_file }} && ${GPHOME}/share/postgresql/contrib/postgis-2.1/postgis_manager.sh {{ greenplum_admin_user }} install"
+      when: postgis_installed == False
+      tags: [packages, postgis]
+
+  tags: packages
+  become: true
+  become_user: "{{ greenplum_admin_user }}"
+  become_method: sudo

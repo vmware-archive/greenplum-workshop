@@ -1,0 +1,60 @@
+---
+# Database User Configuration
+
+- name: DBUSER | Modify the user's .bashrc file
+  blockinfile:
+    path: /home/{{ greenplum_user }}/.bashrc
+    create: yes
+    owner: "{{ greenplum_user }}"
+    mode: 0644
+    block: |
+       source /usr/local/greenplum-db/greenplum_path.sh
+       source /usr/local/greenplum-text/greenplum-text_path.sh
+       export PGPORT={{ pgport }}
+    marker: "# {mark} GP WORKSHOP #"
+
+- name: DBUSER | Modify the user's .psqlrc file
+  blockinfile:
+    path: /home/{{ greenplum_user }}/.psqlrc
+    create: yes
+    owner: "{{ greenplum_user }}"
+    mode: 0644
+    block: |
+      \pset null NULL
+      \timing on
+      \set ECHO all
+      set search_path = faa,madlib,public;
+    marker: "-- {mark} GP WORKSHOP --"
+
+- name: DBUSER | Get list of data files from S3
+  raw: wget -q -O - {{ url_gp_workshop_s3_bucket }} | XMLLINT_INDENT='' xmllint --format - | grep 'data/faa' | sed 's|<Key>\(.*\)</Key>|\1|'
+  register: s3_bucket_items
+
+- name: DBUSER | Create the data directory
+  file:
+    path: "/home/{{ greenplum_user }}/data/faa"
+    state: directory
+    owner: "{{ greenplum_user }}"
+    mode: 0755
+
+- name: DBUSER | Download the data files
+  get_url:
+    url: "{{ url_gp_workshop_s3_bucket }}/{{ item }}"
+    dest: "/home/{{ greenplum_user }}/{{ item }}"
+    owner: "{{ greenplum_user }}"
+    mode: 0644
+  with_items: "{{ s3_bucket_items.stdout_lines }}"
+
+- name: DBUSER | Download the workshop exercises from git repo
+  subversion:
+    repo: "{{ gp_workshop_exercises }}"
+    dest: "/home/{{ greenplum_user }}/workshop-exercises"
+    export: yes
+
+- name: DBUSER | Make sure the user owns all dirs/files in its home directory
+  file:
+    path: "/home/{{ greenplum_user }}"
+    state: directory
+    recurse: yes
+    owner: "{{ greenplum_user }}"
+    group: "{{ greenplum_user }}"

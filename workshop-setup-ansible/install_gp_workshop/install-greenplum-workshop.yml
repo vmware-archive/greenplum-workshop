@@ -1,0 +1,13 @@
+---
+
+- name: MAIN | Set up the Greenplum workshop environment
+  hosts: workshops
+  remote_user: gpadmin
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - bootstrap
+    - common
+    - dbadmin
+    - dbuser

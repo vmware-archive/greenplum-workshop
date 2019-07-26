@@ -1,0 +1,9 @@
+---
+- name: reload greenplum
+  shell: "source {{ greenplum_env_file }} && gpstop -u"
+  become: true
+  become_user: "{{ greenplum_admin_user }}"
+  become_method: sudo
+
+- name: reload systemd
+  command: systemctl daemon-reload

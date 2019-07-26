@@ -1,0 +1,66 @@
+---
+
+- name: Install basic packages
+  package: name={{ item }} state=present
+  with_items:
+    - java-1.8.0
+    - expect
+    - m4
+    - subversion
+    - sysstat
+    - postgresql
+    - python-psycopg2
+    - docker
+
+- name: Install Python Pip
+  easy_install:
+    name: pip
+    state: latest
+
+- name: Install Python packages
+  pip:
+    name:
+      - boto
+      - boto3
+      - botocore
+
+- name: Update sshd config
+  lineinfile:
+     path: /etc/ssh/sshd_config
+     regexp: '^#?PasswordAuthentication.*no'
+     line: 'PasswordAuthentication yes'
+     backrefs: yes
+  notify: restart_sshd
+
+- name: Enable Docker
+  systemd:
+     state: started
+     name: docker
+     enabled: yes
+
+- name: Add a 'greenplum' group
+  group:
+    name: "{{ greenplum_group }}"
+    state: present
+
+- name: Allow 'greenplum' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%{{greenplum_group}}'
+    line: '%{{greenplum_group}} ALL=(ALL) NOPASSWD: ALL'
+    validate: visudo -cf %s
+
+- name: Add the workshop database admin user if not already present
+  user:
+    name: "{{ greenplum_admin_user }}"
+    groups: "{{ greenplum_group }}"
+    append: yes
+
+- name: Add the workshop database user
+  user:
+    name: "{{ greenplum_user }}"
+    # Below is the salted sha-512 value of the password '_pivotal_conf_demo_'
+    password: $6$x/d26OHqUTG$nh9/JTVLSRdanrFxOCkpjQCkRgVOR/rHmzkr.3ZN6slAeYxgr1Z1Y3LljvMdzDZZdHVnB25yfynbzyKOdLHUG1
+    groups: "{{ greenplum_group }}"
+    append: yes

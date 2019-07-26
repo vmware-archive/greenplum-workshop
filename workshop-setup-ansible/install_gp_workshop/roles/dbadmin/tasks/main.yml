@@ -1,0 +1,99 @@
+---
+- name: Greenplum administrative changes
+  block:
+  - name: Find installed GP version
+    shell: "source {{ greenplum_env_file }} && $GPHOME/bin/postgres --gp-version"
+    register: postgres_gp_version
+
+  - name: Retrieve the master data directory
+    postgresql_query:
+      db:         "{{ greenplum_admin_user }}"
+      port:       "{{ pgport }}"
+      login_user: "{{ greenplum_admin_user }}"
+      login_host: localhost
+      query:      show data_directory
+    register: sql_query
+
+  - name: master data directory
+    set_fact:
+     master_data_directory: "{{ item.value }}"
+    with_dict: "{{ sql_query.query_result }}"
+
+  - name: .bashrc | Add MASTER_DATA_DIRECTORY env variable
+    lineinfile:
+      path: "/home/{{ greenplum_admin_user }}/.bashrc"
+      regexp: '^export MASTER_DATA_DIRECTORY'
+      line: export MASTER_DATA_DIRECTORY={{master_data_directory}}
+
+  - name: pg_hba.conf | Grant local access to the Greenplum user
+    postgresql_pg_hba:
+        dest: "{{ master_data_directory }}/pg_hba.conf"
+        contype: local
+        databases: all
+        users: "{{ greenplum_user }}"
+        method: ident
+    notify:
+      reload greenplum
+
+  - name: pg_hba.conf | Allow access from any host
+    postgresql_pg_hba:
+        dest: "{{ master_data_directory }}/pg_hba.conf"
+        contype: host
+        databases: sameuser
+        users: all
+        source: "{{ item }}"
+        method: trust
+    with_items:
+        - "0.0.0.0/0"
+        - "::1/128"
+    notify:
+      reload greenplum
+
+  tags: setup_pghba
+  #become: true
+  #become_user: "{{ greenplum_admin_user }}"
+  #become_method: sudo
+
+- name: Import Greenplum packages task list
+  import_tasks: gp_packages.yml
+  tags: packages
+
+# By default, we do not install GPText. To run this task list, use '--tags "all, never"
+- name: Import Greenplum Text task list
+  import_tasks: gp_text.yml
+  tags: never
+
+- name: Set up Greenplum user account
+  block:
+    - name: Create GP user account
+      postgresql_user:
+        db:              postgres
+        port:            "{{ pgport }}"
+        login_host:      localhost
+        login_user:      "{{ greenplum_admin_user }}"
+        name:            "{{ greenplum_user }}"
+        password:        "pivotal"
+        priv:            ALL
+        role_attr_flags: INHERIT,LOGIN,CREATEDB
+
+    - name: Create GP database for user
+      # This task will fail on GP 5 if the database exists so we will ignore any errors
+      # The query to check if the database exists includes the 'pg_database.datcollate' column and this
+      # column does not exists in PG 8.x
+      postgresql_db:
+        login_host:    localhost
+        login_user:    "{{ greenplum_admin_user }}"
+        port:          "{{ pgport }}"
+        name:          "{{ greenplum_user }}"
+        owner:         "{{ greenplum_user }}"
+        template:      "{{ greenplum_admin_user }}"
+        #encoding: UTF-8
+        #lc_collate: en_US.utf8
+        #lc_ctype: en_US.utf8
+      ignore_errors: yes
+  tags: setup_accounts
+  #become: true
+  #become_user: "{{ greenplum_admin_user }}"
+  #become_method: sudo
+
+

@@ -1,0 +1,6 @@
+---
+# Check to see if Python 2 is installed. If not, install it.
+- name: Install Python 2
+  package:
+      name: python
+      state: present
