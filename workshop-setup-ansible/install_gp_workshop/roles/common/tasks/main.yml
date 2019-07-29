@@ -10,7 +10,6 @@
     - sysstat
     - postgresql
     - python-psycopg2
-    - docker
 
 - name: Install Python Pip
   easy_install:
@@ -31,12 +30,6 @@
      line: 'PasswordAuthentication yes'
      backrefs: yes
   notify: restart_sshd
-
-- name: Enable Docker
-  systemd:
-     state: started
-     name: docker
-     enabled: yes
 
 - name: Add a 'greenplum' group
   group:

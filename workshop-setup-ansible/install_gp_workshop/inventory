@@ -3,12 +3,14 @@ aws
 gcp
 
 [aws]
-3.218.155.176
+3.89.219.254
 [gcp]
-35.196.66.62
+35.237.72.139
 
 [aws:vars]
 ansible_ssh_private_key_file=~/.ssh/GPDB.pem
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 [gcp:vars]
 ansible_ssh_private_key_file=~/.ssh/google_compute_engine
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
