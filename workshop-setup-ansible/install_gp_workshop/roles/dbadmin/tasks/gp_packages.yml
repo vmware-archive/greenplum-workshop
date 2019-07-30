@@ -4,8 +4,8 @@
   vars:
     madlib_installer:  "madlib-1.15.1-gp5-rhel7-x86_64.gppkg"
     postgis_installer: "postgis-2.1.5-pivotal.2-gp5-rhel7-x86_64.gppkg"
-    plc_installer:     "plcontainer-1.4.0-rhel7-x86_64.gppkg"
-    plc_py_image:      "plcontainer-python-images-1.4.0.tar.gz"
+    plc_installer:     "plcontainer-1.5.0-rhel7-x86_64.gppkg"
+    plc_py_image:      "plcontainer-python-images-1.5.0.tar.gz"
     admin_home:        "/home/{{ greenplum_admin_user }}"
 
   block:
