@@ -58,7 +58,8 @@
   import_tasks: gp_packages.yml
   tags: packages
 
-# By default, we do not install GPText. To run this task list, use '--tags "all, never"
+# By default, we do not install GPText.
+# To run this task list, specify the "never" tag (i.e., --tags="all, never" or --tags="never")
 - name: Import Greenplum Text task list
   import_tasks: gp_text.yml
   tags: never
@@ -75,6 +76,12 @@
         password:        "pivotal"
         priv:            ALL
         role_attr_flags: INHERIT,LOGIN,CREATEDB
+
+    - name: Add the CREATEEXTTABLE priviledge
+      command: psql -c "alter role {{ greenplum_user }} with createexttable (type = 'readable') "
+      become: true
+      become_user: "{{ greenplum_admin_user }}"
+      become_method: sudo
 
     - name: Create GP database for user
       # This task will fail on GP 5 if the database exists so we will ignore any errors

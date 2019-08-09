@@ -27,6 +27,7 @@
     gptext_config_file: "{{ admin_home }}/gptext_config"
     gptext_data_dir:    "/data1/gptext/primary"
     gptext_master_dir:  "/data1/gptext/master"
+    gptext_init_script: "gptext_initialize.sh"
 
   block:
     - name: gp_packages | Create GPText data and master directories
@@ -94,13 +95,16 @@
 
     - name: gp_packages | Create a GPText initialization script
       template:
-        src:   template_gptext-initialize.sh
-        dest:  gptext-initialize.sh
+        src:   "template_{{ gptext_init_script }}"
+        dest:  "{{ gptext_init_script }}"
         owner: "{{ greenplum_admin_user }}"
         mode:  0755
       vars:
         gpadmin_user:   "{{ greenplum_admin_user }}"
         gpuser:         "{{ greenplum_user }}"
+
+    - name: gp_packages | Execute the GPText initialization script
+      shell: "sh $HOME/{{ gptext_init_script }}"
 
   when: gptext_dir.stat.isdir is not defined
   become: true

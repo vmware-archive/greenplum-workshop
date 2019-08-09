@@ -9,7 +9,6 @@
     mode: 0644
     block: |
        source /usr/local/greenplum-db/greenplum_path.sh
-       source /usr/local/greenplum-text/greenplum-text_path.sh
        export PGPORT={{ pgport }}
     marker: "# {mark} GP WORKSHOP #"
 
