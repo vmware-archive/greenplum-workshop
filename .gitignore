@@ -6,3 +6,4 @@ refresh-s3.sh
 workshop-exercises/
 workshop-setup-ansible/
 workshop-setup-bash/
+.idea

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html class="sl-root decks export offline loaded">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Greenplum - PostgreSQL versus Greenplum Database</title>
+
+    <meta name="description" content="Overview of the data distribution used with the Greenplum database.">
+
+    <link rel="stylesheet" type="text/css" href="lib/offline-v2.css">
+
+
+    <!-- User CSS -->
+    <style id="user-css-output" type="text/css">
+        .reveal .slides h2 {
+            color: #008774;
+            font-size: 1.7em;
+        }
+
+        .reveal .slides h3 {
+            color: black;
+            font-size: 1em;
+        }
+
+    </style>
+</head>
+<body class="reveal-viewport theme-font-montserrat theme-color-white-blue">
+<div class="reveal">
+    <div class="slides">
+        <section data-id="998b2eb78a9e7d8aa2809a367ee9a001" data-background-position="0% 0%"
+                 data-background-image="images/bg-green-pivotal-labs.png">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 80px; top: 216px; height: auto;"
+                 data-block-id="e084e6e2da7761270dc2bda36ac913f8">
+                <div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text"
+                     style="z-index: 11;">
+                    <h1>Petabyte Scale Data Warehousing with Greenplum</h1>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="2d2695d7ccb3f4a29881b1ff002fa9ed"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 172px; top: 553px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; font-size: 150%;">
+                    <p>PostgreSQL versus Greenplum Database</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line" data-block-id="c38aee5b210584c66487b4226e710eb6"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 163px; top: 522px;">
+                <div class="sl-block-content" data-line-x1="-220" data-line-y1="170" data-line-x2="420"
+                     data-line-y2="170" data-line-color="#ffff00" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 13;" data-line-width="10px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="640"
+                         height="1" viewbox="-220 170 640 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-220" y1="170" x2="420" y2="170"></line>
+                        <line stroke="#ffff00" stroke-width="10" x1="-220" y1="170" x2="420" y2="170"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 300px; height: 124px; left: 0px; top: 0px;"
+                 data-block-id="f99612684b72408925b015d6a5125d78">
+                <div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="1814"
+                                                                        data-natural-height="751" data-lazy-loaded=""
+                                                                        data-src="gp-data-distribution-3/3d7f87850857fc8e7a269e916bd1323a.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="0f853458eded25c944e4dcd8764148a7">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="b583c71f094b89f1184d8e97f4af2409">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left;">
+                    <h2>Agenda</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 321px; height: auto;"
+                 data-block-id="c36367a54d0d248173578e240b8a4fdd">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: center;">
+                    <h3>This chapter gives you an overview of a number of main differences between PostgreSQL and
+                        Greenplum databases</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="3944588c1cbd04a2ab3de21766ef587e"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 0px; top: 74px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 13; text-align: left;" dir="ui">
+                    <p>PostgreSQL vs Greenplum</p>
+                </div>
+            </div>
+        </section>
+        <section data-id="be59cbd090c4b726690be209af48ca00">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="b9c87712f61ebc79eb4dc5d04506b57a">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>OLTP versus OLAP</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 880px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="c669c9256bae9e7d8b27eeeda1b443d5">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;">
+                    <ul>
+                        <li>PostgreSQL is for OLTP (Online Transaction Processing)
+                            <ul>
+                                <li>Goals
+                                    <ul>
+                                        <li>Have your hot data in memory</li>
+                                        <li>Use any means necessary to rapidly identify that one dataset you want</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Greenplum is for OLAP (Online Analytical Processing)
+                            <ul>
+                                <li>Goals
+                                    <ul>
+                                        <li>Scan all your data, and again</li>
+                                        <li>Calculate results across all your data</li>
+                                        <li>No way this fits into memory - more hardware required</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="0936a7adc3335474a2e20f214d590401">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="714953a02f3725ad7df88c7849c51346">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="57a8ddfb5468cd796af3bf8e43f35bf9">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Scalability</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 880px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="cbe28f531b2689d46c4ca38f263e69ae">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>Scales well on a single machine</li>
+                                <li>Using multiple machines involves primary + secondary setups, failover, replication,
+                                    etc
+                                </li>
+                                <li>Important every machine always holds a full copy (except when sharding)</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>Purpose built to scale across many machines</li>
+                                <li>Comes with replication built-in</li>
+                                <li>Somewhat slower on OLTP workloads</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="4c8a9e642b306591539b3aaac2842066">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="32240a8b7647e3afe90fb6b24d87a1ad">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="11a58072bd23b7c79edb62d41010b1b9">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Query Planner</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 914px; left: 0px; top: 169px; height: auto;"
+                 data-block-id="6a1bf7bb5ff863eead97e587d21e8818">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;">
+                    <ul>
+                        <li>
+                            <p>PostgreSQL</p>
+
+                            <ul>
+                                <li>
+                                    <p>Grown over time (30 years)</p>
+                                </li>
+                                <li>
+                                    <p>Complex code, hard to debug</p>
+                                </li>
+                                <li>
+                                    <p>Not many people fully understand it</p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>Greenplum with GPORCA</p>
+
+                            <ul>
+                                <li>
+                                    <p>Pluggable query planner, written from scratch in C++</p>
+                                </li>
+                                <li>
+                                    <p>“Powers” both SQL and NoSQL workloads:</p>
+
+                                    <ul>
+                                        <li>
+                                            <p>SQL: Greenplum Database</p>
+                                        </li>
+                                        <li>
+                                            <p>NoSQL: SQL-on-Hadoop for Apache HAWQ</p>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <p>Comes with it’s own test suite (stand-alone)</p>
+                                </li>
+                                <li>
+                                    <p>Debugging tool allows to extract query information from problematic queries</p>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="58b73462e7a4cd456025da6e57985afc">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="0b2dc00cde1ada79c8436758becafb2f">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="ba4e326f1fbefc2754216057debb938d">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Partitioning</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="0a4334b207bc9591bfe8ae6a9390dd9a">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;">
+                    <ul>
+                        <li>
+                            <p>PostgreSQL</p>
+
+                            <ul>
+                                <li>
+                                    <p>Included only in last versions</p>
+                                </li>
+                                <li>
+                                    <p>Basic Runtime partition pruning, otherwise partitions are only pruned during
+                                        planning time</p>
+
+                                    <ul>
+                                        <li>
+                                            <p>Partitions are always scanned when they can’t be included by static
+                                                values</p>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>Has had partitioning for over a decade now</li>
+                                <li>Allows partitions and subpartitions (two levels)</li>
+                                <li>Partitioning is on top of sharding</li>
+                                <li>GPDB planner can do partition pruning during runtime</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="1cc1457ff71f78c2eed83561e9f75589">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="0f1615638226083374b4c95c2918e3e1">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="c8e57be9649fe698ecbf5902436d2911">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Resource Queues</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="1cb7440c8e993f01824796f2070093ec">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>No resource management (usually not needed)</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>Resources like CPU, Queries and Memory can be managed on a per-user basis</li>
+                                <li>Queries can be limited, or aborted, or queued</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="2bd7cb84c98a81964a6a5553cdd486fe">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="376ddabc5ea3e16cbab78153c661c2c8">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="45279c05eb4d69d4fd6030ef5840344e">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Pipelining</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="880cd727bc4a41c7be9d45660ddcf8bc">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>Has Background Workers now</li>
+                                <li>Still no complete parallel execution</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>Pipelines flow data from one processing part to the next</li>
+                                <li>Makes efficient use of CPU resources as more cores can be used in parallel</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="025ef53d893691fd89f5b7f9a5030bd6">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="6d2c3bc8a3399b181468c7219acd4302">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="191152c31629d2c22cd5beb3646a8daf">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Parallel Loading and Unloading</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="ffaef7704faaefb1cc65935765860a8b">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>
+                                    <p>Usually: COPY (single process, single backend)</p>
+                                </li>
+                                <li>
+                                    <p>gpLoader speeds up data loading</p>
+
+                                    <ul>
+                                        <li>
+                                            <p>But is still one process</p>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>
+                                    <p>Can load data using external tables, in parallel on all segments</p>
+                                </li>
+                                <li>
+                                    <p>Scales out</p>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="3f80bb547886bd7fe4912c6f7a63b905">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="abba3bca0f688f26f468b450ca2c6965">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="4ca63a6b82d669370089756119ad0ce2">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Access to external resources</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 948px; left: 0px; top: 168px; height: auto;"
+                 data-block-id="813f84db23d2245bc1fc5324c85812d3">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;" dir="ui">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>Uses SQL/MED</li>
+                                <li>Requires additional plugins to read/write different formats, or connect resources
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>Uses External Tables to access resources</li>
+                                <li>Scales out on all segments</li>
+                                <li>Can load data in parallel</li>
+                                <li>Can execute processes in parallel
+                                    <ul>
+                                        <li>gp_toolkit is using scripts/tools on segments to provide cluster
+                                            information
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>Data can be imported/exported in many formats and can include transformations</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="968517ddd76ba22df72e7ed73718b870">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="5a4c2405406200fe8dfd6879fd9a9dc2">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="a92e7f405ac542e39a8dfcc28d9e75fe">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Hadoop</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="8a8ec619e0b0c2832e9e3b3493047f60">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;" dir="ui">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>???</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>External Tables and the PXF connector allow access to Hadoop systems</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="e57d4936d737d2c7713ea7dfa1d4a8fe">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="ebb1366e393388e343fc34b7f4b76a82">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="e0b29c99c460af0f71b88cccbc8e9d5d">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Table Compression</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="0e67e7ce34f7b952bbaaec29b66ceaaa">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;" dir="ui">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>???</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>Tables (rows or columns) can be compressed using different algorithms
+                                    <ul>
+                                        <li>zlib</li>
+                                        <li>quicklz</li>
+                                        <li>RLE</li>
+                                        <li>Delta</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="367656432ecf49773e0e872cf36bdbf2">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="eda2d359eea3a0b7d7d849dd64120905">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="27d253e4e97ebe53bfb0185c42302aef">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Column Orientation</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="aa74b81bcf9d9f197c8326a6d21c8b70">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;" dir="ui">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>???</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>
+                                    <p>Tables can be row-oriented or column-oriented</p>
+
+                                    <ul>
+                                        <li>
+                                            <p>Row-oriented: traditional HEAP table</p>
+                                        </li>
+                                        <li>
+                                            <p>Column-oriented: every column is stored in one file</p>
+
+                                            <ul>
+                                                <li>
+                                                    <p>Accessing a few columns does not read the entire row</p>
+                                                </li>
+                                                <li>
+                                                    <p>Every column can be compressed, even using different
+                                                        algorithms</p>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="64f247b85e4f5f7eb0c241f0fc4177d3">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="ab3918a974d4cc0ef61a248620c7bec4">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="b52501c33c1b58837f0ae07b58d36ed1">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Text Search</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="f26878003e5f7b570f97348fe543d734">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;" dir="ui">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>Basic Full Text Search included</li>
+                                <li>A bit complicated for different languages</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>​GPText
+                                    <ul>
+                                        <li>Integrates Apache Solr Cloud with Greenplum</li>
+                                        <li>Runs in parallel on the segments, no single instance</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="a387063c0efe5a68a1b94931b9c5d175">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="617e25e49de4b4e18e7dd788baadba9c">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="7016da70d93f93002e76ee3058084c49">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Expansion</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="fc0b3a62d56d91c8222ddc04a290eec0">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;" dir="ui">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>Expansion beyond one system - includes replication, connection pooler, and HA
+                                    setup
+                                </li>
+                                <li>Does not improve the overall performance (one data copy per system)</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>Just add more segments and re-distribute the database</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="088679ffeae73e0d6f57321e009231ad">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="6d34a50822553f4377027aec8ef02b45">
+            <div class="sl-block" data-block-type="text" style="width: 929px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="472e721a610ebf9d216dfa7d6f465e62">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>MADlib - Machine Learning at Scale</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="b623e4bbccc15b1dcf8beaa401460532">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;" dir="ui">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>Works with PostgreSQL</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>Works with Greenplum</li>
+                                <li>Originally designed for Greenplum</li>
+                                <li>Scaling out will improve MADlib performance</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="2944b2f15dd8bdf3d1d497e21fd01ffe">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="196cfd872fa5577b4f84eef81bd64178">
+            <div class="sl-block" data-block-type="text" style="width: 929px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="63b595ae4a711d33ad6abe7064343bc4">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left;">
+                    <h2>Foreign Keys</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 908px; left: 0px; top: 216px; height: auto;"
+                 data-block-id="6549e392d03406cca89eeb921c4f6b64">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; text-align: left;" dir="ui">
+                    <ul>
+                        <li>PostgreSQL
+                            <ul>
+                                <li>Works as expected</li>
+                            </ul>
+                        </li>
+                        <li>Greenplum
+                            <ul>
+                                <li>​FKs are not enforced
+                                    <ul>
+                                        <li>Because of the distributed nature, FK enforcement requires a scan across the
+                                            entire database, for every single row
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 74px;"
+                 data-block-id="d85e905901269a1ca73170bb37c1f1b0">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;" dir="ui">
+                    <p><span>PostgreSQL vs Greenplum</span></p>
+                </div>
+            </div>
+        </section>
+        <section data-background-image="images/bg-green-pivotal-labs.png"
+                 data-background-position="0% 0%" data-id="79b8f5bed9566f7883671a3d1bb35d40">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 80px; top: 216px; height: auto;"
+                 data-block-id="f06b03e4f56e61f6cf0bd22aecf8f9aa">
+                <div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text"
+                     style="z-index: 10;">
+                    <h1>Petabyte Scale Data Warehousing with Greenplum</h1>
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="image"
+                 style="width: 300px; height: 124px; left: 0px; top: 0px; min-width: 4px; min-height: 4px;"
+                 data-block-id="1b8656d1707918a57c9efbaf00e39280">
+                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="1814"
+                                                                        data-natural-height="751" data-lazy-loaded=""
+                                                                        data-src="gp-data-distribution-3/3d7f87850857fc8e7a269e916bd1323a.png">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    var SLConfig = {
+        "deck": {
+            "id": 1619684,
+            "slug": "gp-postgresql-vs-gp",
+            "title": "Greenplum - PostgreSQL versus Greenplum Database",
+            "description": "Overview of the data distribution used with the Greenplum database.",
+            "width": 960,
+            "height": 720,
+            "visibility": "all",
+            "published_at": "2019-10-09T17:39:03.505Z",
+            "sanitize_messages": null,
+            "thumbnail_url": "https://s3.amazonaws.com/media-p.slid.es/thumbnails/6fd956d5bbdc248fa7e895e81fa1913d/thumb.jpg?1570642984",
+            "view_count": 0,
+            "user": {
+                "id": 1134143,
+                "username": "csylvester",
+                "name": "",
+                "description": "",
+                "thumbnail_url": "https://www.gravatar.com/avatar/d2436491e8c9292c895eebad673e3837?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png",
+                "paid": true,
+                "pro": true,
+                "lite": false,
+                "team_id": null,
+                "settings": {
+                    "id": 3868303,
+                    "present_controls": true,
+                    "present_upsizing": true,
+                    "present_pointer": false,
+                    "present_notes": true,
+                    "default_deck_tag_id": null
+                }
+            },
+            "background_transition": "slide",
+            "transition": "slide",
+            "theme_id": null,
+            "theme_font": "montserrat",
+            "theme_color": "white-blue",
+            "auto_slide_interval": 0,
+            "comments_enabled": true,
+            "forking_enabled": true,
+            "rolling_links": false,
+            "center": false,
+            "shuffle": false,
+            "should_loop": false,
+            "share_notes": false,
+            "slide_number": false,
+            "slide_count": 18,
+            "rtl": false,
+            "version": 2,
+            "collaborative": false,
+            "deck_user_editor_limit": 3,
+            "data_updated_at": 1570644928644,
+            "font_typekit": null,
+            "font_google": null,
+            "time_limit": null,
+            "upsizing_enabled": true
+        }
+    };
+
+
+    // Use local fonts
+    SLConfig.fonts_url = 'lib/fonts/';
+</script>
+
+<script src="lib/reveal.min.js"></script>
+<script src="lib/offline.js"></script>
+
+<!-- Initialize the presentation -->
+<script>
+    Reveal.initialize({
+        width: 960,
+        height: 720,
+        margin: 0.05,
+
+
+        hash: true,
+        controls: true,
+        progress: true,
+        mouseWheel: false,
+        showNotes: false,
+        slideNumber: false,
+
+        autoSlide: 0,
+        autoSlideStoppable: true,
+
+        center: false,
+        shuffle: false,
+        loop: false,
+        rtl: false,
+
+        transition: "slide",
+        backgroundTransition: "slide",
+
+        highlight: {
+            escapeHTML: false
+        },
+
+        /* Added menu plugin from https://github.com/denehyg/reveal.js-menu: CJS, 07oct2019 */
+        /* For a description of the 'menu' options, see the gp-intro-overview.html presentation */
+        menu: {
+            side: 'left',
+            width: 'wide',
+            numbers: true,
+            titleSelector: 'h1, h2, h3, h4, h5, h6',
+            useTextContentForMissingTitles: false,
+            hideMissingTitles: false,
+            markers: true,
+            custom: false,
+            themes: false,
+            themesPath: 'css/theme/',
+            transitions: false,
+            openButton: true,
+            openSlideNumber: false,
+            keyboard: true,
+            sticky: false,
+            autoOpen: true,
+            delayInit: false,
+            openOnInit: false,
+            loadIcons: true
+        },
+
+        dependencies: [
+            {
+                src: 'lib/reveal-plugins/markdown/marked.js', condition: function () {
+                    return !!document.querySelector('[data-markdown]');
+                }
+            },
+            {
+                src: 'lib/reveal-plugins/markdown/markdown.js', condition: function () {
+                    return !!document.querySelector('[data-markdown]');
+                }
+            },
+            {src: 'lib/reveal-plugins/highlight/highlight.js'},
+            {
+                src: 'lib/reveal-plugins/notes/notes.js', async: true, condition: function () {
+                    return !!document.body.classList;
+                }
+            },
+            {src: 'lib/reveal-plugins/zoom/zoom.js', async: true},
+            {src: 'lib/reveal-plugins/menu/menu.js', async: false}
+        ]
+    });
+</script>
+
+
+</body>
+</html>
