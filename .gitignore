@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 tmp
 GP*tgz
 GP*tar
@@ -6,3 +7,13 @@ refresh-s3.sh
 .*swp
 test.yml
 .idea
+=======
+GP-Workshop-Setup.tgz
+aws-testing-harness/
+azure-testing-harness/
+gcp-testing-harness/
+refresh-s3.sh
+workshop-exercises/
+workshop-setup-ansible/
+workshop-setup-bash/
+>>>>>>> presentations
