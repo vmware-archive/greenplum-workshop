@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html class="sl-root decks export offline loaded">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Greenplum - Introduction</title>
+
+    <meta name="description" content="Introduction to the Pivotal Greenplum Database">
+
+    <link rel="stylesheet" type="text/css" href="lib/offline-v2.css">
+
+
+    <!-- User CSS -->
+    <style id="user-css-output" type="text/css">
+        .reveal .slides h2 {
+            color: #008774;
+            font-size: 1.7em;
+        }
+
+        .reveal .slides h3 {
+            color: black;
+            font-size: 1em;
+        }
+
+    </style>
+</head>
+<body class="reveal-viewport theme-font-montserrat theme-color-white-blue">
+<div class="reveal">
+    <div class="slides">
+        <section data-id="998b2eb78a9e7d8aa2809a367ee9a001" data-background-position="0% 0%"
+                 data-background-image="images/bg-green-pivotal-labs.png">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 80px; top: 216px; height: auto;"
+                 data-block-id="e084e6e2da7761270dc2bda36ac913f8">
+                <div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text"
+                     style="z-index: 11;">
+                    <h1>Petabyte Scale Data Warehousing with Greenplum</h1>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="2d2695d7ccb3f4a29881b1ff002fa9ed"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: 172px; top: 553px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; font-size: 150%;">
+                    <p>Introduction</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line" data-block-id="c38aee5b210584c66487b4226e710eb6"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 163px; top: 522px;">
+                <div class="sl-block-content" data-line-x1="-220" data-line-y1="170" data-line-x2="420"
+                     data-line-y2="170" data-line-color="#ffff00" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 13;" data-line-width="10px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="640"
+                         height="1" viewbox="-220 170 640 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-220" y1="170" x2="420" y2="170"></line>
+                        <line stroke="#ffff00" stroke-width="10" x1="-220" y1="170" x2="420" y2="170"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 300px; height: 124px; left: 0px; top: 0px;"
+                 data-block-id="f99612684b72408925b015d6a5125d78">
+                <div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="1814"
+                                                                        data-natural-height="751" data-lazy-loaded=""
+                                                                        alt="pivotal-logo"
+                                                                        data-src="images/logos/logo-pivotal-on-dark.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="411224700ab402b9c2b4505dae1b4400">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="06401b9431eea1fb8348f3f4aaaa79c6">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2><span style="font-size:1.0em">Greenplum Workshop Overview</span></h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="table" data-block-id="ac70bb8466000bd747a3d4b5fbb3b74d"
+                 style="height: auto; min-width: 120px; min-height: 30px; width: 899px; left: 31px; top: 133px;">
+                <div class="sl-block-content" style="z-index: 12;" data-table-cols="3" data-table-rows="4"
+                     data-table-has-header="false" data-table-border-color="rgba(0, 0, 0, 0)" data-table-padding="15px">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 15px; width: 442px;">What you take home
+                                from this workshop
+                            </td>
+                            <td style="border-color: rgba(0, 0, 0, 0); width: 40px; padding: 15px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 15px;">An understanding of the Greenplum
+                                database
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-color: rgba(0, 0, 0, 0); width: 442px; padding: 15px;">What we assume you
+                                already know
+                            </td>
+                            <td style="border-color: rgba(0, 0, 0, 0); width: 40px; padding: 15px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 15px;">SQL and a little PostgreSQL</td>
+                        </tr>
+                        <tr>
+                            <td style="border-color: rgba(0, 0, 0, 0); width: 442px; padding: 15px;">What you will have
+                                in this workshop
+                            </td>
+                            <td style="border-color: rgba(0, 0, 0, 0); width: 40px; padding: 15px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 15px;">Some slideware, some discussion,
+                                some hands-on labs
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-color: rgba(0, 0, 0, 0); width: 442px; padding: 15px;">Where will you run
+                                the lab exercises
+                            </td>
+                            <td style="border-color: rgba(0, 0, 0, 0); width: 40px; padding: 15px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 15px;">A single node Greenplum instance
+                                hosted in a public cloud
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line" data-block-id="7b876eb149999c409aa505e5af01ac00"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 31px; top: 243px;">
+                <div class="sl-block-content" data-line-x1="-349" data-line-y1="-17" data-line-x2="550"
+                     data-line-y2="-17" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 13;">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="899"
+                         height="1" viewbox="-349 -17 899 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-349" y1="-17" x2="550" y2="-17"></line>
+                        <line stroke="#008774" stroke-width="2" x1="-349" y1="-17" x2="550" y2="-17"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 31px; top: 351px;"
+                 data-block-id="7faa9c3af6d41a148237bed0d699522e">
+                <div class="sl-block-content" data-line-x1="-349" data-line-y1="-17" data-line-x2="550"
+                     data-line-y2="-17" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 14;">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="899"
+                         height="1" viewbox="-349 -17 899 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-349" y1="-17" x2="550" y2="-17"></line>
+                        <line stroke="#008774" stroke-width="2" x1="-349" y1="-17" x2="550" y2="-17"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 31px; top: 500px;"
+                 data-block-id="5581b01fbfabb0063553dfae787d7058">
+                <div class="sl-block-content" data-line-x1="-349" data-line-y1="-17" data-line-x2="550"
+                     data-line-y2="-17" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 15;">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="899"
+                         height="1" viewbox="-349 -17 899 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-349" y1="-17" x2="550" y2="-17"></line>
+                        <line stroke="#008774" stroke-width="2" x1="-349" y1="-17" x2="550" y2="-17"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 121px; height: 50px; left: 0px; top: 670px;"
+                 data-block-id="f2f2a2ebfc67ce3570690fbd5b8c3f42">
+                <div class="sl-block-content" style="z-index: 16;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="80100b400cbf16a03b94d5a9c9d1e578">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="8b3d29afef1e27fc531e7432e45ae757">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
+                    <h2><span style="font-size:1.0em">Agenda</span></h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 413px; left: 0px; top: 100px; height: auto;"
+                 data-block-id="81adc977bc8143c6e8e1844252c5ce86">
+                <div class="sl-block-content" data-placeholder-tag="p"
+                     data-placeholder-text=""
+                     style="z-index: 11; text-align: left; font-size: 69%; line-height: 1.495;" data-has-line-height="">
+                    <ul>
+                        <li>Introduction to MPP and Greenplum</li>
+                        <li>Differences Between PostgreSQL and Greenplum</li>
+                        <li>Data Distribution</li>
+                        <li>Parallel loading</li>
+                        <li>Loading from S3 and external connectivity</li>
+                        <li>Polymorphic storage and external partitions</li>
+                        <li>Partitioning vs. Distribution</li>
+                        <li>Query response time exercises</li>
+                        <li>Running Analytics in Greenplum: MADlib exercise</li>
+                        <li>Analyzing Free Form Text with Solr and GPText</li>
+                        <li>Running PL/Python and PL/R as Trusted Languages with PL/Container</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 523px; height: 588px; left: 437px; top: 100px; min-width: 4px; min-height: 4px;"
+                 data-block-id="032be99f231bc0ae865c3880dffee0d3">
+                <div class="sl-block-content" style="z-index: 10;"><img data-natural-width="750"
+                                                                        data-natural-height="843" style=""
+                                                                        data-lazy-loaded="" alt="sticky-notes-board"
+                                                                        data-src="images/sticky-notes-board.jpg">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 121px; height: 50px; left: 0px; top: 670px;"
+                 data-block-id="b54804872420a77c998264b39405899c">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="1073478748c47321ae6d02c445ef963e">
+            <div class="sl-block" data-block-type="text" style="width: 464px; left: 0px; top: 172px; height: auto;"
+                 data-block-id="4a88bb11a14e6f318e26975f880bb27d">
+                <div class="sl-block-content" data-placeholder-tag="p"
+                     data-placeholder-text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nec metus justo. Aliquam erat volutpat."
+                     style="z-index: 12; text-align: left; font-size: 90%; line-height: 1.495;" data-has-line-height="">
+                    <ul>
+                        <li>Installation</li>
+                        <li>Updates</li>
+                        <li>Backup and recovery</li>
+                        <li>Migration from other RDMS</li>
+                        <li>Hadoop and other integration</li>
+                        <li>Workload Management</li>
+                        <li>Greenplum Command Center</li>
+                        <li>Writing PXF extensions</li>
+                        <li>PostGIS</li>
+                        <li>Encryption</li>
+                        <li>Security</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 420px; height: 588px; left: 488.5px; top: 132px; min-width: 4px; min-height: 4px;"
+                 data-block-id="276ef61316f639158715e4190e6c2df9">
+                <div class="sl-block-content" style="z-index: 11;"><img data-natural-width="600"
+                                                                        data-natural-height="841" style=""
+                                                                        data-lazy-loaded="" alt="little-ducky"
+                                                                        data-src="images/little-ducky.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="3519a5d0020994af49d7390e4ef68923">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h2><span style="font-size:1.0em">Topics without exercises</span></h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="fde2baa0c2a3e842c258dae3ec77b3bb">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="bb5dccda25104391a979f70d2734fa33" >
+            <aside class="notes">
+When people first moved away from expensive mainframe computers, they did their data analytics in Symmetric MultiProcessors. They would start with a small box<br>
+NEXT SLIDE<br>
+but would soon outgrow it and then need to move to a larger one<br>
+NEXT SLIDE<br>
+and when they outgrew it, move to a yet larger one. Costs became prohibitive and performance began to suffer.<br>
+So, people in the data world became to do what people in the scientific computing world had done:  scaling out rather than scaling up.
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="23e51bb5db860510d407b000efbfb913">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2><span style="font-size:1.0em">But first, a little history</span></h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="2fb5bc6e775e67c60d445504d574b2e3">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 210px; height: 214px; left: 0px; top: 249px; min-width: 4px; min-height: 4px;"
+                 data-block-id="4ad51b7109b1879a0885ca34ba79e599">
+                <div class="sl-block-content fragment current-visible" style="z-index: 12;" data-fragment-index="0"><img
+                        style="" data-natural-width="300" data-natural-height="305" data-lazy-loaded=""
+                        alt="clickart-server" data-src="images/clickart-server-large.jpg"></div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 284px; height: 289px; left: 276px; top: 216px; min-width: 4px; min-height: 4px;"
+                 data-block-id="42b45801557b515d1c2dc7675793b961">
+                <div class="sl-block-content fragment current-visible" style="z-index: 13;" data-fragment-index="1"><img
+                        style="" data-natural-width="300" data-natural-height="305" data-lazy-loaded=""
+                        data-src="images/clickart-server-large.jpg"></div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 349px; height: 355px; left: 611px; top: 178px; min-width: 4px; min-height: 4px;"
+                 data-block-id="33f91fc8ce61c21e3d8e09c753909db3">
+                <div class="sl-block-content fragment" style="z-index: 15;" data-fragment-index="2"><img style=""
+                                                                                                         data-natural-width="300"
+                                                                                                         data-natural-height="305"
+                                                                                                         data-lazy-loaded=""
+                                                                                                         data-src="images/clickart-server-large.jpg">
+                </div>
+            </div>
+        </section>
+        <section data-id="93e1634919329c57a5c9681f327cb41a">
+            <aside class="notes">
+But in an MPP, scale out architecture, we increase computing power and storage by starting small.<br>
+NEXT SLIDE<br>
+In most MPP architectures today, the nodes are usually small Linux  servers with enough CPU, RAM, and I/O power for the needs at hand.<br>
+When we run out of any of these resources, we add another node or more .<br>
+NEXT SLIDE<br>
+Since each node has its own memory, OS, CPU and storage with its own set of disks, this architecture is known as a Shared Nothing architecture.
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="02ecb5d88a8dc192c42663bd3a5a1386">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Massively Parallel Processing</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="f849675e5a5e840425834326f8294bb3">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="077cc9c308711b28c70fe12d715c9c1b">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Scaling out, not up</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 895px; height: 204px; left: 33px; top: 372px; min-width: 4px; min-height: 4px;"
+                 data-block-id="4e839c7431074d9ef110083ec223addb">
+                <div class="sl-block-content fragment" style="z-index: 13;" data-fragment-index="2"><img style=""
+                                                                                                         data-natural-width="864"
+                                                                                                         data-natural-height="197"
+                                                                                                         data-lazy-loaded=""
+                                                                                                         alt="servers-3pairs.jpg"
+                                                                                                         data-src="images/servers-3pairs.jpg">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 284px; height: 204px; left: 338px; top: 258px; min-width: 4px; min-height: 4px;"
+                 data-block-id="d3fe49548a4dc888c8fbf6fe13e2f03e">
+                <div class="sl-block-content fragment current-visible" style="z-index: 15;" data-fragment-index="0"><img
+                        style="" data-natural-width="199" data-natural-height="143" data-lazy-loaded=""
+                        alt="servers-1pair" data-src="images/servers-1pair.jpg">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 581px; height: 204px; left: 196px; top: 330px;"
+                 data-block-id="13c6f7227511636a5a5ea79fab4d8c0c">
+                <div class="sl-block-content fragment current-visible" style="z-index: 16;" data-fragment-index="1"><img
+                        style="" data-natural-width="410" data-natural-height="144" data-lazy-loaded=""
+                        alt="servers-2pairs" data-src="images/servers-2pairs.jpg">
+                </div>
+            </div>
+        </section>
+        <section data-id="d5cb832aa71d811f2594723b4776f665">
+            <aside class="notes">
+A colleague has a large collection of business cards. He exchanges business cards with everyone he meets.
+He has collected 10,000 business cards.<br>
+Being no fool, he keeps them sorted in alphabetical order: last name, first name.
+When he needs to look up someone’s contact info and he knows the name, it’s a no-brainer.
+He goes to roughly the right place in the alphabet and scans a few cards, taking a few seconds.<br>
+Occasionally he needs different information  He’s visiting Acme Widget and want to find all his contacts who work for them.
+This requires going through all his cards.  Now he can scan through cards at a pretty rapid rate, say 100/minute.
+For this current card stack, this takes 10,000/100=100 minutes. This is too long and he came to me for advice.
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="8289445abfb786902d6f4175bdab6e1f">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>A brief analogy</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="1e9274898eb89c69333b651b03b85b1a">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 427px; height: 192px; left: 20px; top: 123px;"
+                 data-block-id="eaaa23123f174e98eaab8dd82bbd7a5e">
+                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="600"
+                                                                        data-natural-height="270" data-lazy-loaded=""
+                                                                        alt="business-card"
+                                                                        data-src="images/business-card.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 606px; height: 268px; left: 337px; top: 348px;"
+                 data-block-id="666d2fccd454a9cb7df1a17a0495629e">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="606"
+                                                                        data-natural-height="268" data-lazy-loaded=""
+                                                                        alt="business-card-container"
+                                                                        data-src="images/business-card-drawer.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="a34516a0940c087d734fedf5f068db10">
+            <aside class="notes">
+“Don’t you have a lot of interns working for you?
+Why not enlist the help of 10 of them, divide the cards equally among the 10, and have each intern scan the cards in parallel?”
+10,000 cards/10 interns=1000 cards/intern.
+Assuming the interns can also scan cards at 100/minute, they can get the job done in 10 minutes, a 10X speedup over a single user.
+If we had used 50 interns, the job could be finished in 2 minutes, a 50X speedup.  We get linear scalability from this strategy.<br>
+Our parallel solution has the advantage of faster lookups. And my friend can use a similar parallel strategy for loading news sets of cards he gets at the next Strata conference.<br>
+Notice that the process is the same whether we used 10 or 20 or 50 interns. Anytime he wants to ask a question of the business cards, my colleague does not need to know how many interns or who has which data.<br>
+Once the cards are distributed, the parallelism is transparent to him.<br>
+What we have created is an analogue of an MPP (or massively parallel processing) database.<br><br>
+"Disclaimer:  No Interns were harmed in the processes mentioned above.",
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="3934e6a8af7ec45b48e84de37bafde7f">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>A brief analogy</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="27b6ad267894f967abcb0a0098df8929">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 548px; height: 216px; left: 0px; top: 252px; min-width: 4px; min-height: 4px;"
+                 data-block-id="4d2202dcf1fb7635576d95adf9540bec">
+                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="654"
+                                                                        data-natural-height="258" data-lazy-loaded=""
+                                                                        alt="interns"
+                                                                        data-src="images/interns.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 360px; height: 416px; left: 574px; top: 144px;"
+                 data-block-id="e4c376d599e3df7adcd426198aab4911">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="360"
+                                                                        data-natural-height="416" data-lazy-loaded=""
+                                                                        alt="business-card-stacks"
+                                                                        data-src="images/business-card-stacks.jpg">
+                </div>
+            </div>
+        </section>
+        <section data-id="bb70c9cee018d2dff5b08302863c697a">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="fc0be0457a43eb474989202c372b7ec3">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum Architecture</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="2e64702eba98275c82820216681dd850">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 720px; height: 495px; left: 240px; top: 140px; min-width: 4px; min-height: 4px;"
+                 data-block-id="86ee5866381439fc9b16d547fe169497">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="902"
+                                                                        data-natural-height="620" data-lazy-loaded=""
+                                                                        alt="greenplum-architecture"
+                                                                        data-src="images/gp-arch.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="3aa20dc4b79c07ad3d5f5caf5fbd2e5e">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Massively Parallel PostgreSQL for Analytics</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="86c5e80f48de6ca4ec3e8650d15a89b2"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 233px; left: 5px; top: 193px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 14; line-height: 0.975;" data-has-line-height="">
+                    <p><span style="font-size:0.7em"><strong>Master Servers</strong></span></p>
+
+                    <p><span style="font-size:0.7em"><span
+                            style="color:rgb(0, 37, 62)">Query planning and dispatch</span></span></p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 233px; left: 7px; top: 310px;"
+                 data-block-id="7aacdfb2bf29e9465aa0c4f59993e444">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 16; line-height: 0.975;" data-has-line-height="">
+                    <p><span style="font-size:0.7em"><strong>Interconnect</strong></span></p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 233px; left: 0px; top: 409px;"
+                 data-block-id="87cbbf1bc7ff8f7971f5c5827917f93e">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 17; line-height: 0.975;" data-has-line-height="">
+                    <p><span style="font-size:0.7em"><strong>Segment Servers</strong></span></p>
+
+                    <p><span style="font-size:0.7em"><span style="color:rgb(0, 37, 62)">Query processing and data storage</span></span>
+                    </p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 233px; left: 0px; top: 576px;"
+                 data-block-id="cb10e24a96c51677e275910d41c70447">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 18; line-height: 0.975;" data-has-line-height="">
+                    <p><span style="font-size:0.7em"><strong>External Sources and Pipelines</strong></span></p>
+                </div>
+            </div>
+        </section>
+        <section data-id="6713b1133800f796b96401276d23a5cd" data-transition="default">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="3a33f0dfe0c159dd24f93b78e4ff135b">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum Environment</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="6efece4f78e03ee83725320194769769">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 960px; height: 501px; left: 0px; top: 144px; min-width: 4px; min-height: 4px;"
+                 data-block-id="dee293e9aebe0c99df2db4fef89513cb">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="1402"
+                                                                        data-natural-height="731" data-lazy-loaded=""
+                                                                        alt="greenplum-data-platform"
+                                                                        data-src="images/gp-next-gen-data-platform.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="0a9430c2eb511f8c32134f9e3a63a7e8">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Massively Parallel PostgreSQL for Analytics</h3>
+                </div>
+            </div>
+        </section>
+        <section data-id="3af240031fef76c81fa2b3812092bb47">
+            <aside class="notes">
+Pivotal Greenplum can run in all platforms. It's a pure software solution. All optimizations are based on the software and not on any hardware optimization.<br>
+We can run on premises (Greenplum Building Blocks is a good example) or on private or public cloud. This is the same software that you are deploying whatever the target platform.<br>
+Pivotal Greenplum is available on public cloud marketplaces as the one from Amazon or Microsoft. You can instantiate a Greenplum cluster in few minutes.
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="73ab9a32846e5d9833bee9d3713d02e7">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum Deployment</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="2600b578077188cd852d1890363c8707">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="5e2aacf0d1f7c904fa7ebf1809e0abd0">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Run your analytics anywhere you need it</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 960px; height: 439px; left: 0px; top: 134px;"
+                 data-block-id="85f7444b1c30e0abea98b4f9793cbbed">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="1056"
+                                                                        data-natural-height="483" data-lazy-loaded=""
+                                                                        alt="infrastructure-agnostic"
+                                                                        data-src="images/infrastructure-agnostic.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="a51f9735ac2c46e68d2d27b65f05e19d"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 960px; left: 0px; top: 576px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 15; background-color: rgb(0, 135, 116); color: rgb(255, 255, 255);">
+                    <ul>
+                        <li>A portable, 100% software solution</li>
+                        <li>Same platform, no switching/migration costs</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section data-id="e4278213325a42f1e417bef3ee3f6121">
+            <aside class="notes">
+ELIMINATE DATA SILOS<br>
+Greenplum is the perfect platform to modernize existing EDWs and eliminate the need for analytical silos created by new tools and libraries<br>
+Pivotal Greenplum is able to migrate and support traditional DW workloads (BI/reporting) in the same platform where it runs Machine learning and Advanced analytics in-database using a massively parallel architecture.
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="5c8590ac23e6bcc64ad7aaf5145eee5c">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Integrated Analytics</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="d6311e5bfe8b9bd11570b6316c5e90cf">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Traditional and Advanced In-database Analytics</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="5f5e4878435fed535663e4fa273d214f">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 613px; height: 542px; left: 303px; top: 167px; min-width: 4px; min-height: 4px;"
+                 data-block-id="c85beccc8901e362ff310a552239b84d">
+                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="693"
+                                                                        data-natural-height="612" data-lazy-loaded=""
+                                                                        alt="greenplum-integrated-analytics"
+                                                                        data-src="images/gp-integrated-analytics.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="f497323950123c50fb4a72a8a48b50a5">
+            <aside class="notes">
+Algorithms:<br>
+- All Pairs Shortest Path (APSP)<br>
+- Breadth-First Search<br>
+- Average Path Length<br>
+- Closeness Centrality<br>
+- Graph Diameter<br>
+- In-Out Degree<br>
+- PageRank<br>
+- Single Source Shortest Path (SSSP)<br>
+- Weakly Connected Components
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="fafaa9ddfc7d649c52908c5256e050de">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Graph</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="29f11975a2a8db8a8afae9076521a7be">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 68px; height: auto;"
+                 data-block-id="b7854df607dc8ca53a466a1aa684ca12">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Integrated Analytics</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 240px; height: 251px; left: 690px; top: 190px; min-width: 4px; min-height: 4px;"
+                 data-block-id="a246a819aab85a193f59bcbf918bf8c4">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="258"
+                                                                        data-natural-height="270" data-lazy-loaded=""
+                                                                        alt="graph-diagram"
+                                                                        data-src="images/graph-diagram.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 640px; left: 0px; top: 192px; height: auto;"
+                 data-block-id="3ad952c5273fdc93de6c0a7f97c36e44">
+                <div class="sl-block-content" data-placeholder-tag="p"
+                     data-placeholder-text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nec metus justo. Aliquam erat volutpat."
+                     style="z-index: 15; text-align: left; font-size: 90%; line-height: 1.495;" data-has-line-height="">
+                    <ul>
+                        <li>Designed for very large graphs (billions of vertices/edges</li>
+                        <li>No need to move and transform data for an external graph engine</li>
+                        <li>Support for most popular graph algorithms</li>
+                        <li>Familiar SQL interface</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" data-block-id="ad4d581364dc79821d54feba3ec1c786"
+                 style="min-width: 30px; min-height: 30px; width: 462px; height: 166px; left: 0px; top: 482px;">
+                <div class="sl-block-content notranslate" data-highlight-theme="xcode" data-code-frame="none"
+                     style="z-index: 16; border-style: solid; border-width: 1px; font-size: 80%;">
+        <pre class="sql"><code> SELECT madlib.pagerank (
+   'vertex',             -- Vertex table                                                                                                                              'id',                 -- Vertix id column
+   'edge'                -- Edge table
+   'src=src, dest=dest', -- Edge arguments
+   'pagerank_out',       -- Output table of PageRank
+   NULL,                 -- Default damping factor (0.85)
+   NULL,                 -- Default max iters (100)
+   0.00000001,           -- Threshold
+   'user_id'             -- Grouping column name
+ );</code></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 450px; height: 232px; left: 508px; top: 486px;"
+                 data-block-id="cd363a1a3edca8ee17a96891903e672a">
+                <div class="sl-block-content" style="z-index: 17;"><img style="" data-natural-width="520"
+                                                                        data-natural-height="268" data-lazy-loaded=""
+                                                                        alt="graph-tables"
+                                                                        data-src="images/graph-tables.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 133px; height: 99px; left: 827px; top: 0px;"
+                 data-block-id="2b16a036dff69513d40c7fb302b6d443">
+                <div class="sl-block-content" style="z-index: 18;"><img style="" data-natural-width="202"
+                                                                        data-natural-height="150" data-lazy-loaded=""
+                                                                        alt="logo-madlib"
+                                                                        data-src="images/logos/logo-madlib.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="599e47b3d21364831e06f227d62b867e">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="dabf14dcba5af9ddd61a58dcc625dc54">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Text</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="6e5fde893109ed172545d84d1c8eda0e">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                 data-block-id="eaf92155504979f6a293c7e6fbf423fd">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Integrated Analytics</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 240px; height: 120px; left: 673px; top: 384px; min-width: 4px; min-height: 4px;"
+                 data-block-id="b504c39e7612022e064f03d4f73744ef">
+                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="343"
+                                                                        data-natural-height="172" data-lazy-loaded=""
+                                                                        alt="logo-apache-solr"
+                                                                        data-src="images/logos/logo-solr.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 640px; left: 0px; top: 192px; height: auto;"
+                 data-block-id="b1d297b6aaa43ae7d0f02b7a3c693508">
+                <div class="sl-block-content" data-placeholder-tag="p"
+                     data-placeholder-text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nec metus justo. Aliquam erat volutpat."
+                     style="z-index: 14; text-align: left; font-size: 90%; line-height: 1.495;" data-has-line-height="">
+                    <p><strong>Use Cases</strong></p>
+
+                    <ul>
+                        <li>Communications compliance and monitoring</li>
+                        <li>Customer sentiment analysis</li>
+                        <li>Document search and query</li>
+                        <li>Social media processing, etc</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 133px; height: 99px; left: 720px; top: 261px; min-width: 4px; min-height: 4px;"
+                 data-block-id="7677429a8d291979fac007da8cf5bd14">
+                <div class="sl-block-content" style="z-index: 16;"><img style="" data-natural-width="202"
+                                                                        data-natural-height="150" data-lazy-loaded=""
+                                                                        alt="logo-madlib"
+                                                                        data-src="images/logos/logo-madlib.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 940px; left: 0px; top: 458px; height: auto;"
+                 data-block-id="a992ea219071a0a555340cea7b0e0b3c">
+                <div class="sl-block-content" data-placeholder-tag="p"
+                     data-placeholder-text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nec metus justo. Aliquam erat volutpat."
+                     style="z-index: 17; text-align: left; font-size: 90%; line-height: 1.495;" data-has-line-height="">
+                    <p><strong>GPText</strong></p>
+
+                    <ul>
+                        <li>Leverages Apache Solr and Greenplum</li>
+                        <li>Python and Java integration for Natural Language Processing (NLP)</li>
+                        <li>Apache MADlib integration for machine learning on textual data</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section data-id="383e1c16582ebe89602d696cdaea143d">
+            <aside class="notes">
+Let’s talk about diversity in term of datatype and let’s start with Geospatial support.<br>
+Greenplum is providing Geospatial support through postGIS implementation.<br>
+In a few words, it adds spatial functions such as distance, area, intersection and the ability to manipulate polygon and special data types. Support for R-tree indices provide for high speed queries against very large data sets.<br>
+Postgis implementation give opportunity to manage all geolocation uses cases inside the database.
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="a603a68b46b8bd3a9cb57a6042faa6be">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Geospatial</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="93968065889c69fec61491cb3c5d6f0e">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="be48d9e4dbce5db61ba5b08de1cf5e9e">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 15; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Integrated Analytics</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 640px; left: 0px; top: 192px; height: auto;"
+                 data-block-id="e9df32e6de214ec73db379b14544f4e5">
+                <div class="sl-block-content" data-placeholder-tag="p"
+                     data-placeholder-text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nec metus justo. Aliquam erat volutpat."
+                     style="z-index: 16; text-align: left; font-size: 90%; line-height: 1.495;" data-has-line-height="">
+                    <ul>
+                        <li>Points, Lines, Polygons, Perimeter, Area</li>
+                        <li>Intersection, Contains, Distance, Longitude/Latitude</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 150px; height: 39px; left: 800px; top: 20px; min-width: 4px; min-height: 4px;"
+                 data-block-id="08e2f98043fd4c8d7ff70164618b8155">
+                <div class="sl-block-content" style="z-index: 17;"><img style="" data-natural-width="297"
+                                                                        data-natural-height="77" data-lazy-loaded=""
+                                                                        alt="logo-postgis"
+                                                                        data-src="images/logos/logo-postgis.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 308px; height: 154px; left: 6px; top: 500px;"
+                 data-block-id="ba524fc83756cccb44038bfb8c829fff">
+                <div class="sl-block-content" style="z-index: 18;"><img style="" data-natural-width="504"
+                                                                        data-natural-height="252" data-lazy-loaded=""
+                                                                        alt="gis-round-earth-calculations"
+                                                                        data-src="images/gis-round-earth-calculations.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 283px; height: 131px; left: 339px; top: 511px;"
+                 data-block-id="ac10d085dbdcb0c2537cdec75c7b84c2">
+                <div class="sl-block-content" style="z-index: 19;"><img style="" data-natural-width="283"
+                                                                        data-natural-height="131" data-lazy-loaded=""
+                                                                        alt="gis-bounding-boxes"
+                                                                        data-src="images/gis-spatial-bounding-boxes.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 248px; height: 198px; left: 676px; top: 456px;"
+                 data-block-id="9c7b2e952046b5353fa57120d13e7b0d">
+                <div class="sl-block-content" style="z-index: 20;"><img style="" data-natural-width="370"
+                                                                        data-natural-height="295" data-lazy-loaded=""
+                                                                        alt="gis-raster-image"
+                                                                        data-src="images/gis-raster-image.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="ff648905e4ad0e5b05e612116d0d4c77"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 286px; left: 18px; top: 393px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 21; color: rgb(0, 135, 116);">
+                    <p><span style="font-size:0.9em">Round earth calculations</span></p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 320px; left: 321px; top: 393px;"
+                 data-block-id="09097bf5e6c33382f58538f5e9981f43">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 22; color: rgb(0, 135, 116);">
+                    <p><span style="font-size:0.9em">Spatial indexes &amp; bounding boxes</span></p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 319px; left: 641px; top: 393px;"
+                 data-block-id="7abd7ba12289805c79878f81f9cee708">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 23; color: rgb(0, 135, 116);">
+                    <p><span style="font-size:0.9em">Raster support</span></p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape" data-block-id="250435e0a702594a4b52e24097e4c641"
+                 style="min-width: 4px; min-height: 4px; width: 320px; height: 281px; left: 0px; top: 383px;">
+                <div class="sl-block-style" style="z-index: 12; opacity: 0.5;">
+                    <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(0, 0, 0, 0)"
+                         data-shape-stretch="true" style="z-index: 12;" data-shape-stroke-color="#000000"
+                         data-shape-stroke-width="1px">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                             preserveaspectratio="none" viewbox="0 0 320 281">
+                            <defs>
+                                <clippath id="shape-mask-1-1569934384838">
+                                    <rect width="320" height="281" rx="0" ry="0"></rect>
+                                </clippath>
+                            </defs>
+                            <rect width="320" height="281" rx="0" ry="0" clip-path="url(#shape-mask-1-1569934384838)"
+                                  class="shape-element" fill="rgba(0, 0, 0, 0)" stroke="#000000"
+                                  stroke-width="2"></rect>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape"
+                 style="min-width: 4px; min-height: 4px; width: 320px; height: 281px; left: 320px; top: 383px;"
+                 data-block-id="a5c471d947e98441d4928f7ab7daac6e">
+                <div class="sl-block-style" style="z-index: 11; opacity: 0.5;">
+                    <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(0, 0, 0, 0)"
+                         data-shape-stretch="true" style="z-index: 11;" data-shape-stroke-color="#000000"
+                         data-shape-stroke-width="1px">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                             preserveaspectratio="none" viewbox="0 0 320 281">
+                            <defs>
+                                <clippath id="shape-mask-2-1569934392731">
+                                    <rect width="320" height="281" rx="0" ry="0"></rect>
+                                </clippath>
+                            </defs>
+                            <rect width="320" height="281" rx="0" ry="0" clip-path="url(#shape-mask-2-1569934392731)"
+                                  class="shape-element" fill="rgba(0, 0, 0, 0)" stroke="#000000"
+                                  stroke-width="2"></rect>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape"
+                 style="min-width: 4px; min-height: 4px; width: 320px; height: 281px; left: 640px; top: 383px;"
+                 data-block-id="b3038ee4500f9bea0515f84df7efd4a3">
+                <div class="sl-block-style" style="z-index: 10; opacity: 0.5;">
+                    <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(0, 0, 0, 0)"
+                         data-shape-stretch="true" style="z-index: 10;" data-shape-stroke-color="#000000"
+                         data-shape-stroke-width="1px">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                             preserveaspectratio="none" viewbox="0 0 320 281">
+                            <defs>
+                                <clippath id="shape-mask-3-1569934407738">
+                                    <rect width="320" height="281" rx="0" ry="0"></rect>
+                                </clippath>
+                            </defs>
+                            <rect width="320" height="281" rx="0" ry="0" clip-path="url(#shape-mask-3-1569934407738)"
+                                  class="shape-element" fill="rgba(0, 0, 0, 0)" stroke="#000000"
+                                  stroke-width="2"></rect>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section data-id="2e15f9637230de6747d826f80bfc6dd6">
+            <aside class="notes">
+The list on this slide is partial. All the supported libraries are below.<br>
+All supported libraries will fully leverage the Greenplum MPP architecture:<br>
+Python libraries to be supported in Greenplum v5:<br>
+Tensorflow, NumPy, SciPy, scikit-learn, Pandas, NLTK, Pattern-en, Statsmodels (python lib), gensim (python lib),
+pyldavis, lifelines, spaCy, XGBoost, BeautifulSoup, lxml, Keras, and PyMC3 (Tensorflow and Keras  require RHEL 7 as host OS).<br>
+R libraries to be supported in Greenplum v5:<br>
+BH, DBI, MASS, MCMCpack, Matrix, R2jags, R6, RColorBrewer, ROCR, RPostgreSQL, Rcpp, RcppEigen, RobustRankAggreg, SparseM,
+abind, adabag, arm, assertthat, bitops, caTools, car, caret, coda, colorspace, compHclust, curl, data.table, dichromat, digest, dplyr, e1071, flashClust, forecast, foreign,
+gdata, ggplot2, glmnet, gplots, gtable, gtools, hms, hybridHclust, igraph, labeling, lattice, lazyeval, lme4, lmtest, magrittr, minqa, MTS, munsell, neuralnet, nloptr, nnet,
+pbkrtest, plyr, quantreg, randomForest, readr, reshape2, rjags, rpart, sandwich, scales, stringi, stringr, survival, tibble, tseries, zoo.
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="b83cae19c04745d1227bbfb12c37a734">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Python &amp; R Libraries</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="1bf780382eb44f0d2dc7e3eb8789b9e3">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="d47be2969a7ad53850ebc00f4a2365f5">
+                <div class="sl-block-content" data-placeholder-tag="h23" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Integrated Analytics</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 231px; height: 50px; left: 22px; top: 191px;"
+                 data-block-id="3791eec1f4e6640c05c5c8848f384e79"><a class="sl-block-content" style="z-index: 14;"
+                                                                     href="https://pandas.pydata.org"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="231"
+                                                                                          data-natural-height="50"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-pandas"
+                                                                                          data-src="images/logos/logo-pandas.png"></a>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 165px; height: 105px; left: 39px; top: 288px;"
+                 data-block-id="736847be1dc9cf3a4d3ee1eee6901c0d"><a class="sl-block-content" style="z-index: 15;"
+                                                                     href="https://tensorflow.org" target="_blank"><img
+                    style="" data-natural-width="231" data-natural-height="147" data-lazy-loaded=""
+                    alt="logo-tensorflow" data-src="images/logos/logo-tensorflow.png"></a></div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 152px; height: 47px; left: 52px; top: 446px;"
+                 data-block-id="7af81f36a444c070a706c1482eeff341"><a class="sl-block-content" style="z-index: 16;"
+                                                                     href="https://spacy.io" target="_blank"><img
+                    style="" data-natural-width="152" data-natural-height="47" data-lazy-loaded="" alt="logo-spacy"
+                    data-src="images/logos/logo-spacy.png"></a></div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 247px; height: 56px; left: 73px; top: 548px;"
+                 data-block-id="fa88b59926f60fe981eb379084d1eac5"><a class="sl-block-content" style="z-index: 17;"
+                                                                     href="https://xgboost.readthedocs.io"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="247"
+                                                                                          data-natural-height="56"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-xgboost"
+                                                                                          data-src="images/logos/logo-xgboost.png"></a>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 195px; height: 61px; left: 383px; top: 180px;"
+                 data-block-id="734ad31242b3ae5fa6765f6a2ff90773"><a class="sl-block-content" style="z-index: 18;"
+                                                                     href="https://radimrehurek.com/gensim"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="285"
+                                                                                          data-natural-height="89"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-gensim"
+                                                                                          data-src="images/logos/logo-gensim.png"></a>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 216px; height: 83px; left: 373px; top: 299px;"
+                 data-block-id="11ebfab9a25530b2038da4b461902ae1"><a class="sl-block-content" style="z-index: 19;"
+                                                                     href="https://numpy.org"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="297"
+                                                                                          data-natural-height="114"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-numpy"
+                                                                                          data-src="images/logos/logo-numpy.png"></a></div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 129px; height: 127px; left: 431px; top: 406px;"
+                 data-block-id="b411abf2904e295489b61bb0108de913"><a class="sl-block-content" style="z-index: 20;"
+                                                                     href="https://www.scipy.org/scikits.html"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="129"
+                                                                                          data-natural-height="127"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-scikit"
+                                                                                          data-src="images/logos/logo-scikit.png"></a>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 96px; height: 96px; left: 496px; top: 552px;"
+                 data-block-id="d0d424b9cb7d926dc2a3db7892babde6"><a class="sl-block-content" style="z-index: 21;"
+                                                                     href="https://www.statsmodels.org"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="127"
+                                                                                          data-natural-height="127"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-statsmod"
+                                                                                          data-src="images/logos/logo-statsmod.png"></a></div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 210px; height: 54px; left: 720px; top: 226px;"
+                 data-block-id="38697016fac02f8066df84c02381f580"><a class="sl-block-content" style="z-index: 22;"
+                                                                     href="https://cran.r-project.org/web/packages/MCMCpack/index.html"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="339"
+                                                                                          data-natural-height="87"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-mcmcpack"
+                                                                                          data-src="images/logos/logo-mcmcpack.png"></a>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 145px; height: 58px; left: 728px; top: 348px;"
+                 data-block-id="4d3a72b2b6ec45bb0070287a5d64ec36"><a class="sl-block-content" style="z-index: 23;"
+                                                                     href="https://pypi.org/project/pyLDAvis"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="145"
+                                                                                          data-natural-height="58"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-pyldavis"
+                                                                                          data-src="images/logos/logo-pyldavis.png"></a>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 285px; height: 50px; left: 668px; top: 493px;"
+                 data-block-id="1404e5ba9bd7e917db903a3cd3508770"><a class="sl-block-content" style="z-index: 24;"
+                                                                     href="https://lifelines.readthedocs.io/en/latest"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="285"
+                                                                                          data-natural-height="50"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-lifelines"
+                                                                                          data-src="images/logos/logo-lifelines.png"></a>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 165px; height: 102px; left: 757px; top: 576px;"
+                 data-block-id="bbabedc0fd4bb877b3953360da48e754"><a class="sl-block-content" style="z-index: 25;"
+                                                                     href="https://www.crummy.com/software/BeautifulSoup"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="206"
+                                                                                          data-natural-height="127"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="logo-beautifulsoup"
+                                                                                          data-src="images/logos/logo-bs.png"></a>
+            </div>
+        </section>
+        <section data-id="2c6744ea64c8fadfa5b01bcdf83f7239">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="f7de3201f1b5dae366df354a3146c6e0">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Spark</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="383b0d4cc7bb420c31737891309df526">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="a8b17200ae2ab42d2943280b29a8228b">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Integrated Analytics</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 960px; height: 302px; left: 0px; top: 151px;"
+                 data-block-id="df4dd8c0786e1b1558c5d4d10d18b714">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="1350"
+                                                                        data-natural-height="424" data-lazy-loaded=""
+                                                                        alt="greenplum-spark-data-flow"
+                                                                        data-src="images/diagram-spark-gp-data-flow.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="c5fe2a05ccd5af7904dabf68ffc4c8b7"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 917px; left: 22px; top: 480px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 15;">
+                    <ul>
+                        <li style="color: rgb(0, 37, 62);">
+                            <span><span>Provide Data Access to Greenplum Data</span></span></li>
+                        <li style="color: rgb(0, 37, 62);">
+                            <span><span>Leverage SPARK Skill Set of Data Scientists</span></span></li>
+                        <li style="color: rgb(0, 37, 62);"><span><span>Leverage off-cluster compute resources to do computations</span></span>
+                        </li>
+                        <li style="color: rgb(0, 37, 62);">
+                            <span><span>Push result sets back into Greenplum for storage</span></span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section data-id="313a5a28c3a2dc7091a39c1df14ec906" data-transition="default">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="a71862e667b00af8a7b0d1a98bd68d98">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2><span style="font-size:1.0em">Greenplum - Language Agnostic</span></h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="e53551a30e071b8ef25fbeaf5d046b88">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="b83b676f8a40d8653eef9599fd00e9f8">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Integrated Analytics</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 462px; left: 489px; top: 288px;"
+                 data-block-id="9aaeea5d2bd1b2edf0569cbb7e0a874c">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 14; text-align: left;">
+                    <p style="color:rgb(0, 37, 62); text-align:left"><strong>Interfaces</strong></p>
+
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">User Defined Types</li>
+                        <li style="color:rgb(0, 37, 62)">User Defined Functions</li>
+                        <li style="color:rgb(0, 37, 62)">User Defined Aggregates</li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 379px; height: 469px; left: 41px; top: 144px;"
+                 data-block-id="4a4657607e32f148a5b0c72578eab938">
+                <div class="sl-block-content" style="z-index: 17;"><img style="" data-natural-width="452"
+                                                                        data-natural-height="560" data-lazy-loaded=""
+                                                                        alt="greenplum-languages"
+                                                                        data-src="images/gp-udf-languages.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="6001c04e7befed82486d7f8fff367e20">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="e7a26c40bc11746fad7af509e6e354f0">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2><span style="font-size:1.0em">Greenplum - PL/Container</span></h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="284faac872e1895564ecff08b3262395">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="f201e3f185fb3c8c6f4101ba76f083c6">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Python/R Containerization on Greenplum</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 260px; height: 119px; left: 521px; top: 144px; min-width: 4px; min-height: 4px;"
+                 data-block-id="8aa87b9cef07bfeb2694eef7fa278c95">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="350"
+                                                                        data-natural-height="160" data-lazy-loaded=""
+                                                                        alt="plc-r"
+                                                                        data-src="images/diagram-plc-docker-r.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 260px; height: 119px; left: 180px; top: 144px; min-width: 4px; min-height: 4px;"
+                 data-block-id="102dddd89cd7cca4d4ae9a1662461cd8">
+                <div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="350"
+                                                                        data-natural-height="160" data-lazy-loaded=""
+                                                                        alt="plc-python"
+                                                                        data-src="images/diagram-plc-docker-py.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="0697b406f1d505a6b42c97243c43d5c6"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 941px; left: 10px; top: 316px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 16; text-align: left;">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>
+                                <span><span>Deploy Custom R &amp; Python Developer Environment(s) To Cluster</span></span>
+                            </p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Execute Functions in Isolated Secure Containers</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Deploy code and functions as non super-user</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Package any custom Python and R modules in the deployment</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Pre-configured for Data Science or customized images by users</span></span>
+                            </p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Multiple developer environments on same cluster</span></span></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section data-id="6c0fa3743770b53b8b2eb78bb208f9c2">
+            <aside class="notes">
+CAPABILITIES:<br>
+- Leverages Linux Cgroups for implementation<br>
+- Specify CPU Max Per Group<br>
+- Burst Above Max Limit if available<br>
+- Specify Max Memory Per Group And Memory Per Query<br>
+- Specify Max Concurrency Per Group<br>
+- Transaction scope not Statement scope
+            </aside>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="29265cc6b3cfd8464c10f36a899c536f">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2><span style="font-size:1.0em">Greenplum - SQL Containerization</span></h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="6f97614cbd752feb60ba3e84969f9790">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="3e85c9670c21d5a903f1858279c3eb46">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Greenplum Resource Groups</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 941px; left: 10px; top: 144px;"
+                 data-block-id="9f5146cd6e16d0ef533fe33d16e77dba">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 14; text-align: left;">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>
+                                <span><span>Resource isolation for multi-tenancy and mixed analytical SQL workloads</span></span>
+                            </p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Enhances stability and manageability</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Leverages Linux Cgroups</span></span></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 495px; height: 289px; left: 233px; top: 353px;"
+                 data-block-id="05d4e75a753165e3cca897621925f451"><a class="sl-block-content" style="z-index: 15;"
+                                                                     href="https://gpdb.docs.pivotal.io/6-0/admin_guide/workload_mgmt_resgroups.html"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="587"
+                                                                                          data-natural-height="343"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="shipping-containers"
+                                                                                          data-src="images/pic-shipping-containers.png"></a>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="86413bcb45e5a082b902258f19e026a5"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 330px; left: 304px; top: 360px;"><a
+                    class="sl-block-style" style="z-index: 16;"
+                    href="https://gpdb.docs.pivotal.io/6-0/admin_guide/workload_mgmt_resgroups.html" target="_blank">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 16;">
+                    <h1>SQL</h1>
+                </div>
+            </a></div>
+        </section>
+        <section data-id="a0ed2074a3b841697370abea9358ad65">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="fcdd82d4e5e05001729fde74b4ae1daf">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2><span style="font-size:1.0em">Greenplum - Open Source Agility</span></h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="12957cf185a620d3cfeb8adde9c8ede8">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="c490df32b3d7698b82acc1bda0bb5b38">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Analytical Innovation</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 502px; left: 8px; top: 216px;"
+                 data-block-id="dc546c7d8b1a5f2ef3a1f0e684f8ba61">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 14; text-align: left;">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>100% based on PostgreSQL innovation</p>
+
+                            <ul>
+                                <li style="color:rgb(0, 37, 62)">
+                                    <p>the most advanced analytical database for PostgreSQL users</p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p style="color:rgb(0, 37, 62);">Agile development</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p style="color:rgb(0, 37, 62);">A new Pivotal Greenplum release every month</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 302px; height: 337px; left: 617px; top: 86px;"
+                 data-block-id="5f2cfcd97b06d3af77dc6ad84b622178"><a class="sl-block-content" style="z-index: 15;"
+                                                                     href="https://www.postgresql.org/"
+                                                                     target="_blank">
+                                                                     <img style=""
+                                                                          data-natural-width="302"
+                                                                          data-natural-height="337"
+                                                                          data-lazy-loaded=""
+                                                                          alt="logo-postgresql"
+                                                                          data-src="images/logos/logo-postgresql.png"></a></div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 378px; height: 208px; left: 531px; top: 472px;"
+                 data-block-id="f6d2b9a592fb57e68e1d1849ab9afa20">
+                <div class="sl-block-content" style="z-index: 16;"><img style="" data-natural-width="452"
+                                                                        data-natural-height="249" data-lazy-loaded=""
+                                                                        alt="pair-programming"
+                                                                        data-src="images/pic-pair-programming.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="6b86695900d1902699466feb82c950f3" data-transition="default">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="9b7cb3f5438048d7b846d72a71b4dd6d">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Open Source Agility</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="d520d0173f424ec281aebc0e2d92c479">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 66px; height: auto;"
+                 data-block-id="b65cfbf5ca7fad00948363202571c539">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Download at Greenplum.org</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 825px; height: 504px; left: 68px; top: 132px; min-width: 4px; min-height: 4px;"
+                 data-block-id="bbe1b0ff6144ceab1dff9882aacea2c8"><a class="sl-block-content" style="z-index: 14;"
+                                                                     href="https://greenplum.org/download/"
+                                                                     target="_blank"><img style=""
+                                                                                          data-natural-width="1455"
+                                                                                          data-natural-height="889"
+                                                                                          data-lazy-loaded=""
+                                                                                          alt="greenplum-dot-org-website"
+                                                                                          data-src="images/greenplum-org.png"></a>
+            </div>
+        </section>
+        <section data-id="d5d861c011436e66fdf060797ca4145e">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="e84fff599b0011ca2a1e06ec467594df">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Support Offering</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="64757d90fdc56145014cf9c038331421">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="37ee29128f393057f7b9495aa8075863">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Pivotal Greenplum</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 9px; top: 178px;"
+                 data-block-id="b06a85491f9625d55d7bec4dd5aedd6c">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 13; text-align: left;">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Binaries and Installers</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Production Ready Releases</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>24x7 Premium Support</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Pivotal is the top Greenplum sponsor and steward worldwide </span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>12 years of engineering experience with Greenplum</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><span><span>Drives the Roadmap of Pivotal Greenplum</span></span></p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>
+                                <span><span>Largest contributor and committer to open source Greenplum Database</span></span>
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section data-id="fd85eae47a670a687ce30d6afb3783f4" data-transition="concave">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="d2f4a0bc71be6cbd665663c82466bac8">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Greenplum - Additional Tools</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="c14a6ba5c7917680a199a3be84653393">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 72px; height: auto;"
+                 data-block-id="e6cc792bc14f936ae0ff69beebaebb2a">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
+                    <h3>Proprietary Pivotal Greenplum Modules</h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="table" data-block-id="3ef68f299552143c97dfb5a9641d8ceb"
+                 style="height: auto; min-width: 120px; min-height: 30px; width: 839px; left: 61px; top: 144px;">
+                <div class="sl-block-content" style="z-index: 13; font-size: 80%;" data-table-cols="3"
+                     data-table-rows="7" data-table-has-header="false" data-table-border-color="rgba(0, 0, 0, 0)"
+                     data-table-padding="8px">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td style="border-color: rgba(0, 0, 0, 0); width: 216px; padding: 8px;">Greenplum Command
+                                Center
+                            </td>
+                            <td style="width: 40px; border-color: rgba(0, 0, 0, 0); padding: 8px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 8px;">Graphical DBA Console for
+                                centralized monitoring and management
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 216px; border-color: rgba(0, 0, 0, 0); padding: 8px;">GPText</td>
+                            <td style="width: 40px; border-color: rgba(0, 0, 0, 0); padding: 8px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 8px;">Apache SOLR integration for
+                                advanced text search
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 216px; border-color: rgba(0, 0, 0, 0); padding: 8px;">Gemfire Connector
+                            </td>
+                            <td style="width: 40px; border-color: rgba(0, 0, 0, 0); padding: 8px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 8px;">Integration with Pivotal Gemfire
+                                for low latency, high concurrency data access
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 216px; border-color: rgba(0, 0, 0, 0); padding: 8px;">Apache Spark
+                                Connector
+                            </td>
+                            <td style="width: 40px; border-color: rgba(0, 0, 0, 0); padding: 8px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 8px;">Consume Greenplum data in Spark
+                                analytics jobs
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 216px; border-color: rgba(0, 0, 0, 0); padding: 8px;">Informatica
+                                Connector
+                            </td>
+                            <td style="width: 40px; border-color: rgba(0, 0, 0, 0); padding: 8px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 8px;">ETL with industry leading
+                                integration solutoin
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 216px; border-color: rgba(0, 0, 0, 0); padding: 8px;">ODBC &amp; JDBC
+                                Drivers
+                            </td>
+                            <td style="width: 40px; border-color: rgba(0, 0, 0, 0); padding: 8px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 8px;">Industry standard connection
+                                protocols by Progress Software
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 216px; border-color: rgba(0, 0, 0, 0); padding: 8px;">QuickLZ
+                                Compression
+                            </td>
+                            <td style="width: 40px; border-color: rgba(0, 0, 0, 0); padding: 8px;"></td>
+                            <td style="border-color: rgba(0, 0, 0, 0); padding: 8px;">High speed proprietary data
+                                compression algorithm
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line" data-block-id="9a567bf3d9cfce4af7b0fc10c4db3772"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 40px; top: 225px;">
+                <div class="sl-block-content" data-line-x1="-340" data-line-y1="-35" data-line-x2="545"
+                     data-line-y2="-35" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 14;" data-line-width="4px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="885"
+                         height="1" viewbox="-340 -35 885 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                        <line stroke="#008774" stroke-width="4" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 40px; top: 269px;"
+                 data-block-id="b06dc9e35198e091514f52a697894ca5">
+                <div class="sl-block-content" data-line-x1="-340" data-line-y1="-35" data-line-x2="545"
+                     data-line-y2="-35" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 16;" data-line-width="4px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="885"
+                         height="1" viewbox="-340 -35 885 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                        <line stroke="#008774" stroke-width="4" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 40px; top: 350px;"
+                 data-block-id="8b6895ffeb609165471648bbeeb3a980">
+                <div class="sl-block-content" data-line-x1="-340" data-line-y1="-35" data-line-x2="545"
+                     data-line-y2="-35" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 17;" data-line-width="4px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="885"
+                         height="1" viewbox="-340 -35 885 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                        <line stroke="#008774" stroke-width="4" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 40px; top: 431px;"
+                 data-block-id="4bc4f200202f76e27c3e17033ceafdbe">
+                <div class="sl-block-content" data-line-x1="-340" data-line-y1="-35" data-line-x2="545"
+                     data-line-y2="-35" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 18;" data-line-width="4px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="885"
+                         height="1" viewbox="-340 -35 885 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                        <line stroke="#008774" stroke-width="4" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 40px; top: 506px;"
+                 data-block-id="c289db9f545f49aea68c4e2bd8dbaf63">
+                <div class="sl-block-content" data-line-x1="-340" data-line-y1="-35" data-line-x2="545"
+                     data-line-y2="-35" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 19;" data-line-width="4px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="885"
+                         height="1" viewbox="-340 -35 885 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                        <line stroke="#008774" stroke-width="4" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 40px; top: 584px;"
+                 data-block-id="6a26d38bf60a3788d661c6f00141cd63">
+                <div class="sl-block-content" data-line-x1="-340" data-line-y1="-35" data-line-x2="545"
+                     data-line-y2="-35" data-line-color="#008774" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 20;" data-line-width="4px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="885"
+                         height="1" viewbox="-340 -35 885 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                        <line stroke="#008774" stroke-width="4" x1="-340" y1="-35" x2="545" y2="-35"></line>
+                    </svg>
+                </div>
+            </div>
+        </section>
+        <section data-background-image="images/bg-green-pivotal-labs.png"
+                 data-background-position="0% 0%" data-id="79b8f5bed9566f7883671a3d1bb35d40">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 80px; top: 216px; height: auto;"
+                 data-block-id="f06b03e4f56e61f6cf0bd22aecf8f9aa">
+                <div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text"
+                     style="z-index: 10;">
+                    <h1>Petabyte Scale Data Warehousing with Greenplum</h1>
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="image"
+                 style="width: 300px; height: 124px; left: 0px; top: 0px; min-width: 4px; min-height: 4px;"
+                 data-block-id="1b8656d1707918a57c9efbaf00e39280">
+                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="1814"
+                                                                        data-natural-height="751" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-dark.png">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    var SLConfig = {
+        "deck": {
+            "id": 1612127,
+            "slug": "gp-intro-overview",
+            "title": "Greenplum - Introduction",
+            "description": "Introduction to the Pivotal Greenplum Database",
+            "width": 960,
+            "height": 720,
+            "visibility": "all",
+            "published_at": "2019-09-30T19:55:36.693Z",
+            "sanitize_messages": null,
+            "thumbnail_url": "https://s3.amazonaws.com/media-p.slid.es/thumbnails/6ef2f4c7f299a7ff7a97d18f64b416a1/thumb.jpg?1570130943",
+            "view_count": 1,
+            "user": {
+                "id": 1134143,
+                "username": "csylvester",
+                "name": "",
+                "description": "",
+                "thumbnail_url": "https://www.gravatar.com/avatar/d2436491e8c9292c895eebad673e3837?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png",
+                "paid": true,
+                "pro": true,
+                "lite": false,
+                "team_id": null,
+                "settings": {
+                    "id": 3868303,
+                    "present_controls": true,
+                    "present_upsizing": true,
+                    "present_pointer": false,
+                    "present_notes": true,
+                    "default_deck_tag_id": null
+                }
+            },
+            "background_transition": "slide",
+            "transition": "slide",
+            "theme_id": null,
+            "theme_font": "montserrat",
+            "theme_color": "white-blue",
+            "auto_slide_interval": 0,
+            "comments_enabled": true,
+            "forking_enabled": true,
+            "rolling_links": false,
+            "center": false,
+            "shuffle": false,
+            "should_loop": false,
+            "share_notes": false,
+            "slide_number": false,
+            "slide_count": 25,
+            "rtl": false,
+            "version": 2,
+            "collaborative": false,
+            "deck_user_editor_limit": 3,
+            "data_updated_at": 1570131657368,
+            "font_typekit": null,
+            "font_google": null,
+            "time_limit": null,
+            "upsizing_enabled": true
+        }
+    };
+
+
+    // Use local fonts
+    SLConfig.fonts_url = 'lib/fonts/';
+</script>
+
+<script src="lib/reveal.min.js"></script>
+<script src="lib/offline.js"></script>
+
+<!-- Initialize the presentation -->
+<script>
+    Reveal.initialize({
+        width: 960,
+        height: 720,
+        margin: 0.05,
+
+
+        hash: true,
+        controls: true,
+        progress: true,
+        mouseWheel: false,
+        showNotes: false,
+        slideNumber: false,
+
+        autoSlide: 0,
+        autoSlideStoppable: true,
+
+        center: false,
+        shuffle: false,
+        loop: false,
+        rtl: false,
+
+        transition: "slide",
+        backgroundTransition: "slide",
+
+        highlight: {
+            escapeHTML: false
+        },
+        /* Added menu plugin from https://github.com/denehyg/reveal.js-menu: CJS, 01oct2019 */
+        menu: {
+            // Specifies which side of the presentation the menu will
+            // be shown. Use 'left' or 'right'.
+            side: 'left',
+
+            // Specifies the width of the menu.
+            // Can be one of the following:
+            // 'normal', 'wide', 'third', 'half', 'full', or
+            // any valid css length value
+            width: 'wide',
+
+            // Add slide numbers to the titles in the slide list.
+            // Use 'true' or format string (same as reveal.js slide numbers)
+            numbers: true,
+
+            // Specifies which slide elements will be used for generating
+            // the slide titles in the menu. The default selects the first
+            // heading element found in the slide, but you can specify any
+            // valid css selector and the text from the first matching
+            // element will be used.
+            // Note: that a section data-menu-title attribute or an element
+            // with a menu-title class will take precedence over this option
+            titleSelector: 'h1, h2, h3, h4, h5, h6',
+
+            // If slides do not have a matching title, attempt to use the
+            // start of the text content as the title instead
+            useTextContentForMissingTitles: false,
+
+            // Hide slides from the menu that do not have a title.
+            // Set to 'true' to only list slides with titles.
+            hideMissingTitles: false,
+
+            // Adds markers to the slide titles to indicate the
+            // progress through the presentation. Set to 'false'
+            // to hide the markers.
+            markers: true,
+
+            // Specify custom panels to be included in the menu, by
+            // providing an array of objects with 'title', 'icon'
+            // properties, and either a 'src' or 'content' property.
+            custom: false,
+
+            // Specifies the themes that will be available in the themes
+            // menu panel. Set to 'true' to show the themes menu panel
+            // with the default themes list. Alternatively, provide an
+            // array to specify the themes to make available in the
+            // themes menu panel, for example...
+            // [
+            //     { name: 'Black', theme: 'css/theme/black.css' },
+            //     { name: 'White', theme: 'css/theme/white.css' },
+            //     { name: 'League', theme: 'css/theme/league.css' }
+            // ]
+            themes: false,
+
+            // Specifies the path to the default theme files. If your
+            // presentation uses a different path to the standard reveal
+            // layout then you need to provide this option, but only
+            // when 'themes' is set to 'true'. If you provide your own
+            // list of themes or 'themes' is set to 'false' the
+            // 'themesPath' option is ignored.
+            themesPath: 'css/theme/',
+
+            // Specifies if the transitions menu panel will be shown.
+            // Set to 'true' to show the transitions menu panel with
+            // the default transitions list. Alternatively, provide an
+            // array to specify the transitions to make available in
+            // the transitions panel, for example...
+            // ['None', 'Fade', 'Slide']
+            transitions: false,
+
+            // Adds a menu button to the slides to open the menu panel.
+            // Set to 'false' to hide the button.
+            openButton: true,
+
+            // If 'true' allows the slide number in the presentation to
+            // open the menu panel. The reveal.js slideNumber option must
+            // be displayed for this to take effect
+            openSlideNumber: false,
+
+            // If true allows the user to open and navigate the menu using
+            // the keyboard. Standard keyboard interaction with reveal
+            // will be disabled while the menu is open.
+            keyboard: true,
+
+            // Normally the menu will close on user actions such as
+            // selecting a menu item, or clicking the presentation area.
+            // If 'true', the sticky option will leave the menu open
+            // until it is explicitly closed, that is, using the close
+            // button or pressing the ESC or m key (when the keyboard
+            // interaction option is enabled).
+            sticky: false,
+
+            // If 'true' standard menu items will be automatically opened
+            // when navigating using the keyboard. Note: this only takes
+            // effect when both the 'keyboard' and 'sticky' options are enabled.
+            autoOpen: true,
+
+            // If 'true' the menu will not be created until it is explicitly
+            // requested by calling RevealMenu.init(). Note this will delay
+            // the creation of all menu panels, including custom panels, and
+            // the menu button.
+            delayInit: false,
+
+            // If 'true' the menu will be shown when the menu is initialised.
+            openOnInit: false,
+
+            // By default the menu will load it's own font-awesome library
+            // icons. If your presentation needs to load a different
+            // font-awesome library the 'loadIcons' option can be set to false
+            // and the menu will not attempt to load the font-awesome library.
+            loadIcons: true
+        },
+
+        dependencies: [
+            {
+                src: 'lib/reveal-plugins/markdown/marked.js', condition: function () {
+                    return !!document.querySelector('[data-markdown]');
+                }
+            },
+            {
+                src: 'lib/reveal-plugins/markdown/markdown.js', condition: function () {
+                    return !!document.querySelector('[data-markdown]');
+                }
+            },
+            {src: 'lib/reveal-plugins/highlight/highlight.js'},
+            {
+                src: 'lib/reveal-plugins/notes/notes.js', async: true, condition: function () {
+                    return !!document.body.classList;
+                }
+            },
+            {src: 'lib/reveal-plugins/zoom/zoom.js', async: true},
+            {src: 'lib/reveal-plugins/menu/menu.js', async: false}
+        ]
+    });
+</script>
+
+
+</body>
+</html>
