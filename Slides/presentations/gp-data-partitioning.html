@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html class="sl-root decks export offline loaded">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Greenplum Data Partititioning</title>
+
+
+    <link rel="stylesheet" type="text/css" href="lib/offline-v2.css">
+
+
+</head>
+<body class="reveal-viewport theme-font-montserrat theme-color-white-blue">
+<div class="reveal">
+    <div class="slides">
+        <section data-background-image="images/bg-green-pivotal-labs.png"
+                 data-background-position="0% 0%" data-id="b5e77bdfd6cd87387774d75ee43c04ed">
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 80px; top: 216px; height: auto;"
+                 data-block-id="ab3104e9b1e6bc4e8f0a6bd88df1dd65">
+                <div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text"
+                     style="z-index: 10;">
+                    <h1>Petabyte Scale Data Warehousing with Greenplum</h1>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 172px; top: 553px;"
+                 data-block-id="a259dfc26e26dd5009de6de7b5158e17">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 11; font-size: 150%;">
+                    <p>Partitioning</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 163px; top: 522px;"
+                 data-block-id="ce9537a5b9c5f2c35b49fd70e58e41f3">
+                <div class="sl-block-content" data-line-x1="-220" data-line-y1="170" data-line-x2="420"
+                     data-line-y2="170" data-line-color="#ffff00" data-line-start-type="none" data-line-end-type="none"
+                     style="z-index: 12;" data-line-width="10px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="640"
+                         height="1" viewbox="-220 170 640 1">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-220" y1="170" x2="420" y2="170"></line>
+                        <line stroke="#ffff00" stroke-width="10" x1="-220" y1="170" x2="420" y2="170"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 300px; height: 124px; left: 0px; top: 0px; min-width: 4px; min-height: 4px;"
+                 data-block-id="c943609a1b7f52e1a5d8968927288efd">
+                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="1814"
+                                                                        data-natural-height="751" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-dark.png">
+                </div>
+            </div>
+        </section>
+        <section data-id="a037a7e3cdb7a65c149ff404de4ee9c1">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="b4ea2b77282153441c9cd8e495e133dd">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Agenda</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="f4c9d6867d53a6a169c73c28dfadd3e5">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+
+            <div class="sl-block" data-block-type="text" data-block-id="f57da210718ef9794965dbf58cf8c726"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 960px; left: 0px; top: 168px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 15; text-align: left; line-height: 1.625;" dir="ui" data-has-line-height="">
+                    <ul>
+                        <li><span style="font-size:1.4em">Why partition a table?</span></li>
+                        <li><span style="font-size:1.4em">Difference between data <em><strong>distribution</strong></em> and data <strong><em>partitioning</em></strong></span>
+                        </li>
+                        <li><span style="font-size:1.4em">Partitioning strategies</span></li>
+                        <li><span style="font-size:1.4em">Loading partitioned tables</span></li>
+                        <li><span style="font-size:1.4em">Partitioning summary</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section data-id="5baa8518899ce9de792376ba550e541c">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="3e1770cd69658ee8a6c5031c7a0c2387">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Partitioning in Greenplum</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="318843bb0683619cc37caabba1933e00">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 9px; top: 178px;"
+                 data-block-id="012917792791e794c96cb5c27d814bba">
+                <a class="sl-block-style" style="z-index: 13;"
+                   href="https://www.postgresql.org/docs/9.1/static/ddl-partitioning.html" target="_blank">
+                    <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                         style="z-index: 13; text-align: left;">
+                        <ul>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>A mechanism for use in physical database design</p>
+                            </li>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>Increase the available options for improving the performance of a certain class of
+                                    queries</p>
+                            </li>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>Propagate data to the child tables</p>
+                            </li>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>GP partitioning is different than PostgreSQL partitioning</p>
+
+                                <ul>
+                                    <li style="color:rgb(0, 37, 62)">
+                                        <p><span><span style="color:rgb(0, 159, 223)">https://www.postgresql.org/docs/10/static/ddl-partitioning.html</span></span>
+                                        </p>
+                                    </li>
+                                    <li style="color:rgb(0, 37, 62)">
+                                        <p><span><span style="color:rgb(0, 159, 223)">https://www.postgresql.org/docs/9.1/static/ddl-partitioning.html</span></span>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </a>
+            </div>
+        </section>
+        <section data-id="7b4dfa7a6c25f40e221913308e51a076">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="91521d190da564b72af8eba80eeb66a5">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Why Partition a Table?</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="ce52f89ac68d95b19ca4e3131057e1cf">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 9px; top: 178px;"
+                 data-block-id="6d04273d37791fd3ad14095c3b99409c">
+                <a class="sl-block-style" style="z-index: 12;"
+                   href="https://www.postgresql.org/docs/9.1/static/ddl-partitioning.html" target="_blank">
+                    <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                         style="z-index: 12; text-align: left;">
+                        <ul>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>To more efficiently query a subset of a large data set</p>
+
+                                <ul>
+                                    <li style="color:rgb(0, 37, 62)">
+                                        <p>decrease query times by avoiding full table scans</p>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>To avoid the overhead and maintenance costs of an index</p>
+                            </li>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>To handle increasing volumes of data that the average query doesn't need</p>
+                            </li>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>Allow near instantaneous dropping of older data and simple addition of newer data</p>
+                            </li>
+                            <li style="color:rgb(0, 37, 62)">
+                                <p>Supports a rolling <em>N</em> periods methodology for archiving data</p>
+                            </li>
+                        </ul>
+                    </div>
+                </a>
+            </div>
+        </section>
+        <section data-id="958b7783a898aa93f54d654f99b1dc47">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="0d3cf417baa1e5174f28fb1b41730744">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Why Partition a Table?</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="0bdc441742172e1becccb00f92b50ffb">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                 data-block-id="8062041ec0dfa5491ec46faf2c48394d">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3><span style="color:#000000">A little more detail</span></h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 844px; left: 9px; top: 139px;"
+                 data-block-id="a3fa2c4dc325d19a144448f8da3af1d6">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 14; text-align: left;">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Partition elimination/pruning</p>
+
+                            <ul>
+                                <li style="color:rgb(0, 37, 62)">
+                                    <p>Only scan relevant data</p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p style="color:rgb(0, 37, 62)">Partition types are RANGE and LIST</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p style="color:rgb(0, 37, 62)">Distribution allocates rows to segments. In each segment,
+                                partitioning separates the rows into distinct files.</p>
+
+                            <ul>
+                                <li style="color:rgb(0, 37, 62)">
+                                    <p style="color:rgb(0, 37, 62)">Distribution + Partitioning = "Plaiding" of
+                                        data </p>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="0d64dbee583201507a09f2b9bc0f3be5"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 871px; left: 45px; top: 527px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 15; background-color: rgb(0, 135, 116); color: rgb(255, 255, 255);">
+                    <p style="text-align:left"><span style="font-size:1.0em"> Best Practice: Do not use multi-level partitioning</span>
+                    </p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 871px; left: 45px; top: 566px;"
+                 data-block-id="ac642118566addb6826db8c99d1b51b1">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 16; background-color: rgba(0, 0, 0, 0); color: rgb(0, 0, 0); border-style: solid; border-width: 2px; border-color: rgb(0, 135, 116);">
+                    <ul>
+                        <li style="text-align: left;"><span style="font-size:1.0em">Sub-partitions often have little to no data</span>
+                        </li>
+                        <li style="text-align: left;"><span style="font-size:1.0em">Most queries cannot take advantage of partition pruning</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 118px; height: 129px; left: 754px; top: 375px;"
+                 data-block-id="1e98167748d917be54d6e3031fc7cf14">
+                <div class="sl-block-content" style="z-index: 17;"><img
+                        style="left: -16px; top: -42px; width: 142px; height: 214px;" data-natural-width="1920"
+                        data-natural-height="2879" data-crop-x="0.115493" data-crop-y="0.195122"
+                        data-crop-width="0.828169" data-crop-height="0.602251" data-lazy-loaded="" alt="plaiding"
+                        data-src="images/plaiding.png"></div>
+            </div>
+        </section>
+        <section data-id="7622ae9f288dbadc9845cfeac8502279">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="c860059544677c1adef8ec161ba5e16c">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 17; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Partitioning Methods</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="9ca4f4adf0bf1c7082fa18a95f32c355">
+                <div class="sl-block-content" style="z-index: 18;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                 data-block-id="c0971b9f8c7795d0e61b99febcefd1ad">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 19; text-align: left; color: rgb(0, 135, 116);">
+                    <h3><span style="color:#000000">RANGE and LIST</span></h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 233px; height: 103px; left: 121px; top: 201px;"
+                 data-block-id="dceaaea550731cd0c3cbac9210ac592b">
+                <div class="sl-block-content" style="z-index: 20;"><img style="" data-natural-width="192"
+                                                                        data-natural-height="85" data-lazy-loaded=""
+                                                                        alt="disk-blue"
+                                                                        data-src="images/disk-blue.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 233px; height: 103px; left: 120px; top: 257px;"
+                 data-block-id="134b9a27abc1e9983011d4fd486109a4">
+                <div class="sl-block-content" style="z-index: 16;"><img style="" data-natural-width="192"
+                                                                        data-natural-height="85" data-lazy-loaded=""
+                                                                        alt="disk-blue"
+                                                                        data-src="images/disk-blue.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 233px; height: 103px; left: 120px; top: 313px;"
+                 data-block-id="866e9ac723497f33afe35d385fc481a8">
+                <div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="192"
+                                                                        data-natural-height="85" data-lazy-loaded=""
+                                                                        alt="disk-blue"
+                                                                        data-src="images/disk-blue.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 233px; height: 103px; left: 120px; top: 368px;"
+                 data-block-id="e9e0588af876ce04b63724a6303ac1c3">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="192"
+                                                                        data-natural-height="85" data-lazy-loaded=""
+                                                                        alt="disk-blue"
+                                                                        data-src="images/disk-blue.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 233px; height: 103px; left: 604px; top: 315px;"
+                 data-block-id="6551acf5f8fce482411d6023aaf35049">
+                <div class="sl-block-content" style="z-index: 21;"><img data-natural-width="192"
+                                                                        data-natural-height="85" style=""
+                                                                        data-lazy-loaded="" alt="disk-orange"
+                                                                        data-src="images/disk-orange.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 233px; height: 103px; left: 604px; top: 371px;"
+                 data-block-id="d157ee5181b253597adb659bcb24afa7">
+                <div class="sl-block-content" style="z-index: 13;"><img data-natural-width="192"
+                                                                        data-natural-height="85" style=""
+                                                                        data-lazy-loaded="" alt="disk-orange"
+                                                                        data-src="images/disk-orange.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 233px; height: 103px; left: 604px; top: 427px;"
+                 data-block-id="5f54c56fafc8f714661975a103f70df1">
+                <div class="sl-block-content" style="z-index: 12;"><img data-natural-width="192"
+                                                                        data-natural-height="85" style=""
+                                                                        data-lazy-loaded="" alt="disk-orange"
+                                                                        data-src="images/disk-orange.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="baa41823847445b3b6a6c60f75189f67"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 175px; left: 633px; top: 215px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 22; font-size: 200%; color: rgb(213, 141, 33);">
+                    <p>LIST</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 130px; top: 504px;"
+                 data-block-id="923f94e0fa7b3cd8208f90a894db69a6">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 23; color: rgb(60, 120, 216); font-size: 200%;">
+                    <p>RANGE</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 137px; top: 255px;"
+                 data-block-id="1c47c4fd523bcf47a7998fc0af6e442d">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 24; color: rgb(255, 255, 255);">
+                    <pre style="text-align: center;">JAN 2011</pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 137px; top: 313px;"
+                 data-block-id="4186abaed1e0a8bbb3fcabbc17e72f99">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 25; color: rgb(255, 255, 255);">
+                    <pre style="text-align: center;">FEB 2011</pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 137px; top: 368px;"
+                 data-block-id="386416858c5619363f7c48ba628857ed">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 26; color: rgb(255, 255, 255);">
+                    <pre style="text-align: center;">MAR 2011</pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 137px; top: 420px;"
+                 data-block-id="c03938a670d4416276401046429acdb8">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 27; color: rgb(255, 255, 255);">
+                    <pre style="text-align:center">APR 2011</pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape" data-block-id="bd3791d77c576bbdf1e76ee2b3c96ffb"
+                 style="min-width: 4px; min-height: 4px; width: 319px; height: 429px; left: 80px; top: 171px;">
+                <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgb(255, 242, 204)"
+                     data-shape-stretch="true" style="z-index: 11;" data-shape-stroke-color="#d58d21"
+                     data-shape-stroke-width="4px" data-shape-corner-radius="25px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                         preserveaspectratio="none" viewbox="0 0 319 429">
+                        <defs>
+                            <clippath id="shape-mask-4-1571244140690">
+                                <rect width="319" height="429" rx="25" ry="25"></rect>
+                            </clippath>
+                        </defs>
+                        <rect width="319" height="429" rx="25" ry="25" clip-path="url(#shape-mask-4-1571244140690)"
+                              class="shape-element" fill="rgb(255, 242, 204)" stroke="#d58d21" stroke-width="8"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape"
+                 style="min-width: 4px; min-height: 4px; width: 319px; height: 429px; left: 561px; top: 171px;"
+                 data-block-id="05351f080cc4ea6f4c661e15a26c25c9">
+                <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(60, 120, 216, 0.41)"
+                     data-shape-stretch="true" style="z-index: 10;" data-shape-stroke-color="#1c4587"
+                     data-shape-stroke-width="4px" data-shape-corner-radius="25px">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                         preserveaspectratio="none" viewbox="0 0 319 429">
+                        <defs>
+                            <clippath id="shape-mask-5-1571244258752">
+                                <rect width="319" height="429" rx="25" ry="25"></rect>
+                            </clippath>
+                        </defs>
+                        <rect width="319" height="429" rx="25" ry="25" clip-path="url(#shape-mask-5-1571244258752)"
+                              class="shape-element" fill="rgba(60, 120, 216, 0.41)" stroke="#1c4587"
+                              stroke-width="8"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 620px; top: 371px;"
+                 data-block-id="35831f4beb59a53b5567334a75fc74ee">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 28; color: rgb(60, 120, 216);">
+                    <pre style="text-align:center">EMEA</pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 620px; top: 427px;"
+                 data-block-id="1e30f53d4442d2161f97726d52325a8a">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 29; color: rgb(60, 120, 216);">
+                    <pre style="text-align:center">APAC</pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 201px; left: 620px; top: 479px;"
+                 data-block-id="8edd3c9c16d4e531e461d2288740862f">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 31; color: rgb(60, 120, 216);">
+                    <pre style="text-align:center">AMER</pre>
+                </div>
+            </div>
+        </section>
+        <section data-id="450eaffc7a4a0722556a0fd4643b677a">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="3251b5b1eb6101ef37b529b8437f8fcb">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 15; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>When do you partition?</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="04414d80fb308687e38fb012d7afde12">
+                <div class="sl-block-content" style="z-index: 16;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 163px; height: 161px; left: 29px; top: 144px;"
+                 data-block-id="66654d7319a9cae35569beaad7d1dda4">
+                <div class="sl-block-content" style="z-index: 17;"><img style="" data-natural-width="400"
+                                                                        data-natural-height="394" alt="table-ddl"
+                                                                        data-lazy-loaded=""
+                                                                        data-src="images/table-ddl.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape" data-block-id="eb6d88c375a920e04c1f6b50f65a261e"
+                 style="min-width: 4px; min-height: 4px; width: 327px; height: 209px; left: 10px; top: 124px;">
+                <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(213, 141, 33, 0.5)"
+                     data-shape-stretch="true" style="z-index: 14;">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                         preserveaspectratio="none" viewbox="0 0 327 209">
+                        <rect width="327" height="209" rx="0" ry="0" class="shape-element"
+                              fill="rgba(213, 141, 33, 0.5)"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="713728dd191593c4c4d4aa70ad27d262"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 126px; left: 205px; top: 166px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 18; color: rgb(0, 135, 116);">
+                    <p>Large fact table</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 174px; height: 137px; left: 418px; top: 237px;"
+                 data-block-id="28341664252adcb1353712809ff315e2">
+                <div class="sl-block-content" style="z-index: 19;"><img
+                        style="left: 0px; top: -37px; width: 174px; height: 174px;" data-natural-width="256"
+                        data-natural-height="256" alt="performance-chart" data-crop-x="0" data-crop-y="0.212644"
+                        data-crop-width="1" data-crop-height="0.787356" data-lazy-loaded=""
+                        data-src="images/performance-chart.png"></div>
+            </div>
+            <div class="sl-block" data-block-type="shape"
+                 style="min-width: 4px; min-height: 4px; width: 209px; height: 238px; left: 400px; top: 144px;"
+                 data-block-id="0559561f769d1cb962dc7542b93b9c97">
+                <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(213, 141, 33, 0.5)"
+                     data-shape-stretch="true" style="z-index: 13;">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                         preserveaspectratio="none" viewbox="0 0 209 238">
+                        <rect width="209" height="238" rx="0" ry="0" class="shape-element"
+                              fill="rgba(213, 141, 33, 0.5)"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 209px; left: 400px; top: 144px;"
+                 data-block-id="424afd7f8e8ccb4cd6c3ea1688d9b29e">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 20; color: rgb(0, 135, 116);">
+                    <p>Performance issues</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 181px; height: 168px; left: 192px; top: 399px;"
+                 data-block-id="62e8a31af8bf4d12c36c8b5a3c4ddeda">
+                <div class="sl-block-content" style="z-index: 21;"><img style="" data-natural-width="355"
+                                                                        data-natural-height="330" alt="3x3-grid"
+                                                                        data-lazy-loaded=""
+                                                                        data-src="images/3x3-grid.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape"
+                 style="min-width: 4px; min-height: 4px; width: 370px; height: 177px; left: 10px; top: 399px;"
+                 data-block-id="2fb05cfbcc7d9b18beebb1e09a7ba0d2">
+                <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(213, 141, 33, 0.5)"
+                     data-shape-stretch="true" style="z-index: 12;">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                         preserveaspectratio="none" viewbox="0 0 370 177">
+                        <rect width="370" height="177" rx="0" ry="0" class="shape-element"
+                              fill="rgba(213, 141, 33, 0.5)"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 182px; left: 10px; top: 424px;"
+                 data-block-id="9ff8c170696cc9f3964255b4d69d1323">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 22; color: rgb(0, 135, 116);">
+                    <p>Identifiable access patterns</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 183px; height: 191px; left: 729px; top: 200px;"
+                 data-block-id="5c0f8ad8866210d3483daeca31876643">
+                <div class="sl-block-content" style="z-index: 24;"><img style="" data-natural-width="244"
+                                                                        data-natural-height="254" data-lazy-loaded=""
+                                                                        alt="balanced-names-data"
+                                                                        data-src="images/balanced-names.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 158px; left: 742px; top: 399px;"
+                 data-block-id="f0a1842fd15c9562c32c6ad1e7a6ca64">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 25; color: rgb(0, 135, 116);">
+                    <p>Data divides evenly</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape"
+                 style="min-width: 4px; min-height: 4px; width: 209px; height: 341px; left: 716px; top: 186px;"
+                 data-block-id="485a7f60bd8120162913d3d12d6fab26">
+                <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(213, 141, 33, 0.5)"
+                     data-shape-stretch="true" style="z-index: 11;">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                         preserveaspectratio="none" viewbox="0 0 209 341">
+                        <rect width="209" height="341" rx="0" ry="0" class="shape-element"
+                              fill="rgba(213, 141, 33, 0.5)"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 224px; height: 104px; left: 437px; top: 423px;"
+                 data-block-id="bdfa5c455fc1df3f75042f9f48f3cc4a">
+                <div class="sl-block-content" style="z-index: 26;"><img data-natural-width="317"
+                                                                        data-natural-height="147" style=""
+                                                                        alt="rolling-data" data-lazy-loaded=""
+                                                                        data-src="images/rolling-data.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="shape"
+                 style="min-width: 4px; min-height: 4px; width: 263px; height: 235px; left: 418px; top: 413px;"
+                 data-block-id="30bf5591af3cc1228c74d746864d6287">
+                <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgba(213, 141, 33, 0.5)"
+                     data-shape-stretch="true" style="z-index: 10;">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+                         preserveaspectratio="none" viewbox="0 0 263 235">
+                        <rect width="263" height="235" rx="0" ry="0" class="shape-element"
+                              fill="rgba(213, 141, 33, 0.5)"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 231px; left: 434px; top: 554px;"
+                 data-block-id="d94ac8205067bcc8e0af2ebee78fc426">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 27; color: rgb(0, 135, 116);">
+                    <p>Maintaining rolling data</p>
+                </div>
+            </div>
+        </section>
+        <section data-id="bee2f820e08929fcd48ad0533f427b6b">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="35099cdaf3e7eaa1260a073bebf2e148">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Historical Data Maintenance</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="2b3070e490e390c3c20a096c86cc051f">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                 data-block-id="59e61f0091307d2042d5ae9220b7087b">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3><span style="color:#000000">Partition Management</span></h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 764px; height: 480px; left: 98px; top: 199px;"
+                 data-block-id="c805f9cea05346b6e27863ec4d77fb2d">
+                <div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="870"
+                                                                        data-natural-height="547" alt="rolling-data"
+                                                                        data-lazy-loaded=""
+                                                                        data-src="images/rolling-data-large.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="d37c8d917ac1ebcec5635a63faaca284"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 250px; left: 70px; top: 199px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 15;">
+                    <p>Previous Month</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 136px; left: 800px; top: 345px;"
+                 data-block-id="b6acbc965a2718945b187e3f6bcfdce8">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 16;">
+                    <p>Deep History</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="67b205edc24ce4ec0629050b8f9068d9"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 204px; left: 387px; top: 373px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 17; background-color: rgba(0, 0, 0, 0); color: rgb(255, 255, 0);">
+                    <p>Rolling 13 months</p>
+                </div>
+            </div>
+        </section>
+        <section class="stack" data-id="084dc914ab3f70054b3b7afb0e276f16">
+            <section data-id="daa31dc0cd23adf82db9e6d562250318">
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                     data-block-id="389bd0abc41407872ffb81c1c599985c">
+                    <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                         style="z-index: 10; text-align: left; color: rgb(0, 135, 116); font-size: 90%;">
+                        <h2>Partitioned Table - DATE RANGE</h2>
+                    </div>
+                </div>
+                <div class="sl-block" data-block-type="image"
+                     style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                     data-block-id="822a3ee081192f36318c31a31fe272f8">
+                    <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                            data-natural-height="375"
+                                                                            data-lazy-loaded=""
+                                                                            data-src="images/logos/logo-pivotal-on-light.png">
+                    </div>
+                </div>
+
+                <div class="sl-block" data-block-type="code" data-block-id="8c89ada186797993afd0d1844fe3f29d"
+                     style="min-width: 30px; min-height: 30px; width: 909px; height: 504px; left: 26px; top: 144px;">
+                    <div class="sl-block-content notranslate" data-highlight-theme="solarized-light"
+                         data-code-frame="none"
+                         style="z-index: 12; font-size: 196%; border-style: solid; border-width: 1px;"><pre><code
+                            data-line-numbers="7-13">CREATE TABLE sales(
+    id int, 
+    sales_date date, 
+    amt decimal(10,2)
+)
+DISTRIBUTED BY (id)
+PARTITION BY RANGE (sales_date)
+( PARTITION Jan18 START (date '2018-01-01') INCLUSIVE ,
+  PARTITION Feb18 START (date '2018-02-01') INCLUSIVE ,
+  PARTITION Mar18 START (date '2018-03-01') INCLUSIVE ,
+  …
+  PARTITION Dec18 START (date '2018-12-01') INCLUSIVE
+  END (date '2019-01-01') EXCLUSIVE );</code></pre>
+                    </div>
+                </div>
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 66px; height: auto;"
+                     data-block-id="b53926897dade7178c367cf9b8c9335c">
+                    <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                         style="z-index: 14; text-align: left; color: rgb(0, 135, 116);">
+                        <h3><span style="color:#000000">Naming each partition</span></h3>
+                    </div>
+                </div>
+            </section>
+            <section data-id="6d9a59a5b452baef92fde3b7c106aa14" data-transition="concave">
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                     data-block-id="5b1e1d0594ed9b8326ff762aacf324e8">
+                    <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                         style="z-index: 10; text-align: left; color: rgb(0, 135, 116); font-size: 90%;">
+                        <h2>Partitioned Table - DATE RANGE</h2>
+                    </div>
+                </div>
+                <div class="sl-block" data-block-type="image"
+                     style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                     data-block-id="2aa787c48cc27c9581c2cec9fe3b9472">
+                    <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                            data-natural-height="375"
+                                                                            data-lazy-loaded=""
+                                                                            data-src="images/logos/logo-pivotal-on-light.png">
+                    </div>
+                </div>
+
+                <div class="sl-block" data-block-type="code" style="width: 960px; height: 504px; left: 0px; top: 144px;"
+                     data-block-id="588749109722a5dc0a51318b8302c81d">
+                    <div class="sl-block-content notranslate" data-highlight-theme="solarized-light"
+                         data-code-frame="none"
+                         style="z-index: 12; font-size: 196%; border-style: solid; border-width: 1px;"><pre><code
+                            data-line-numbers="7-13">CREATE TABLE sales(
+    id int, 
+    sales_date date, 
+    amt decimal(10,2)
+)
+DISTRIBUTED BY (id)
+PARTITION BY RANGE (sales_date)
+( PARTITION pre    END   ('2000-01-01'::date),
+  PARTITION yearly START ('2000-01-01'::date)
+                   END   ('2020-01-01')
+                   EVERY ('1 year'::INTERVAL),
+  PARTITION post   START ('2020-01-01'::date)
+);</code></pre>
+                    </div>
+                </div>
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 66px; height: auto;"
+                     data-block-id="c847c09465f175177dd681b57980abb7">
+                    <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                         style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                        <h3><span style="color:#000000">Auto-naming with INTERVAL</span></h3>
+                    </div>
+                </div>
+            </section>
+        </section>
+        <section data-id="2415da7d0c0aba811d8c481fb334f979">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="8b8e889145906d0aecdc7ea0c48ad3d7">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116); font-size: 90%;">
+                    <h2>Partition Table - NUMERIC RANGE</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="776bbd4af13f501dc74f3d59cc28484d">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="code" style="width: 589px; height: 504px; left: 51px; top: 144px;"
+                 data-block-id="34ad21c9cb24bbc1a8c92d52ff1fd437">
+                <div class="sl-block-content notranslate" data-highlight-theme="solarized-light" data-code-frame="none"
+                     style="z-index: 12; font-size: 196%; border-style: solid; border-width: 1px;"><pre><code
+                        data-line-numbers="9-11|12" data-fragment-index="1">CREATE TABLE ranking(
+    id     int, 
+    rank   int, 
+    yr     int,
+    gender char(1)
+)
+DISTRIBUTED BY (id)
+PARTITION BY RANGE (yr)
+( START (2011)
+  END   (2021)
+  EVERY 1,
+  DEFAULT PARTITION extra
+);</code></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 66px; height: auto;"
+                 data-block-id="439e992ec5f5bc69c85c4b22081a84e1">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3><span style="color:#000000">Auto-naming and DEFAULT PARTITION</span></h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="7dda5793b18b4c6eac13b5cca16062c9"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 320px; left: 640px; top: 177px;">
+                <div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 14;" data-fragment-index="0">
+                    <p>How many partitions will be created on each segment?</p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 320px; left: 640px; top: 504px;"
+                 data-block-id="9bc4c03eda99f32c54918ce6f750d7d7">
+                <div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 16;" data-fragment-index="1">
+                    <p>DEFAULT PARTITION:</p>
+
+                    <p>Good or bad idea?</p>
+                </div>
+            </div>
+        </section>
+        <section data-id="8bbde8a4a9be0e6f8870916bd5083252">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="a0d417ffe8ede17e9d8efbb659933b1b">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116); font-size: 90%;">
+                    <h2>Partition Table - LIST</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="034a8a76047072b01135b17aed58955f">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="code" style="width: 960px; height: 432px; left: 0px; top: 144px;"
+                 data-block-id="730ccf090d066dbbe6f576d25cd8500b">
+                <div class="sl-block-content notranslate" data-highlight-theme="solarized-light" data-code-frame="none"
+                     style="z-index: 13; font-size: 150%; border-style: solid; border-width: 1px;"><pre><code
+                        data-fragment-index="0" data-line-numbers="8-13">CREATE TABLE widgits_staging (
+    id int, 
+    w_name varchar, 
+    ..., 
+    state char(2)
+)
+DISTRIBUTED BY (id)
+PARTITION BY LIST (state)
+( PARTITION NE   VALUES ('ME','NH','VT','MA','RI','CT'),
+  PARTITION MidA VALUES ('NY','NJ','PA','DE','MD','DC'),
+   ...
+  PARTITION West VALUES ('CA','OR','WA','AK','HI'),
+  DEFAULT PARTITION
+);</code></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 66px; height: auto;"
+                 data-block-id="62b5e051dc9c32a267586dde7403a0ea">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 14; text-align: left; color: rgb(0, 135, 116);">
+                    <h3><span style="color:#000000">LIST Example with DEFAULT PARTITION</span></h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="line" data-block-id="2bb93e01cacf5e711df5837f7a12b0cd"
+                 style="width: auto; height: auto; min-width: 1px; min-height: 1px; left: 290px; top: 528px;">
+                <div class="sl-block-content fragment" data-line-x1="-90" data-line-y1="268" data-line-x2="-16"
+                     data-line-y2="335" data-line-color="#000000" data-line-start-type="line-arrow"
+                     data-line-end-type="none" style="z-index: 15;" data-line-width="5px" data-fragment-index="0">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="74"
+                         height="67" viewbox="-90 268 74 67">
+                        <line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-86.5" y1="271.5" x2="-15.5"
+                              y2="335.5"></line>
+                        <line stroke="#000000" stroke-width="5" x1="-86.5" y1="271.5" x2="-15.5" y2="335.5"></line>
+                        <path style="fill: rgba(0,0,0,0);" stroke="#000000" stroke-width="5"
+                              transform="translate(-87,271) rotate(132.158)"
+                              d="M -11.25 -11.25 L 0 0 L 11.25 -11.25"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="0607d6077ce835273be97b29cb49c34e"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 496px; left: 364px; top: 595px;">
+                <div class="sl-block-content fragment" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 16;" data-fragment-index="0">
+                    <p>Might be a good idea here. Why?</p>
+                </div>
+            </div>
+        </section>
+        <section data-id="975ce1cc248486c6f05fabe7a8eff781">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="d63456c50aeb7f30e5bffab2625dd3b5">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Partitioning an Existing Table</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="1baa81c6f4d6dae35decf6e502244b83">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                 data-block-id="15c9cf3f6208d8c0d981ace899c1df1f">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 13; text-align: left; color: rgb(0, 135, 116);">
+                    <h3><span style="color:#000000">How is it done?</span></h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" data-block-id="c148f0864dd8311097129bbe5810db2e"
+                 style="min-width: 30px; min-height: 30px; width: 282px; height: 138px; left: 11px; top: 193px;">
+                <div class="sl-block-content notranslate fragment" data-highlight-theme="solarized-light"
+                     data-code-frame="none" style="z-index: 14; border-style: solid; border-width: 1px;"
+                     data-fragment-index="0"><pre><code>orders TABLE:
+
+order_id    int,
+order_date  date,
+order_amt   numeric(8,2),
+...</code></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" data-block-id="5fdb2733feaa172ebd973f8efee00709"
+                 style="min-width: 30px; min-height: 30px; width: 436px; height: 191px; left: 373px; top: 169px;">
+                <div class="sl-block-content notranslate fragment" data-highlight-theme="solarized-light"
+                     data-code-frame="none" style="z-index: 15; border-style: solid; border-width: 1px;"
+                     data-fragment-index="1"><pre><code data-line-numbers="">CREATE TABLE orders_partitioned (
+    LIKE orders
+)
+DISTRIBUTED BY (order_num)
+PARTITION BY RANGE (order_date)
+( START ('01/01/2000'::date)
+  END   ('12/31/2025'::date) INCLUSIVE
+  EVERY 1 month
+);
+</code></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" data-block-id="5059eae7abd563dc33a1c35d9f761813"
+                 style="min-width: 30px; min-height: 30px; width: 533px; height: 210px; left: 373px; top: 399px;">
+                <div class="sl-block-content notranslate fragment" data-highlight-theme="obsidian"
+                     data-code-frame="none" style="z-index: 16;" data-fragment-index="2"><pre><code>INSERT INTO orders_partitioned SELECT * FROM orders;
+
+ALTER TABLE orders RENAME to orders_old;
+ALTER TABLE orders_partitioned RENAME to orders;
+
+/* verify data transfer and drop orders_old table */
+
+GRANT ... TO orders;
+...</code></pre>
+                </div>
+            </div>
+        </section>
+        <section data-id="acc5ab40601c08aa4ac8621daa0fb4ca">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="a218dbca61c4044d3a6b4d103707fa9c">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Partition Maintenance</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="28b6310a9f385d34e337ccada9ed1956">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 9px; top: 178px;"
+                 data-block-id="9a50db76cb6ede90f0381c711e1e68f8">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 13; text-align: left;" dir="ui">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Add, Rename, Truncate, Remove</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Exchange</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" data-block-id="cd2f32fcde05ba44f25d3279a1f0e8bd"
+                 style="min-width: 30px; min-height: 30px; width: 861px; height: 129px; left: 38px; top: 296px;">
+                <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
+                     style="z-index: 14;"><pre><code data-line-numbers="6">/* Table 'sales_cm' contains sales data for the current month */
+/* At the end of the month, add it to sales_history table */
+ALTER TABLE sales_cm RENAME to jan18;
+CREATE TABLE sales_cm (like sales_history) DISTRIBUTED BY ...;
+
+ALTER TABLE sales_history EXCHANGE PARTITION FOR ('2018-01-01') WITH TABLE jan18;</code></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 9px; top: 432px;"
+                 data-block-id="b6072b14382c5915019c579c227f429f">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 15; text-align: left;" dir="ui">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Split existing partition</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" data-block-id="56aa2525c712768f7707faca4dda7488"
+                 style="min-width: 30px; min-height: 30px; width: 842px; height: 71px; left: 38px; top: 479px;">
+                <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
+                     style="z-index: 16;"><pre><code data-line-numbers="">ALTER TABLE sales_history SPLIT PARTITION FOR ('2018-01-01')
+AT ('2018-01-16')
+INTO (PARTITION jan181to15, PARTITION jan1816to31);</code></pre>
+                </div>
+            </div>
+        </section>
+        <section data-id="0416588ac07f9f0dd528ab8da3c239ef">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="d04a04cbc3275a12195ae6042f125d64">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Partition Table Details</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="69a886e1823d3d3185cf0434f9e3a52e">
+                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="code" style="width: 575px; height: 269px; left: 0px; top: 105px;"
+                 data-block-id="3850539a88580383b927cf75510323f2">
+                <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
+                     style="z-index: 13; font-size: 90%; border-style: solid; border-width: 1px;"><pre><code
+                        data-line-numbers="1,10-12,15">\d+ rankings
+                    Table "public.rankings"
+ Column |     Type     | Modifiers | Storage  | Description
+--------+--------------+-----------+----------+-------------
+ id     | integer      |           | plain    |
+ rank   | integer      |           | plain    |
+ year   | integer      |           | plain    |
+ gender | character(1) |           | extended |
+ count  | integer      |           | plain    |
+Child tables: rankings_1_prt_boys,
+              rankings_1_prt_girls,
+              rankings_1_prt_other
+Has OIDs: no
+Distributed by: (id)
+Partition by: (gender)</code></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" data-block-id="152ef6989667175ada8a0ecfb88c0b38"
+                 style="min-width: 30px; min-height: 30px; width: 783px; height: 287px; left: 177px; top: 383px;">
+                <div class="sl-block-content notranslate" data-highlight-theme="solarized-light" data-code-frame="none"
+                     style="z-index: 14; font-size: 90%; border-style: solid; border-width: 1px;"><pre><code
+                        data-line-numbers="3,7-9,12,15">select partitiontablename as "Table", partitionboundary as "Boundaries",
+       partitiontype as "PartType", partitionlistvalues as "PartValues"
+from pg_partitions where tablename = 'rankings';
+       
+        Table         |         Boundaries          | PartType |    PartValues
+----------------------+-----------------------------+----------+-------------------
+ rankings_1_prt_boys  | PARTITION boys VALUES('M')  | list     | 'M'::character(1)
+ rankings_1_prt_girls | PARTITION girls VALUES('F') | list     | 'F'::character(1)
+ rankings_1_prt_other | DEFAULT PARTITION other     | list     |
+(3 rows)
+
+select * from pg_partition_columns where tablename = 'rankings';
+ schemaname | tablename | columnname | partitionlevel | position_in_partition_key
+------------+-----------+------------+----------------+---------------------------
+ public     | rankings  | gender     |              0 |                         1
+(1 row)</code></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" data-block-id="6f429bc70b9eb5d444fc7b7ebcd0707d"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 193px; left: 575px; top: 104px;">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 15; border-style: solid; border-width: 1px;">
+                    <p><span style="font-size:0.9em">Parent-child details</span></p>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 334px; left: 626px; top: 225px;"
+                 data-block-id="0820c8c7075131c3e40255f8b4f867f6">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 16; border-style: solid; border-width: 1px;">
+                    <p><span
+                            style="font-size:0.9em">Further details from <em><strong>pg_partitions</strong></em> and <em><strong>pg_partition_columns</strong></em> catalog views</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+        <section data-id="3bfef300a659b9b0ebd64af6539b5ce6">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="00af5b2a7cecffc8176bdf0973116e06">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Partition Table Loading</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="2ed3a5b54f7f43b035353f72b97a1bcc">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 9px; top: 178px;"
+                 data-block-id="da6033ed7b4fdc5cb920eca9c2717c65">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 13; text-align: left;">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Top level, parent tables are empty</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Data is loaded into child partitions</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>COPY or INSERT automatically load data to the correct partition</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Load a staging table and swap the table in place of an existing partition</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section data-id="215c07180e715330f7280200304c0d35">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="b5cf88b809861859bf2c86159db0e739">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>Partition Table Summary</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
+                 data-block-id="9072bc480f41a50f218f0848f29720a7">
+                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
+                                                                        data-natural-height="375" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                </div>
+            </div>
+
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 17px; top: 144px;"
+                 data-block-id="a93e141e2ad5f8e7ce1f621689f9d270">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 12; text-align: left;">
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p><strong><span
+                                    style="color:#FF0000">Never distribute and partition on the same column!</span></strong>
+                            </p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Do not use multi-level partitioning (sub-partitions) unless absolutely necessary</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Use partitioning on large tables to improve performance</p>
+
+                            <ul>
+                                <li style="color:rgb(0, 37, 62)">
+                                    <p>Used in addition to, not in place of, distribution</p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p style="color:rgb(0, 37, 62)">Use if the table can be divided into roughly equal parts
+                                based on the partitioning key</p>
+
+                            <ul>
+                                <li style="color:rgb(0, 37, 62)">
+                                    <p style="color:rgb(0, 37, 62)">RANGE partitioning on DATE</p>
+                                </li>
+                                <li style="color:rgb(0, 37, 62)">
+                                    <p style="color:rgb(0, 37, 62)">No overlapping ranges or duplicate values</p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p style="color:rgb(0, 37, 62)">Partitioning benefits filtering (WHERE clause)</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p style="color:rgb(0, 37, 62)">Avoid DEFAULT PARTITION if possible</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section data-background-image="images/bg-green-pivotal-labs.png"
+                 data-background-position="0% 0%" data-id="901613e30c895ab96c32c26c2750cda6">
+
+
+            <div class="sl-block" data-block-type="image"
+                 style="width: 300px; height: 124px; left: 0px; top: 0px; min-width: 4px; min-height: 4px;"
+                 data-block-id="03b99e5c2dc9b590980f3f0b196b80ec">
+                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="1814"
+                                                                        data-natural-height="751" data-lazy-loaded=""
+                                                                        data-src="images/logos/logo-pivotal-on-dark.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 806px; left: 80px; top: 216px; height: auto;"
+                 data-block-id="b6567627fbcc772e2eb51760cb763da3">
+                <div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text"
+                     style="z-index: 14;">
+                    <h1>Petabyte Scale Data Warehousing with Greenplum</h1>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    var SLConfig = {
+        "deck": {
+            "id": 1624472,
+            "slug": "gp-data-partitioning",
+            "title": "Greenplum Data Partitioning",
+            "description": "",
+            "width": 960,
+            "height": 720,
+            "visibility": "self",
+            "published_at": null,
+            "sanitize_messages": null,
+            "thumbnail_url": "https://s3.amazonaws.com/media-p.slid.es/thumbnails/5c38dbb3bbba2e31c3c1b928cb6830d7/thumb.jpg?1571164864",
+            "view_count": 0,
+            "user": {
+                "id": 1134143,
+                "username": "csylvester",
+                "name": "Craig Sylvester",
+                "description": "Pivotal Data Engineer - Federal Division",
+                "thumbnail_url": "https://www.gravatar.com/avatar/d2436491e8c9292c895eebad673e3837?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png",
+                "paid": true,
+                "pro": true,
+                "lite": false,
+                "team_id": null,
+                "settings": {
+                    "id": 3868303,
+                    "present_controls": true,
+                    "present_upsizing": true,
+                    "present_pointer": false,
+                    "present_notes": true,
+                    "default_deck_tag_id": null
+                }
+            },
+            "background_transition": "slide",
+            "transition": "slide",
+            "theme_id": null,
+            "theme_font": "montserrat",
+            "theme_color": "white-blue",
+            "auto_slide_interval": 0,
+            "comments_enabled": true,
+            "forking_enabled": false,
+            "rolling_links": false,
+            "center": false,
+            "shuffle": false,
+            "should_loop": false,
+            "share_notes": false,
+            "slide_number": false,
+            "slide_count": 19,
+            "rtl": false,
+            "version": 2,
+            "collaborative": false,
+            "deck_user_editor_limit": 3,
+            "data_updated_at": 1571338814509,
+            "font_typekit": null,
+            "font_google": null,
+            "time_limit": null,
+            "upsizing_enabled": true,
+            "notes": {
+                "5baa8518899ce9de792376ba550e541c": "Table partitioning is used to logically divide large tables to improve query performance and facilitate data warehouse maintenance tasks.\nAll structure of the parent table propagates to its children through table inheritance.\nIt is important to keep in mind that parent tables contain no data; all data is stored at the child table level.\nIf you create an index on the table, you will be implicitly creating an index on each of the child tables (the partitions).\nIt is also possible to create an index on the individual partitions.",
+                "7b4dfa7a6c25f40e221913308e51a076": "While Greenplum is not afraid of full table scans, it is a good idea to partition your table to help Greenplum process the table as efficiently as possible.\nHowever, your business rules should dictate if and how you partition tables.\n\nThe following are some of the reasons for considering table partition as part of the design:\n- Provide more efficiency in querying against a subset of large volumes of transactional detail data as well as to manage this data more effectively. Businesses have recognized the analytic value of detailed transactions and are storing larger and larger volumes of this data.\n- Increase query efficiency by avoiding full table scans.\n- Without the overhead and maintenance costs of an index for date.\n- As the retention volume of detailed transactions increases, the percent of transactions that the “average” query requires for execution decreases.\n- Allow the instantaneous dropping of old data and the simple addition of newer data that may be queried more often. One of the practical uses of partitioned tables is partition swapping or partition exchanging. This practice allows you to load data to a table and replace an existing table with the same data plus the updated information with little impact to the original table.\n- Support a rolling n periods methodology for transactional data. \n\nYou can have default partitions that act as a catchall. This allows you to insert rows without having to worry about a partition. Later, you can alter the table to split the partition with the values that you want to go to the partitioned table.",
+                "d0b3795b6647fccb1d37f68177e24f79": "",
+                "958b7783a898aa93f54d654f99b1dc47": "Table partitioning may be used to improve query performance by scanning only the relevant data needed to satisfy a given query. Table partitioning does not affect the physical distribution of data. GP supports both range partitioning or list partitioning.  Range partitioning partitions the data based on a numerical range, for example by date, while list partitioning partitions the data based on a list of values, for example location (store, city, state, region). Partitioning using a combination of range partitioning and list partitioning is also supported.  Table partitioning is implemented using table inheritance and constraints. Check constraints limit the data a table can contain based on some defining criteria. These constraints are also used at runtime to determine which child tables to scan in order to satisfy a given query.",
+                "7622ae9f288dbadc9845cfeac8502279": "Greenplum Database supports:\n- Range partitioning, where the data used for partitioning is based on a numerical range, such as date or price.\n- List partitioning, where data used for partitioning is based on a list of values, such as a region.\n- A combination of range and list partitioning.\n",
+                "450eaffc7a4a0722556a0fd4643b677a": "There are several reasons why you would partition your data:\n- Large fact table – Large fact tables are good candidates for table partitioning. If you have billions of rows in a table, you will see performance benefits from breaking that data up into smaller chunks. For smaller tables, avoid partitioning.\n- Unsatisfactory performance – As with any performance tuning initiative, a table should be partitioned only if queries against that table are producing slower response times than desired.\n- Identifiable access patterns – Examine the WHERE clauses of your query workload and look for table columns that are consistently used to access data. For example, if most of your queries look up records by date, then date range based partitioning design might be beneficial.\n- Maintaining rolling data – as discussed earlier, partitioning provides great ILM benefits.\n- Dividing data into equal parts – Choose a partitioning criteria that will divide your data as evenly as possible.  For example, by dividing a large table into 10 partitions of equal size, you should see a 10x speedup for queries having predicates which restrict them to scanning a single partition.",
+                "a037a7e3cdb7a65c149ff404de4ee9c1": "",
+                "b5e77bdfd6cd87387774d75ee43c04ed": "",
+                "bee2f820e08929fcd48ad0533f427b6b": "Let’s begin by considering how table partitioning, combined with a couple of other GPDB storage features, provides a powerful Information Lifecycle Management, or “ILM”, solution.  This example shows a large, partitioned, fact table, tracking transactions back to January 2000.  The current month is “live”, and its data is stored in a row-oriented partition, which is defined on a tablespace which links to an SSD-based filespace.  Queries against this partition are extremely responsive, and may include INSERT, UPDATE, and DELETE, in addition to SELECT.  The previous month’s data, along with data going back on year, is housed within Append-Optimized, columnar partitions, defined within a tablespace tied to SAS disks.  This portion of the data is optimized for the type of reports the organization needs to run against data for the past year.  Older, “deep history” data, is stored on an adjacent Hadoop cluster, within a partition defined as an external table, using the “gphdfs” protocol.  When a query’s date range includes endpoints spanning any of these time periods, the relevant data is automatically scanned.\n\nThis is the power available through table partitioning.",
+                "daa31dc0cd23adf82db9e6d562250318": "You can define a date range or a numeric range for a partitioned table:\n- A date range uses a single date or timestamp column as the partition key column.\n- When date partitioning a table, consider partitioning by the most granular level you are interested in. For example, partition by day and have 365 daily partitions, rather than partitioning by year, then subpartitioning by month, then subpartitioning by day.\n- You can have Greenplum automatically generate partitions by giving a START value, an END value, and an EVERY clause that defines the partition increment value.\nBy default, START values are always inclusive and END values are always exclusive.\nNote: You can declare and name each partition individually.",
+                "2415da7d0c0aba811d8c481fb334f979": "A numeric range uses a single numeric data type column as the partition key column\n\nCaveat: try to avoid using DEFAULT PARTITION\n- it is always scanned\n- in certain cases can contain far more data than expected",
+                "8bbde8a4a9be0e6f8870916bd5083252": "In our example here, we have included a default partition. While generally I would avoid using DEFAULT, for list partitioning it sometimes makes sense. Especially for staging tables or tables used to load data into. \nData is often messy and bad values may be in the partition field. Remember we can catch rows with bad data when we use COPY or gpfdist with external tables. But we would still need to interrogate the bad rows, fix the problem, and reload those rows. Alternatively, we could set up a DEFAULT PARTITION, load the data, and then filter and fix the data during the transformation into production tables.",
+                "975ce1cc248486c6f05fabe7a8eff781": "It is not possible to partition a table that has already been created. Tables can only be partitioned at CREATE TABLE time.\nTo partition an existing table, you must:\n- Recreate the table as a partitioned table.\n- Load the data into the newly partitioned table.\n- Rename the new partitioned table to the original name and drop the original table.\n- Grant any table permissions to the new table that were granted on the original table.\n",
+                "acc5ab40601c08aa4ac8621daa0fb4ca": "",
+                "0416588ac07f9f0dd528ab8da3c239ef": "Some partition information can be obtained by using the \\d+ PSQL meta-command. All child tables are displayed by their names. \n\nYou can obtain additional information from the pg_partitions view.\n\nThe pg_partition_columns view displays the column(s) used for partitioning.",
+                "3bfef300a659b9b0ebd64af6539b5ce6": "With partitioned table structure, top-level parent tables are empty. Data is routed to the bottom-level child table partitions. COPY or INSERT automatically loads to the correct partition. Best practice for loading data into partitioned tables is to create an intermediate staging table, load it, and then exchange it into your partition table. You can exchange partitions only at the lowest level of your partition hierarchy. Rows that cannot be mapped to a child table partition are rejected and the load fails. \nTo avoid unmapped rows being rejected at load time, define your partition hierarchy with a DEFAULT partition. Any rows that do not match a partition’s CHECK constraints load into the DEFAULT partition.\nThe DEFAULT partition is always scanned and can slow down the overall scan time.",
+                "215c07180e715330f7280200304c0d35": "",
+                "6d9a59a5b452baef92fde3b7c106aa14": "",
+                "901613e30c895ab96c32c26c2750cda6": ""
+            }
+        }
+    };
+
+
+    // Use local fonts
+    SLConfig.fonts_url = 'lib/fonts/';
+</script>
+
+<script src="lib/reveal.min.js"></script>
+<script src="lib/offline.js"></script>
+
+<!-- Initialize the presentation -->
+<script>
+    Reveal.initialize({
+        width: 960,
+        height: 720,
+        margin: 0.05,
+
+
+        hash: true,
+        controls: true,
+        progress: true,
+        mouseWheel: false,
+        showNotes: false,
+        slideNumber: false,
+
+        autoSlide: 0,
+        autoSlideStoppable: true,
+
+        center: false,
+        shuffle: false,
+        loop: false,
+        rtl: false,
+
+        transition: "slide",
+        backgroundTransition: "slide",
+
+        highlight: {
+            escapeHTML: false
+        },
+        /* Added menu plugin from https://github.com/denehyg/reveal.js-menu: CJS, 11oct2019 */
+        /* For a description of the 'menu' options, see the gp-intro-overview.html presentation */
+        menu: {
+            side: 'left',
+            width: 'wide',
+            numbers: true,
+            titleSelector: 'h1, h2, h3, h4, h5, h6',
+            useTextContentForMissingTitles: false,
+            hideMissingTitles: false,
+            markers: true,
+            custom: false,
+            themes: false,
+            themesPath: 'css/theme/',
+            transitions: false,
+            openButton: true,
+            openSlideNumber: false,
+            keyboard: true,
+            sticky: false,
+            autoOpen: true,
+            delayInit: false,
+            openOnInit: false,
+            loadIcons: true
+        },
+
+        dependencies: [
+            {
+                src: 'lib/reveal-plugins/markdown/marked.js', condition: function () {
+                    return !!document.querySelector('[data-markdown]');
+                }
+            },
+            {
+                src: 'lib/reveal-plugins/markdown/markdown.js', condition: function () {
+                    return !!document.querySelector('[data-markdown]');
+                }
+            },
+            {src: 'lib/reveal-plugins/highlight/highlight.js'},
+            {
+                src: 'lib/reveal-plugins/notes/notes.js', async: true, condition: function () {
+                    return !!document.body.classList;
+                }
+            },
+            {src: 'lib/reveal-plugins/zoom/zoom.js', async: true},
+            {src: 'lib/reveal-plugins/menu/menu.js', async: false}
+        ]
+    });
+</script>
+
+
+</body>
+</html>
