@@ -9,8 +9,6 @@
 
 
     <link rel="stylesheet" type="text/css" href="lib/offline-v2.css">
-
-
 </head>
 <body class="reveal-viewport theme-font-montserrat theme-color-white-blue">
 <div class="reveal">
@@ -909,6 +907,14 @@ demo=$ SELECT COUNT(*) FROM wiki_pages;
             </div>
         </section>
         <section data-id="8b4e1edfa5665eff82efc354dd9420b7">
+            <aside class="notes">
+In this example, the YAML control file, load_faadata.yaml, defines how data from several source files is to be loaded into the faa2 database.
+It is assumed that the faadata.factontimeperformance and public.audit tables already exist within the database.
+A reject limit of 100 errors is defined for this load, with any errors redirected to the faadata.faadataerr table.<br>
+Before the load occurs, the table is truncated. The external table created as a result of this load will not be reused.
+Reusing a table is useful if you are performing trickle loads or need to reduce system catalog bloat, which can occur when creating and dropping
+multiple temporary tables. By reusing the table, the table is not destroyed and recreated.
+            </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="0c2858bd522825df629afa8ead4e1b48">
                 <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
@@ -1037,6 +1043,21 @@ GPLOAD:
             </div>
         </section>
         <section data-id="186aa3e6410c761995399ef1ba6d5a80">
+            <aside class="notes">
+The gpload utility is executed with the following syntax:<br>
+gpload –f control_name<br>
+The command will display the gpfdist command that was issued.<br>
+Once the external table has been created, data is automatically loaded into the target database table specified in the control file.<br>
+gpload display the number of rows inserted, updated, as well as the number of errors encountered.<br><br>
+If the user is not specified on the command line, with the “-U” option, gpload will extract the user from one of the following in the order shown:
+the load control file, the environment variable $PGUSER or the login of the user running the command.<br>
+As with the user, if the password is not specified on the command line, gpload will extract the password from the following in the order specified:
+$PGPASSWORD variable, the password file specified by $PGPASSFILE or ~/.pgpass; if none of these contain the password, you will be prompted.<br>
+Once the control file has been created, issuing the gpload command starts a chain of events:<br>
+- The gpfdist program is started.<br>
+- gpload creates the external table based on the YAML file.<br>
+- The data is loaded using INSERT, as specified in the YAML file.
+            </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="21aa65db001f83f70287f2ce3c3486cf">
                 <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
@@ -1086,6 +1107,16 @@ $</code></pre>
             </div>
         </section>
         <section data-id="5ea509bf8df9a80bc53357865946c2a9">
+            <aside class="notes">
+In the first example shown on the slide, an external web table is defined using the HTTP protocol.
+Three different URLs are associated with the external table, all using the CSV format.<br><br>
+The second example shows how to define an external table to a script. The script:<br>
+- Must be located on all segments in the same location.<br>
+- Must be executable by the superuser account.<br>
+- Will execute by one segment on each segment host.<br>
+- Executes in parallel on all segments.<br><br>
+In the third example, the external table is created on the command, df -k. The command is executed by each primary segment.
+            </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="ee53c9d89acf340ab19593555847d342">
                 <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
@@ -1162,6 +1193,15 @@ EXECUTE 'df -k' ON ALL FORMAT 'TEXT';</code></pre>
             </div>
         </section>
         <section data-id="a913ea14c15c585829c0bbe1e24aad27">
+            <aside class="notes">
+When an external table command is executed, that command is executed from within the database and not from a login shell.
+If you rely on environment variables in external web table commands, such as the $PATH variable,
+keep in mind that the .bashrc or .profile of the current user will not be sourced at the segment host.
+You can set desired environment variables from within the EXECUTE clause of your external web table definition as follows:<br>
+CREATE EXTERNAL WEB TABLE ext_table (…) EXECUTE 'export PATH=/usr/sbin‘<br><br>
+Note that you can disable the use of the EXECUTE command in web table definitions by setting the parameter, gp_external_enable_exec,
+to off in the postgresql.conf file.
+            </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="814aaa966a32173181fa799c56ad017d">
                 <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
@@ -1226,6 +1266,12 @@ SELECT * FROM test;
             </div>
         </section>
         <section data-id="ddfba8a174e1290426c2fa56160a4858">
+            <aside class="notes">
+The Greenplum Database variables shown in the table are available to operating system commands executed by an external table.
+These variables are set as environment variables in the shell that executes the external table command(s).
+They can be used to identify a set of requests made by an external table statement, at runtime, across the Greenplum Database
+array of hosts and segment instances.
+            </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="11a0dd212bc28d073ca525ed8ddfbfc0">
                 <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
@@ -1354,6 +1400,22 @@ SELECT * FROM test;
             </div>
         </section>
         <section data-id="e13452ce35b3a4c28b2d245b2a9271ab">
+            <aside class="notes">
+The most common use of external tables is to facilitate loading of data. This is typically done by issuing a
+CREATE TABLE AS SELECT or INSERT INTO SELECT command, where the SELECT statement triggers the flow of data.<br>
+By default, if the external table data contains an error, the entire command fails and no data is loaded into the target database table.
+To isolate data errors in external table data while still loading correctly formatted rows, you define an external table
+with a SEGMENT REJECT LIMIT clause.<br><br>
+Specify the number of error rows acceptable, on a per-segment basis, after which the entire external table operation will be aborted
+and no rows will be processed or loaded.<br><br>
+Note that the count of error rows is per-segment, not per entire operation. The following conditions then apply:<br>
+If the per-segment reject limit is not reached, all rows that do not contain an error will be processed.<br>
+If the limit is not reached, all good rows will be processed and any error rows discarded.<br>
+If you would like to keep error rows for further examination, include the LOG ERRORS clause.
+Any rows containing a format error would then be logged to an internal Greenplum table. To view the bad rows captured,
+use the gp_read_error_log('\u003cdb_table\u003e') function:<br><br>
+select * from gp_read_error_log ('table name');
+            </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="a843018006636c755fd7c9b51b557b8e">
                 <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
@@ -1422,6 +1484,12 @@ SELECT * FROM test;
             </div>
         </section>
         <section data-id="beaa530426dd31888ae05ab1411c15fa">
+            <aside class="notes">
+Query planning of complex queries involving external tables is not optimal because:<br>
+There are no statistics to help the query planner choose a good plan.<br>
+The data is not in the database.<br>
+External tables are really not meant to be used in frequent, ad-hoc queries.
+            </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="4b63773e77e5df4b876f89af4532127d">
                 <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
@@ -1642,16 +1710,7 @@ SELECT * FROM test;
             "font_typekit": null,
             "font_google": null,
             "time_limit": null,
-            "upsizing_enabled": true,
-            "notes": {
-                "8b4e1edfa5665eff82efc354dd9420b7": "In this example, the YAML control file, load_faadata.yaml, defines how data from several source files is to be loaded into the faa2 database. It is assumed that the faadata.factontimeperformance and public.audit tables already exist within the database. A reject limit of 100 errors is defined for this load, with any errors redirected to the faadata.faadataerr table.\nBefore the load occurs, the table is truncated. The external table created as a result of this load will not be reused. Reusing a table is useful if you are performing trickle loads or need to reduce system catalog bloat, which can occur when creating and dropping multiple temporary tables. By reusing the table, the table is not destroyed and recreated.\n",
-                "186aa3e6410c761995399ef1ba6d5a80": "The gpload utility is executed with the following syntax:\ngpload –f control_name\nThe command will display the gpfdist command that was issued.\nOnce the external table has been created, data is automatically loaded into the target database table specified in the control file.\ngpload display the number of rows inserted, updated, as well as the number of errors encountered.\n \nIf the user is not specified on the command line, with the “-U” option, gpload will extract the user from one of the following in the order shown: the load control file, the environment variable $PGUSER or the login of the user running the command.\nAs with the user, if the password is not specified on the command line, gpload will extract the password from the following in the order specified: $PGPASSWORD variable, the password file specified by $PGPASSFILE or ~/.pgpass; if none of these contain the password, you will be prompted.\n\nOnce the control file has been created, issuing the gpload command starts a chain of events:\n- The gpfdist program is started.\n- gpload creates the external table based on the YAML file.\n- The data is loaded using INSERT, as specified in the YAML file.\n",
-                "5ea509bf8df9a80bc53357865946c2a9": "In the first example shown on the slide, an external web table is defined using the HTTP protocol. Three different URLs are associated with the external table, all using the CSV format.\n\nThe second example shows how to define an external table to a script. The script:\n- Must be located on all segments in the same location.\n- Must be executable by the superuser account.\n- Will execute by one segment on each segment host.\n- Executes in parallel on all segments.\n\nIn the third example, the external table is created on the command, df -k. The command is executed by each primary segment.\n",
-                "a913ea14c15c585829c0bbe1e24aad27": "When an external table command is executed, that command is executed from within the database and not from a login shell. If you rely on environment variables in external web table commands, such as the $PATH variable, keep in mind that the .bashrc or .profile of the current user will not be sourced at the segment host. You can set desired environment variables from within the EXECUTE clause of your external web table definition as follows:\nCREATE EXTERNAL WEB TABLE ext_table (…) EXECUTE 'export PATH=/usr/sbin‘\n\nNote that you can disable the use of the EXECUTE command in web table definitions by setting the parameter, gp_external_enable_exec, to off in the postgresql.conf file.",
-                "ddfba8a174e1290426c2fa56160a4858": "The Greenplum Database variables shown in the table are available to operating system commands executed by an external table. These variables are set as environment variables in the shell that executes the external table command(s). They can be used to identify a set of requests made by an external table statement, at runtime, across the Greenplum Database array of hosts and segment instances.",
-                "e13452ce35b3a4c28b2d245b2a9271ab": "The most common use of external tables is to facilitate loading of data. This is typically done by issuing a CREATE TABLE AS SELECT or INSERT INTO SELECT command, where the SELECT statement triggers the flow of data. \nBy default, if the external table data contains an error, the entire command fails and no data is loaded into the target database table. To isolate data errors in external table data while still loading correctly formatted rows, you define an external table with a SEGMENT REJECT LIMIT clause.\n\nSpecify the number of error rows acceptable, on a per-segment basis, after which the entire external table operation will be aborted and no rows will be processed or loaded.\n\nNote that the count of error rows is per-segment, not per entire operation. The following conditions then apply:\nIf the per-segment reject limit is not reached, all rows that do not contain an error will be processed.\nIf the limit is not reached, all good rows will be processed and any error rows discarded.\nIf you would like to keep error rows for further examination, include the LOG ERRORS clause. Any rows containing a format error would then be logged to an internal Greenplum table. To view the bad rows captured, use the gp_read_error_log('\u003cdb_table\u003e') function:\n\nselect * from gp_read_error_log ('table name');\n",
-                "beaa530426dd31888ae05ab1411c15fa": "Query planning of complex queries involving external tables is not optimal because:\nThere are no statistics to help the query planner choose a good plan.\nThe data is not in the database.\nExternal tables are really not meant to be used in frequent, ad-hoc queries.\n\n"
-            }
+            "upsizing_enabled": true
         }
     };
 
