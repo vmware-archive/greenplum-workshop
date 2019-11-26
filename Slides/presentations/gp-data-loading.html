@@ -9,12 +9,34 @@
 
 
     <link rel="stylesheet" type="text/css" href="lib/offline-v2.css">
+    <!-- User CSS -->
+    <style id="user-css-output" type="text/css">
+        .reveal .controls button {
+            color: #f27062
+        }
+
+        .reveal .backgrounds .agenda-slide {
+            background: linear-gradient(90deg, #008774 40%, white 40%);
+        }
+
+        .reveal .slides h2 {
+            color: #008774;
+            font-size: 1.7em;
+        }
+
+        .reveal .slides h3 {
+            color: black;
+            font-size: 1em;
+            text-align: left;
+        }
+    </style>
+
 </head>
 <body class="reveal-viewport theme-font-montserrat theme-color-white-blue">
 <div class="reveal">
     <div class="slides">
         <section data-background-image="images/bg-green-pivotal-labs.png"
-                 data-background-position="0% 0%" data-id="0aaa98dac59760af5f4c51dd918eecb2">
+                 data-background-position="0% 0%" data-id="title-slide">
             <div class="sl-block" data-block-type="text" style="width: 806px; left: 80px; top: 226px; height: auto;"
                  data-block-id="e777097643eb60aaf94842c36286adb5">
                 <div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text"
@@ -59,11 +81,11 @@
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="725729ef3cf46ab2af5e133df2652ab0">
-                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
 
@@ -172,13 +194,21 @@
                     </div>
                 </div>
             </div>
-            <div class="sl-block" data-block-type="text" data-block-id="fe702aa3574ab72135071bab401dd143"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 273px; left: 675px; top: 473px;">
+            <div class="sl-block" data-block-type="image"
+                 style="min-width: 4px; min-height: 4px; width: 188px; height: 165px; left: 700px; top: 380px;"
+                 data-block-id="4ade94b97fc5cc12fa9032dde292c4ac">
+                <div class="sl-block-content" style="z-index: 20;"><img style="" data-natural-width="402"
+                                                                        data-natural-height="160" data-lazy-loaded=""
+                                                                        alt="loading-pxf"
+                                                                        data-src="images/pxf-data-flow.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 200px; left: 691px; top: 553px;"
+                 data-block-id="25ff04ccbb742fc7ba7533f7975fb7c8">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 25;">
+                     style="z-index: 17; background-color: rgb(0, 135, 116); color: rgb(255, 255, 255);">
                     <p>PXF</p>
-
-                    <p>Placeholder</p>
                 </div>
             </div>
         </section>
@@ -191,11 +221,11 @@
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="481146daee32b0b8e8cc77be4610795f">
-                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -209,40 +239,27 @@
                  data-block-id="ffccfb04c665513438a32f078267efd5">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
                      style="z-index: 14; text-align: left;">
+                    <p>SQL COPY command</p>
                     <ul>
                         <li style="color:rgb(0, 37, 62)">
-                            <p>The SQL COPY command</p>
-
-                            <ul>
-                                <li style="color:rgb(0, 37, 62)">
-                                    <p>Is a PostgreSQL command</p>
-                                </li>
-                                <li style="color:rgb(0, 37, 62)">
-                                    <p>Loads all rows in one command and is not parallel</p>
-                                </li>
-                                <li style="color:rgb(0, 37, 62)">
-                                    <p>Loads data from a file or from standard input</p>
-                                </li>
-                                <li style="color:rgb(0, 37, 62)">
-                                    <p>Support error handling similar to external tables</p>
-                                </li>
-                            </ul>
+                            <p>Is a PostgreSQL command</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Loads all rows in one command and is not parallel</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Loads data from a file or from standard input</p>
+                        </li>
+                        <li style="color:rgb(0, 37, 62)">
+                            <p>Support error handling similar to external tables</p>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="sl-block" data-block-type="text" data-block-id="0d64dbee583201507a09f2b9bc0f3be5"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 871px; left: 45px; top: 537px;">
-                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 15; background-color: rgb(0, 135, 116); color: rgb(255, 255, 255);">
-                    <p style="text-align: left;"><span style="font-size:0.9em"> Example: Copy data from /data/myfile.csv into the table specified</span>
-                    </p>
-                </div>
-            </div>
             <div class="sl-block" data-block-type="code" data-block-id="93f836c6218ed5faabc2ad69d3b08517"
-                 style="min-width: 30px; min-height: 30px; width: 871px; height: 46px; left: 45px; top: 576px;">
-                <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
-                     style="z-index: 16; font-size: 159%; border-style: solid; border-width: 1px; border-color: rgb(0, 135, 116);">
+                 style="min-width: 30px; min-height: 30px; width: auto; height: auto; left: 35px; top: 440px;">
+                <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
+                     style="z-index: 16; font-size: 159%;">
                     <pre><code>COPY mytable FROM '/data/myfile.csv' WITH CSV HEADER;</code></pre>
                 </div>
             </div>
@@ -256,11 +273,11 @@
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="9ae186b8bb651d19039082527563bb3b">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -294,11 +311,11 @@
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="39a0f4ba52f49485d1e38eb1261c46cb">
-                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -324,15 +341,6 @@
                                                                         data-natural-height="175" alt="websource"
                                                                         data-lazy-loaded=""
                                                                         data-src="images/websource.png">
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="image"
-                 style="min-width: 4px; min-height: 4px; width: 60px; height: 122px; left: 42px; top: 475px;"
-                 data-block-id="5b974ba0ac19400368149131da129796">
-                <div class="sl-block-content" style="z-index: 17;"><img style="" data-natural-width="97"
-                                                                        data-natural-height="197" alt="hadoop-gp"
-                                                                        data-lazy-loaded=""
-                                                                        data-src="images/hadoop-gp.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
@@ -457,11 +465,19 @@
                  data-block-id="9e2ff2e18e10eafd7434552bc5a74b13">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
                      style="z-index: 27; text-align: left; background-color: rgb(195, 85, 85); color: rgb(255, 255, 255); border-style: solid; border-width: 1px; border-radius: 6px;">
-                    <pre><span style="font-size:0.9em"> url://</span></pre>
+                    <pre><span style="font-size:0.9em"> http://</span></pre>
                 </div>
             </div>
             <div class="sl-block" data-block-type="text"
                  style="height: auto; min-width: 30px; min-height: 30px; width: 183px; left: 137px; top: 344px;"
+                 data-block-id="9e2ff2e18e10eafd7434552bc5a74b13">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 27; text-align: left; background-color: rgb(195, 85, 85); color: rgb(255, 255, 255); border-style: solid; border-width: 1px; border-radius: 6px;">
+                    <pre><span style="font-size:0.9em"> s3://</span></pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 183px; left: 137px; top: 392px;"
                  data-block-id="e23d5fb62808e4d21b4c68d9a8b888c7">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
                      style="z-index: 28; text-align: left; background-color: rgb(195, 85, 85); color: rgb(255, 255, 255); border-style: solid; border-width: 1px; border-radius: 6px;">
@@ -473,22 +489,29 @@
                  data-block-id="1376227830ac43c02e825dde1b8d9ac0">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
                      style="z-index: 29; text-align: left; background-color: rgb(195, 85, 85); color: rgb(255, 255, 255); border-style: solid; border-width: 1px; border-radius: 6px;">
-                    <pre><span style="font-size:0.9em"> gphdfs://</span></pre>
+                    <pre><span style="font-size:0.9em"> pxf://</span></pre>
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" data-block-id="1086430e96105739ff93348c7657371b"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 344px; left: 4px; top: 382px;">
+                 style="height: auto; min-width: 30px; min-height: 30px; width: auto; left: 10px; top: 382px;">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
                      style="z-index: 30;">
-                    <p><span style="font-size:0.7em">Web source (url or OS command)</span></p>
+                    <p><span style="font-size:0.7em">Web source</span></p>
                 </div>
             </div>
             <div class="sl-block" data-block-type="text"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 344px; left: 1px; top: 590px;"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: auto; left: 10px; top: 490px;"
                  data-block-id="a86b2cb7a4cad753d77059f86d8c9c7c">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 31;">
-                    <p><span style="font-size:0.7em">HDFS (Text, Custom data)</span></p>
+                     style="z-index: 31; font-size: 0.6em;">
+                    <ul>
+                        <li>HDFS</li>
+                        <li>Hive</li>
+                        <li>HBase</li>
+                        <li>RDBMS</li>
+                        <li>GRID</li>
+                        <li>Custom</li>
+                    </ul>
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
@@ -523,11 +546,11 @@
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="3c86c7dc0f9a3ca87952ce4c4156b236">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -575,11 +598,11 @@
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="d68d633b7235b4cfc4edfc851266a17a">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -594,13 +617,13 @@
                 <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
                      style="z-index: 13; font-size: 150%; border-style: solid; border-width: 4px;"
                      data-code-wrap="true"><pre><code style="padding: 10px;">CREATE EXTERNAL TABLE ext_expenses (name text, date date, amount float4, category text, description text)
-LOCATION ( 
+LOCATION (
 'file://seghost1/dbfast/external/expenses1.csv',
 'file://seghost1/dbfast/external/expenses2.csv',
 'file://seghost2/dbfast/external/expenses3.csv',
 'file://seghost2/dbfast/external/expenses4.csv',
 'file://seghost3/dbfast/external/expenses5.csv',
-'file://seghost3/dbfast/external/expenses6.csv', 
+'file://seghost3/dbfast/external/expenses6.csv',
 )
 FORMAT 'CSV' ( HEADER );</code></pre>
                 </div>
@@ -685,11 +708,11 @@ FORMAT 'CSV' ( HEADER );</code></pre>
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="bd71db5645815b5df8ae5a52c3be6236">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -753,11 +776,11 @@ FORMAT 'CSV' ( HEADER );</code></pre>
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="b545f1763040e4c64eb28f85cf79a54d">
-                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -770,150 +793,53 @@ FORMAT 'CSV' ( HEADER );</code></pre>
             <div class="sl-block" data-block-type="code" data-block-id="1b9646d6a9d5d5d3d3dd051cca6c62b9"
                  style="min-width: 30px; min-height: 30px; width: 888px; height: 77px; left: 16px; top: 177px;">
                 <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
-                     style="z-index: 14; font-size: 132%; border-style: solid; border-width: 3px;"><pre><code>gpfdist -d /var/load_files/expenses1 -p 8081 &gt;&gt; gpfdist.log 2&gt;&amp;1 &amp;
+                     style="z-index: 14; font-size: 132%; border-style: solid; border-width: 3px;">
+                    <pre>
+<code>gpfdist -d /var/load_files/expenses1 -p 8081 &gt;&gt; gpfdist.log 2&gt;&amp;1 &amp;
 gpfdist -d /var/load_files/expenses2 -p 8082 &gt;&gt; gpfdist.log 2&gt;&amp;1 &amp;
-</code></pre>
+</code>
+                </pre>
                 </div>
             </div>
             <div class="sl-block" data-block-type="code" data-block-id="7e67260baff674a412630ae8c0b0f906"
-                 style="min-width: 30px; min-height: 30px; width: 888px; height: 280px; left: 16px; top: 276px;">
+                 style="min-width: 30px; min-height: 30px; width: 888px; height: auto; left: 16px; top: 276px;">
                 <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
-                     style="z-index: 15; font-size: 147%;"><pre><code>CREATE EXTERNAL TABLE ext_expenses
-   (name text, date date,  amount float4, description text) 
+                     style="z-index: 15; font-size: 147%;">
+                    <pre>
+<code>CREATE EXTERNAL TABLE ext_expenses
+   (name text, date date,  amount float4, description text)
    LOCATION (
         'gpfdist://etlhost:8081/*',
         'gpfdist://etlhost:8082/*')
    FORMAT 'TEXT' (DELIMITER '|')
-   ENCODING ’UTF-8’    
+   ENCODING ’UTF-8’
    LOG ERRORS
-   SEGMENT REJECT LIMIT 10000 ROWS ;</code></pre>
+   SEGMENT REJECT LIMIT 10000 ROWS ;
+</code>
+                    </pre>
                 </div>
             </div>
             <div class="sl-block" data-block-type="code" data-block-id="4329b0745c0475140e1d9e6b367c2877"
-                 style="min-width: 30px; min-height: 30px; width: 888px; height: 49px; left: 16px; top: 576px;">
+                 style="min-width: 30px; min-height: 30px; width: 888px; height: auto; left: 16px; top: 576px;">
                 <div class="sl-block-content notranslate" data-highlight-theme="obsidian" data-code-frame="none"
                      style="z-index: 16; font-size: 172%;">
                     <pre><code>INSERT INTO expenses (SELECT * FROM ext_expenses);</code></pre>
                 </div>
             </div>
         </section>
-        <section data-id="f64406d5310e5b38478ebb0825818c34">
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
-                 data-block-id="578aec8e2a5ec2d4e33e51b29efdbb4d">
-                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
-                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
-                    <h2>gphdfs example</h2>
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="8d4db632b0be57aecb3f81da73ae936a">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
-                 data-block-id="8642a25465e584a69c6fe3a553aca626">
-                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
-                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
-                    <h3><span style="color:#000000">Accessing Hadoop data</span></h3>
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="code" style="width: 888px; height: 237px; left: 16px; top: 166px;"
-                 data-block-id="2b54bccb29006bc2e889ef94f03c5cd6">
-                <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
-                     style="z-index: 14; font-size: 115%;"><pre><code>gpadmin=$ DROP EXTERNAL TABLE IF EXISTS wiki_pages_ext;
-gpadmin=$
-  CREATE EXTERNAL TABLE wiki_pages_ext
-    ( LIKE wiki_pages )
-  LOCATION ('gphdfs://hadoop-w-0:8020/user/gpadmin/word_count/out/part-m-*')
-  FORMAT 'TEXT' (DELIMITER E'\t' NULL E'')
-  ENCODING 'UTF8'
-  LOG ERRORS SEGMENT REJECT LIMIT 1 PERCENT;
-  
-gpadmin=$ GRANT SELECT ON wiki_pages_ext TO demo;</code></pre>
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="code" style="width: 888px; height: 254px; left: 16px; top: 416px;"
-                 data-block-id="9f10f876e5593d553fbdd5def1ee5898">
-                <div class="sl-block-content notranslate" data-highlight-theme="obsidian" data-code-frame="none"
-                     style="z-index: 15; font-size: 115%;"><pre><code>demo=$ INSERT INTO wiki_pages
-       SELECT * FROM wiki_pages_ext;
-NOTICE: Found 66 data formatting errors (66 or more input rows)
-INSERT 0 15347677
-Time: 9674.557 ms
-
-demo=$ SELECT COUNT(*) FROM wiki_pages;
-  count
----------
-15347677
-(1 row)</code></pre>
-                </div>
-            </div>
-        </section>
-        <section data-id="294f58051e2b821dfc8d7df0e3e78465">
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
-                 data-block-id="7735d985298d95d10a2a48c49e5171fc">
-                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
-                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
-                    <h2>gphdfs config parameters</h2>
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="243a729190113e303f8a4a0c342b1a72">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
-                 data-block-id="ce887f1db1113c7fe91257f8d2415071">
-                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
-                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
-                    <h3><span style="color:#000000">Accessing Hadoop data</span></h3>
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 9px; top: 178px;"
-                 data-block-id="24241929f7de74ef1e3be7cabf93893b">
-                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 14; text-align: left;">
-                    <p style="color:rgb(0, 37, 62)"><span style="color:rgb(77, 77, 77)">One time setup for using gphdfs requires setting a couple of parameters</span>
-                    </p>
-
-                    <ul>
-                        <li style="color:rgb(0, 37, 62)">
-                            <pre><span style="color:#008000">gp_hadoop_target_version</span></pre>
-
-                            <ul>
-                                <li style="color:rgb(0, 37, 62)">
-                                    <p><span style="color:rgb(77, 77, 77)">​corresponds with the version of Hadoop being accessed</span>
-                                    </p>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <pre><span style="color:#008000">gp_hadoop_home</span></pre>
-
-                            <ul>
-                                <li>
-                                    <p>​directory containing Hadoop client libraries</p>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </section>
         <section data-id="8b4e1edfa5665eff82efc354dd9420b7">
             <aside class="notes">
-In this example, the YAML control file, load_faadata.yaml, defines how data from several source files is to be loaded into the faa2 database.
-It is assumed that the faadata.factontimeperformance and public.audit tables already exist within the database.
-A reject limit of 100 errors is defined for this load, with any errors redirected to the faadata.faadataerr table.<br>
-Before the load occurs, the table is truncated. The external table created as a result of this load will not be reused.
-Reusing a table is useful if you are performing trickle loads or need to reduce system catalog bloat, which can occur when creating and dropping
-multiple temporary tables. By reusing the table, the table is not destroyed and recreated.
+                In this example, the YAML control file, load_faadata.yaml, defines how data from several source files is
+                to be loaded into the faa2 database.
+                It is assumed that the faadata.factontimeperformance and public.audit tables already exist within the
+                database.
+                A reject limit of 100 errors is defined for this load, with any errors redirected to the
+                faadata.faadataerr table.<br>
+                Before the load occurs, the table is truncated. The external table created as a result of this load will
+                not be reused.
+                Reusing a table is useful if you are performing trickle loads or need to reduce system catalog bloat,
+                which can occur when creating and dropping
+                multiple temporary tables. By reusing the table, the table is not destroyed and recreated.
             </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="0c2858bd522825df629afa8ead4e1b48">
@@ -923,11 +849,11 @@ multiple temporary tables. By reusing the table, the table is not destroyed and 
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="647a916ce19ff6f4a3fe2bdf9bb44ff0">
-                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -971,17 +897,17 @@ GPLOAD:
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" data-block-id="597b5a4c1e9b79d00783542f06642065"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 32px; left: 711px; top: 563px;">
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 32px; left: 711px; top: 555px;">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
                      style="z-index: 15; text-align: left; font-size: 171%; color: rgb(0, 135, 116);">
                     <p>}</p>
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" data-block-id="3b5256afdf5756d2a8f11d392c5dac44"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 187px; left: 730px; top: 579px;">
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 187px; left: 730px; top: 580px;">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 16; border-width: 1px; border-color: rgb(0, 135, 116); color: rgb(0, 135, 116);">
-                    <p><strong><span style="font-size:0.7em">Pre and post SQL</span></strong></p>
+                     style="z-index: 16; color: rgb(0, 135, 116); font-size: 0.7em;">
+                    <p><strong>Pre and post SQL</strong></p>
                 </div>
             </div>
             <div class="sl-block" data-block-type="text"
@@ -993,11 +919,11 @@ GPLOAD:
                 </div>
             </div>
             <div class="sl-block" data-block-type="text"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 385px; left: 524px; top: 471px;"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 385px; left: 524px; top: 480px;"
                  data-block-id="999ad326eeb9b261d56e5f9f72ee6666">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 18; border-width: 1px; border-color: rgb(0, 135, 116); color: rgb(0, 135, 116);">
-                    <p><strong><span style="font-size:0.7em">Pre-existing table, data entry mode</span></strong></p>
+                     style="z-index: 18; color: rgb(0, 135, 116); font-size: 0.7em;">
+                    <p><strong>Pre-existing table, data entry mode</strong></p>
                 </div>
             </div>
             <div class="sl-block" data-block-type="text"
@@ -1009,27 +935,23 @@ GPLOAD:
                 </div>
             </div>
             <div class="sl-block" data-block-type="text"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 385px; left: 335px; top: 180px;"
+                 style="height: auto; min-width: 30px; min-height: 30px; width: 385px; left: 335px; top: 190px;"
                  data-block-id="899f218a9101d7c3d24fcfc365cbd6c0">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 20; border-width: 1px; border-color: rgb(0, 135, 116); color: rgb(0, 135, 116);">
-                    <p><strong><span style="font-size:0.7em">Greenplum connection information</span></strong></p>
+                     style="z-index: 20; color: rgb(0, 135, 116); font-size: 0.7em;">
+                    <p><strong>Greenplum connection information</strong></p>
                 </div>
             </div>
             <div class="sl-block" data-block-type="text"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 121px; left: 13px; top: 288px;"
+                 style="height: auto; width: auto; min-width: 30px; min-height: 30px; left: 50px; top: 320px;"
                  data-block-id="8dc398400a527e5d20e354aef95d3af8">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 21; border-width: 1px; border-color: rgb(0, 135, 116); color: rgb(0, 135, 116); text-align: right;">
-                    <p><strong><span style="font-size:0.7em">gpfdist</span></strong></p>
-
-                    <p><strong><span style="font-size:0.7em">config</span></strong></p>
-
-                    <p><strong><span style="font-size:0.7em">info</span></strong></p>
+                     style="z-index: 21; font-size: 0.7em; color: rgb(0, 135, 116); text-align: right;">
+                    <p><strong>gpfdist<br>config<br>info</strong></p>
                 </div>
             </div>
             <div class="sl-block" data-block-type="shape" data-block-id="af3e37de309d039ffb47a0c4953ea107"
-                 style="min-width: 4px; min-height: 4px; width: 794px; height: 212px; left: 30px; top: 259px;">
+                 style="min-width: 4px; min-height: 4px; width: 700px; height: 200px; left: 30px; top: 259px;">
                 <div class="sl-block-style" style="z-index: 22; opacity: 0.11;">
                     <div class="sl-block-content" data-shape-type="rect" data-shape-fill-color="rgb(0, 135, 116)"
                          data-shape-stretch="true" style="z-index: 22;">
@@ -1044,32 +966,37 @@ GPLOAD:
         </section>
         <section data-id="186aa3e6410c761995399ef1ba6d5a80">
             <aside class="notes">
-The gpload utility is executed with the following syntax:<br>
-gpload –f control_name<br>
-The command will display the gpfdist command that was issued.<br>
-Once the external table has been created, data is automatically loaded into the target database table specified in the control file.<br>
-gpload display the number of rows inserted, updated, as well as the number of errors encountered.<br><br>
-If the user is not specified on the command line, with the “-U” option, gpload will extract the user from one of the following in the order shown:
-the load control file, the environment variable $PGUSER or the login of the user running the command.<br>
-As with the user, if the password is not specified on the command line, gpload will extract the password from the following in the order specified:
-$PGPASSWORD variable, the password file specified by $PGPASSFILE or ~/.pgpass; if none of these contain the password, you will be prompted.<br>
-Once the control file has been created, issuing the gpload command starts a chain of events:<br>
-- The gpfdist program is started.<br>
-- gpload creates the external table based on the YAML file.<br>
-- The data is loaded using INSERT, as specified in the YAML file.
+                The gpload utility is executed with the following syntax:<br>
+                gpload –f control_name<br>
+                The command will display the gpfdist command that was issued.<br>
+                Once the external table has been created, data is automatically loaded into the target database table
+                specified in the control file.<br>
+                gpload display the number of rows inserted, updated, as well as the number of errors
+                encountered.<br><br>
+                If the user is not specified on the command line, with the “-U” option, gpload will extract the user
+                from one of the following in the order shown:
+                the load control file, the environment variable $PGUSER or the login of the user running the
+                command.<br>
+                As with the user, if the password is not specified on the command line, gpload will extract the password
+                from the following in the order specified:
+                $PGPASSWORD variable, the password file specified by $PGPASSFILE or ~/.pgpass; if none of these contain
+                the password, you will be prompted.<br>
+                Once the control file has been created, issuing the gpload command starts a chain of events:<br>
+                - The gpfdist program is started.<br>
+                - gpload creates the external table based on the YAML file.<br>
+                - The data is loaded using INSERT, as specified in the YAML file.
             </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="21aa65db001f83f70287f2ce3c3486cf">
                 <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
-                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);" dir="ui"><h2>gpload Invocation
-                    Syntax</h2></div>
+                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);" dir="ui"><h2>gpload Invocation Syntax</h2></div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="63e71a59b3d3f169c1858fa550b5de9c">
-                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -1106,129 +1033,143 @@ $</code></pre>
                 </div>
             </div>
         </section>
-        <section data-id="5ea509bf8df9a80bc53357865946c2a9">
-            <aside class="notes">
-In the first example shown on the slide, an external web table is defined using the HTTP protocol.
-Three different URLs are associated with the external table, all using the CSV format.<br><br>
-The second example shows how to define an external table to a script. The script:<br>
-- Must be located on all segments in the same location.<br>
-- Must be executable by the superuser account.<br>
-- Will execute by one segment on each segment host.<br>
-- Executes in parallel on all segments.<br><br>
-In the third example, the external table is created on the command, df -k. The command is executed by each primary segment.
-            </aside>
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
-                 data-block-id="ee53c9d89acf340ab19593555847d342">
-                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
-                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);" dir="ui">
-                    <h2>External Web Table</h2>
+        <section data-id="external-web-tables-section">
+
+            <section data-id="external-web-tables-protocol-and-format">
+                <aside class="notes">
+                    In the first example shown on the slide, an external web table is defined using the HTTP protocol.
+                    Three different URLs are associated with the external table, all using the CSV format.<br><br>
+                    The second example shows how to define an external table to a script. The script:<br>
+                    - Must be located on all segments in the same location.<br>
+                    - Must be executable by the superuser account.<br>
+                    - Will execute by one segment on each segment host.<br>
+                    - Executes in parallel on all segments.<br><br>
+                    In the third example, the external table is created on the command, df -k. The command is executed
+                    by
+                    each primary segment.
+                </aside>
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                     data-block-id="ee53c9d89acf340ab19593555847d342">
+                    <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                         style="z-index: 10; text-align: left; color: rgb(0, 135, 116);" dir="ui">
+                        <h2>External Web Table</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="621df9f04df00faa78394f08bdeed37b">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                <div class="sl-block" data-block-type="image"
+                     style="width: 13%; height: auto; left: 0px; top: 695px;"
+                     data-block-id="footer-logo">
+                    <div class="sl-block-content" style="z-index: 12;">
+                        <img style=max-width:auto height:auto data-lazy-loaded=""
+                             data-src="images/logos/gp-onlight-horizontal.png">
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
-                 data-block-id="8e35575a499a0b1ec70791053cca463a">
-                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
-                     style="z-index: 12; text-align: left; color: rgb(0, 0, 0);">
-                    <h3>Protocol and Format</h3>
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                     data-block-id="8e35575a499a0b1ec70791053cca463a">
+                    <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                         style="z-index: 12; text-align: left; color: rgb(0, 0, 0);">
+                        <h3>Protocol and Format</h3>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="code" style="width: 800px; height: 164px; left: 160px; top: 199px;"
-                 data-block-id="c9b1ad0ab40ff4a41af7093e5c2d4252">
-                <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
-                     style="z-index: 13; font-size: 121%;"><pre><code>CREATE EXTERNAL WEB TABLE ext_expenses (name text, exp_date date,
+                <div class="sl-block" data-block-type="code"
+                     style="width: 800px; height: 164px; left: 160px; top: 199px;"
+                     data-block-id="c9b1ad0ab40ff4a41af7093e5c2d4252">
+                    <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
+                         style="z-index: 13; font-size: 121%;"><pre><code>CREATE EXTERNAL WEB TABLE ext_expenses (name text, exp_date date,
                                         amount float4, desc text)
 LOCATION ( 'http://xyz.company.com/expenses/sales/expenses.csv',
            'http://xyz.company.com/expenses/finance/expenses.csv',
            'http://xyz.company.com/expenses/ops/expenses.csv')
 FORMAT 'CSV' ( HEADER );</code></pre>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="code" style="width: 800px; height: 117px; left: 160px; top: 383px;"
-                 data-block-id="f5333c5c441f410c971cf5301a2d76f4">
-                <div class="sl-block-content notranslate" data-highlight-theme="solarized-light" data-code-frame="none"
-                     style="z-index: 14; font-size: 121%;" data-code-wrap="true"><pre><code>CREATE EXTERNAL WEB TABLE log_output (linenum int,
-       message text)  
-EXECUTE '/var/load_scripts/get_log_data.sh' 
+                <div class="sl-block" data-block-type="code"
+                     style="width: 800px; height: 117px; left: 160px; top: 383px;"
+                     data-block-id="f5333c5c441f410c971cf5301a2d76f4">
+                    <div class="sl-block-content notranslate" data-highlight-theme="solarized-light"
+                         data-code-frame="none"
+                         style="z-index: 14; font-size: 121%;" data-code-wrap="true"><pre><code>CREATE EXTERNAL WEB TABLE log_output (linenum int,
+       message text)
+EXECUTE '/var/load_scripts/get_log_data.sh'
 ON HOST FORMAT 'TEXT' (DELIMITER '|');</code></pre>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="text" data-block-id="dbed0e9e02d6510b8f59d6be60dbaf3a"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 160px; left: 0px; top: 199px;">
-                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 16; border-width: 3px; text-align: center; background-color: rgb(217, 234, 211);">
-                    <p>Loading from a set of URLs</p>
+                <div class="sl-block" data-block-type="text" data-block-id="dbed0e9e02d6510b8f59d6be60dbaf3a"
+                     style="height: auto; min-width: 30px; min-height: 30px; width: 160px; left: 0px; top: 199px;">
+                    <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                         style="z-index: 16; border-width: 3px; text-align: center; background-color: rgb(217, 234, 211);">
+                        <p>Loading from a set of URLs</p>
 
-                    <p> </p>
+                        <p> </p>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="text"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 160px; left: 0px; top: 383px;"
-                 data-block-id="8f210ae5a7814d881ac73b7eaac8a99b">
-                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 17; border-width: 3px; text-align: center; background-color: rgb(217, 234, 211);">
-                    <p>Loading from a script</p>
+                <div class="sl-block" data-block-type="text"
+                     style="height: auto; min-width: 30px; min-height: 30px; width: 160px; left: 0px; top: 383px;"
+                     data-block-id="8f210ae5a7814d881ac73b7eaac8a99b">
+                    <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                         style="z-index: 17; border-width: 3px; text-align: center; background-color: rgb(217, 234, 211);">
+                        <p>Loading from a script</p>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="code" style="width: 800px; height: 117px; left: 160px; top: 517px;"
-                 data-block-id="e5dc327c52773ce6116661dc174f1408">
-                <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
-                     style="z-index: 19; font-size: 121%;" data-code-wrap="true"><pre><code>CREATE EXTERNAL WEB TABLE du_space (storage text)
+                <div class="sl-block" data-block-type="code"
+                     style="width: 800px; height: 117px; left: 160px; top: 517px;"
+                     data-block-id="e5dc327c52773ce6116661dc174f1408">
+                    <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
+                         style="z-index: 19; font-size: 121%;" data-code-wrap="true"><pre><code>CREATE EXTERNAL WEB TABLE du_space (storage text)
 EXECUTE 'df -k' ON ALL FORMAT 'TEXT';</code></pre>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="text"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 160px; left: 0px; top: 517px;"
-                 data-block-id="6dbfb03e43d488789ac3d013a54f3f67">
-                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 20; border-width: 3px; text-align: center; background-color: rgb(217, 234, 211);">
-                    <p>Loading from a command</p>
+                <div class="sl-block" data-block-type="text"
+                     style="height: auto; min-width: 30px; min-height: 30px; width: 160px; left: 0px; top: 517px;"
+                     data-block-id="6dbfb03e43d488789ac3d013a54f3f67">
+                    <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                         style="z-index: 20; border-width: 3px; text-align: center; background-color: rgb(217, 234, 211);">
+                        <p>Loading from a command</p>
+                    </div>
                 </div>
-            </div>
-        </section>
-        <section data-id="a913ea14c15c585829c0bbe1e24aad27">
-            <aside class="notes">
-When an external table command is executed, that command is executed from within the database and not from a login shell.
-If you rely on environment variables in external web table commands, such as the $PATH variable,
-keep in mind that the .bashrc or .profile of the current user will not be sourced at the segment host.
-You can set desired environment variables from within the EXECUTE clause of your external web table definition as follows:<br>
-CREATE EXTERNAL WEB TABLE ext_table (…) EXECUTE 'export PATH=/usr/sbin‘<br><br>
-Note that you can disable the use of the EXECUTE command in web table definitions by setting the parameter, gp_external_enable_exec,
-to off in the postgresql.conf file.
-            </aside>
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
-                 data-block-id="814aaa966a32173181fa799c56ad017d">
-                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
-                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);" dir="ui">
-                    <h2>External Web Table</h2>
+            </section>
+            <section data-id="external-web-table-env-vars">
+
+                <aside class="notes">
+                    When an external table command is executed, that command is executed from within the database and
+                    not from a login shell.
+                    If you rely on environment variables in external web table commands, such as the $PATH variable,
+                    keep in mind that the .bashrc or .profile of the current user will not be sourced at the segment
+                    host.
+                    You can set desired environment variables from within the EXECUTE clause of your external web table
+                    definition as follows:<br>
+                    CREATE EXTERNAL WEB TABLE ext_table (…) EXECUTE 'export PATH=/usr/sbin‘<br><br>
+                    Note that you can disable the use of the EXECUTE command in web table definitions by setting the
+                    parameter, gp_external_enable_exec,
+                    to off in the postgresql.conf file.
+                </aside>
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                     data-block-id="814aaa966a32173181fa799c56ad017d">
+                    <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                         style="z-index: 10; text-align: left; color: rgb(0, 135, 116);" dir="ui">
+                        <h2>External Web Table</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="442a6d6d0ad3c63e0848a1adc12b64a3">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                <div class="sl-block" data-block-type="image"
+                     style="width: 13%; height: auto; left: 0px; top: 695px;"
+                     data-block-id="footer-logo">
+                    <div class="sl-block-content" style="z-index: 12;">
+                        <img style=max-width:auto height:auto data-lazy-loaded=""
+                             data-src="images/logos/gp-onlight-horizontal.png">
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
-                 data-block-id="77934395d288173fa7667e0f210836a0">
-                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
-                     style="z-index: 12; text-align: left; color: rgb(0, 0, 0);">
-                    <h3>Environment Variables</h3>
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                     data-block-id="77934395d288173fa7667e0f210836a0">
+                    <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                         style="z-index: 12; text-align: left; color: rgb(0, 0, 0);">
+                        <h3>Environment Variables</h3>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="code" style="width: 800px; height: 258px; left: 80px; top: 246px;"
-                 data-block-id="ac6c7f4b51bb5fa009856dd18771d99c">
-                <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
-                     style="z-index: 13; font-size: 121%;"><pre><code>CREATE EXTERNAL WEB TABLE TEST(segname text, abbrev text)
-  EXECUTE 'export HNAME="$HOSTNAME"-SR; echo 
+                <div class="sl-block" data-block-type="code"
+                     style="width: 800px; height: 258px; left: 80px; top: 246px;"
+                     data-block-id="ac6c7f4b51bb5fa009856dd18771d99c">
+                    <div class="sl-block-content notranslate" data-highlight-theme="sunburst" data-code-frame="none"
+                         style="z-index: 13; font-size: 121%;"><pre><code>CREATE EXTERNAL WEB TABLE TEST(segname text, abbrev text)
+  EXECUTE 'export HNAME="$HOSTNAME"-SR; echo
   "$HOSTNAME,$HNAME"' FORMAT 'TEXT' (DELIMITER ',');
 
 SELECT * FROM test;
@@ -1237,184 +1178,202 @@ SELECT * FROM test;
  sdw2    | sdw2-SR
  sdw1    | sdw1-SR
 (2 rows)</code></pre>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="text" data-block-id="839663fca4b643bbbe49a6c1c69095be"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 800px; left: 80px; top: 168px;">
-                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 16; background-color: rgb(217, 234, 211);">
-                    <p style="text-align: left;">Environment variables are not source at the segment host. They can be
-                        set in the EXECUTE clause as follows:</p>
+                <div class="sl-block" data-block-type="text" data-block-id="839663fca4b643bbbe49a6c1c69095be"
+                     style="height: auto; min-width: 30px; min-height: 30px; width: 800px; left: 80px; top: 168px;">
+                    <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                         style="z-index: 16; background-color: rgb(217, 234, 211);">
+                        <p style="text-align: left;">Environment variables are not source'd at the segment host. They
+                            can be
+                            set in the EXECUTE clause as follows:</p>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="text"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 889px; left: 35px; top: 537px;"
-                 data-block-id="6eb838a5eca8733651305a2f2f112831">
-                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 18; background-color: rgb(0, 135, 116); color: rgb(255, 255, 255); text-align: center;">
-                    <p style="color:rgb(255, 255, 255)"><span style="font-size:0.9em">To disable the use of the EXECUTE command in web table definitions</span>
-                    </p>
+                <div class="sl-block" data-block-type="text"
+                     style="height: auto; min-width: 30px; min-height: 30px; width: 889px; left: 35px; top: 537px;"
+                     data-block-id="6eb838a5eca8733651305a2f2f112831">
+                    <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                         style="z-index: 18; background-color: rgb(242, 112, 98); color: rgb(255, 255, 255); text-align: center;">
+                        <p style="color:rgb(255, 255, 255)"><span style="font-size:0.9em">To disable the use of the EXECUTE command in web table definitions</span>
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="code"
-                 style="min-width: 30px; min-height: 30px; width: 889px; height: 46px; left: 35px; top: 576px;"
-                 data-block-id="eaf23d44a1f9183df76fe67501b1e4bb">
-                <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
-                     style="z-index: 19; font-size: 159%; border-style: solid; border-width: 1px; border-color: rgb(0, 135, 116);">
-                    <pre class="none"><code>gpadmin$ gpconfig -c gp_external_enable_exec -v off</code></pre>
+                <div class="sl-block" data-block-type="code"
+                     style="min-width: 30px; min-height: 30px; width: 889px; height: 46px; left: 35px; top: 576px;"
+                     data-block-id="eaf23d44a1f9183df76fe67501b1e4bb">
+                    <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
+                         style="z-index: 19; font-size: 159%; border-style: solid; border-width: 1px; border-color: rgb(0, 135, 116);">
+                        <pre class="none"><code>gpadmin$ gpconfig -c gp_external_enable_exec -v off</code></pre>
+                    </div>
                 </div>
-            </div>
-        </section>
-        <section data-id="ddfba8a174e1290426c2fa56160a4858">
-            <aside class="notes">
-The Greenplum Database variables shown in the table are available to operating system commands executed by an external table.
-These variables are set as environment variables in the shell that executes the external table command(s).
-They can be used to identify a set of requests made by an external table statement, at runtime, across the Greenplum Database
-array of hosts and segment instances.
-            </aside>
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
-                 data-block-id="11a0dd212bc28d073ca525ed8ddfbfc0">
-                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
-                     style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
-                    <h2>External TABLE Environment Variables</h2>
+            </section>
+            <section data-id="external-web-table-env-vars-list-1">
+                <aside class="notes">
+                    The Greenplum Database variables shown in the table are available to operating system commands
+                    executed by an external table.
+                    These variables are set as environment variables in the shell that executes the external table
+                    command(s).
+                    They can be used to identify a set of requests made by an external table statement, at runtime,
+                    across the Greenplum Database
+                    array of hosts and segment instances.
+                </aside>
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                     data-block-id="11a0dd212bc28d073ca525ed8ddfbfc0">
+                    <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                         style="z-index: 11; text-align: left; color: rgb(0, 135, 116);">
+                        <h2>External TABLE Environment Variables</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="c084b1c8f7b3b15d06bb494eafe24935">
-                <div class="sl-block-content" style="z-index: 12;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                <div class="sl-block" data-block-type="image"
+                     style="width: 13%; height: auto; left: 0px; top: 695px;"
+                     data-block-id="footer-logo">
+                    <div class="sl-block-content" style="z-index: 12;">
+                        <img style=max-width:auto height:auto data-lazy-loaded=""
+                             data-src="images/logos/gp-onlight-horizontal.png">
+                    </div>
                 </div>
-            </div>
 
-            <div class="sl-block" data-block-type="table" data-block-id="c5e6ef47bb3b3451c327f9c0aab905f0"
-                 style="height: auto; min-width: 120px; min-height: 30px; width: 960px; left: 0px; top: 216px;">
-                <div class="sl-block-content" style="z-index: 14; font-size: 75%; background-color: rgb(217, 234, 211);"
-                     data-table-cols="2" data-table-rows="8">
-                    <table>
-                        <tbody>
-                        <tr>
-                            <th style="width: 279px;">Variable</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_ID</td>
-                            <td>Command count of the session executing the external table statement.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_DATABASE</td>
-                            <td>Database that the external table definition resides in.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_DATE</td>
-                            <td>Date the external table command was executed.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_MASTER_HOST</td>
-                            <td>Host name of the GP master from which the external table statement was dispatched.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_MASTER_PORT</td>
-                            <td>Port number of the GP master from which the external table statement was dispatched.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_SEG_DATADIR</td>
-                            <td>Data directory location of the segment instance executing the external table command.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_SEG_PG_CONF</td>
-                            <td>Location of the <em>postgresql.conf</em> file for the segment.</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <div class="sl-block" data-block-type="table" data-block-id="c5e6ef47bb3b3451c327f9c0aab905f0"
+                     style="height: auto; min-width: 120px; min-height: 30px; width: 960px; left: 0px; top: 216px;">
+                    <div class="sl-block-content"
+                         style="z-index: 14; font-size: 75%; background-color: rgb(217, 234, 211);"
+                         data-table-cols="2" data-table-rows="8">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <th style="width: 279px;">Variable</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_ID</td>
+                                <td>Command count of the session executing the external table statement.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_DATABASE</td>
+                                <td>Database that the external table definition resides in.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_DATE</td>
+                                <td>Date the external table command was executed.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_MASTER_HOST</td>
+                                <td>Host name of the GP master from which the external table statement was dispatched.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_MASTER_PORT</td>
+                                <td>Port number of the GP master from which the external table statement was dispatched.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_SEG_DATADIR</td>
+                                <td>Data directory location of the segment instance executing the external table
+                                    command.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_SEG_PG_CONF</td>
+                                <td>Location of the <em>postgresql.conf</em> file for the segment.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </section>
-        <section data-id="5b7fe0e54e0f30ed8665cfcf966295c8">
-            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
-                 data-block-id="b966288f3c1b0a97c2fd407d0108f2c4">
-                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
-                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
-                    <h2>External TABLE Environment Variables (cont.)</h2>
+            </section>
+            <section data-id="external-web-table-env-vars-list-2">
+                <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                     data-block-id="b966288f3c1b0a97c2fd407d0108f2c4">
+                    <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                         style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                        <h2>External TABLE Environment Variables (cont.)</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="3f46950a9946a1720da6b5159b6438d2">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                <div class="sl-block" data-block-type="image"
+                     style="width: 13%; height: auto; left: 0px; top: 695px;"
+                     data-block-id="footer-logo">
+                    <div class="sl-block-content" style="z-index: 12;">
+                        <img style=max-width:auto height:auto data-lazy-loaded=""
+                             data-src="images/logos/gp-onlight-horizontal.png">
+                    </div>
                 </div>
-            </div>
 
-            <div class="sl-block" data-block-type="table" style="height: auto; width: 960px; left: 0px; top: 216px;"
-                 data-block-id="384a10944bb2234a50ee581c3cf3f0e5">
-                <div class="sl-block-content" style="z-index: 12; font-size: 75%; background-color: rgb(217, 234, 211);"
-                     data-table-cols="2" data-table-rows="9">
-                    <table>
-                        <tbody>
-                        <tr>
-                            <th style="width: 279px;">Variable</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_SEG_PORT</td>
-                            <td>Port number of the segment instance executing command.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_SEGMENT_COUNT</td>
-                            <td>Total number of primary segments in the GP cluster.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_SEGMENT_ID</td>
-                            <td>ID of the segment instance executing command.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_SESSION_ID</td>
-                            <td>Database session identifier number associated with command.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_SN</td>
-                            <td>Serial number of the external table scan node in the query plan of the external table
-                                statement.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_TIME</td>
-                            <td>Time the external table command run.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_USER</td>
-                            <td>Database user running the command.</td>
-                        </tr>
-                        <tr>
-                            <td style="width: 279px;">$GP_XID</td>
-                            <td>Transaction ID of the external table statement.</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <div class="sl-block" data-block-type="table" style="height: auto; width: 960px; left: 0px; top: 216px;"
+                     data-block-id="384a10944bb2234a50ee581c3cf3f0e5">
+                    <div class="sl-block-content"
+                         style="z-index: 12; font-size: 75%; background-color: rgb(217, 234, 211);"
+                         data-table-cols="2" data-table-rows="9">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <th style="width: 279px;">Variable</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_SEG_PORT</td>
+                                <td>Port number of the segment instance executing command.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_SEGMENT_COUNT</td>
+                                <td>Total number of primary segments in the GP cluster.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_SEGMENT_ID</td>
+                                <td>ID of the segment instance executing command.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_SESSION_ID</td>
+                                <td>Database session identifier number associated with command.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_SN</td>
+                                <td>Serial number of the external table scan node in the query plan of the external
+                                    table
+                                    statement.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_TIME</td>
+                                <td>Time the external table command run.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_USER</td>
+                                <td>Database user running the command.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 279px;">$GP_XID</td>
+                                <td>Transaction ID of the external table statement.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
+
         </section>
         <section data-id="e13452ce35b3a4c28b2d245b2a9271ab">
             <aside class="notes">
-The most common use of external tables is to facilitate loading of data. This is typically done by issuing a
-CREATE TABLE AS SELECT or INSERT INTO SELECT command, where the SELECT statement triggers the flow of data.<br>
-By default, if the external table data contains an error, the entire command fails and no data is loaded into the target database table.
-To isolate data errors in external table data while still loading correctly formatted rows, you define an external table
-with a SEGMENT REJECT LIMIT clause.<br><br>
-Specify the number of error rows acceptable, on a per-segment basis, after which the entire external table operation will be aborted
-and no rows will be processed or loaded.<br><br>
-Note that the count of error rows is per-segment, not per entire operation. The following conditions then apply:<br>
-If the per-segment reject limit is not reached, all rows that do not contain an error will be processed.<br>
-If the limit is not reached, all good rows will be processed and any error rows discarded.<br>
-If you would like to keep error rows for further examination, include the LOG ERRORS clause.
-Any rows containing a format error would then be logged to an internal Greenplum table. To view the bad rows captured,
-use the gp_read_error_log('\u003cdb_table\u003e') function:<br><br>
-select * from gp_read_error_log ('table name');
+                The most common use of external tables is to facilitate loading of data. This is typically done by issuing a
+                CREATE TABLE AS SELECT or INSERT INTO SELECT command, where the SELECT statement triggers the flow of data.
+                <br>
+                By default, if the external table data contains an error, the entire command fails and no data is loaded into the
+                target table. To isolate data errors in external table data while still loading correctly formatted rows,
+                you define an external table with a SEGMENT REJECT LIMIT clause.
+                <br><br>
+                Specify the number of error rows acceptable, on a per-segment basis, after which the entire external table operation
+                will be aborted and no rows will be processed or loaded.
+                <br><br>
+                Note that the count of error rows is per-segment, not per entire operation. The following conditions then apply:
+                <br>
+                If the per-segment reject limit is not reached, all rows that do not contain an error will be processed.
+                <br>
+                If the limit is not reached, all good rows will be processed and any error rows discarded or logged.
+                <br>
+                If you would like to keep error rows for further examination, include the LOG ERRORS clause.
+                Any rows containing a format error would then be logged to an internal Greenplum table. To view the bad rows captured,
+                use the gp_read_error_log('\u003cdb_table\u003e') function:
+                <br><br>
+                select * from gp_read_error_log ('table name');
             </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="a843018006636c755fd7c9b51b557b8e">
@@ -1424,71 +1383,50 @@ select * from gp_read_error_log ('table name');
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 644px; min-width: 4px; min-height: 4px;"
-                 data-block-id="b3013155a2a80e06a75a85f0f807c9ca">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
 
-            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 0px; top: 117px;"
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 960px; left: 0px; top: 117px;"
                  data-block-id="b181275dd17eb3a7d58545869e324b96">
                 <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
                      style="z-index: 12; text-align: left;">
-                    <p style="color:rgb(0, 37, 62)">When handling errors using external tables</p>
-
                     <ul>
-                        <li style="color:rgb(0, 37, 62)">
-                            <p>Incorrectly formatted rows are rejected</p>
-
+                        <li> Incorrectly formatted rows are rejected:
                             <ul>
-                                <li style="color:rgb(0, 37, 62)">
-                                    <p>Rows with missing or extra attributes</p>
-                                </li>
-                                <li style="color:rgb(0, 37, 62)">
-                                    <p>Rows with columns of the wrong data type</p>
-                                </li>
-                                <li style="color:rgb(0, 37, 62)">
-                                    <p>Rows with invalid client encoding sequence</p>
-                                </li>
+                                <li> Missing or extra attributes </li>
+                                <li> Columns of the wrong data type </li>
+                                <li> Invalid client encoding sequence </li>
                             </ul>
                         </li>
-                        <li style="color:rgb(0, 37, 62)">
-                            <p>CONSTRAINT errors (NOT NULL, CHECK, UNIQUE) are handled as "all or nothing" - not single
-                                row isolation</p>
-                        </li>
-                        <li style="color:rgb(0, 37, 62)">
-                            <p style="color:rgb(0, 37, 62)">Format of error handling clause:</p>
+                        <li> CONSTRAINT errors (NOT NULL, CHECK, UNIQUE) are handled as "all or nothing" - not single row isolation </li>
+                        <li> Format of error handling clause:<br>
+                            <pre><span style="font-size:0.9em">[LOG ERRORS] SEGMENT REJECT LIMIT count [ROWS | PERCENT]</span></pre>
                         </li>
                     </ul>
-
-                    <pre style="color: rgb(0, 37, 62);"><span style="font-size:0.9em">[LOG ERRORS] SEGMENT REJECT LIMIT count [ROWS | PERCENT]</span></pre>
-                </div>
-            </div>
-            <div class="sl-block" data-block-type="text"
-                 style="height: auto; min-width: 30px; min-height: 30px; width: 765px; left: 89px; top: 559px;"
-                 data-block-id="494fc829ca65126f616cd07180b06632">
-                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
-                     style="z-index: 16; background-color: rgb(0, 135, 116); color: rgb(255, 255, 255); text-align: left;">
-                    <p style="color:rgb(255, 255, 255)"><span style="font-size:0.9em"> To view bad rows</span></p>
                 </div>
             </div>
             <div class="sl-block" data-block-type="code"
-                 style="min-width: 30px; min-height: 30px; width: 765px; height: 46px; left: 89px; top: 598px;"
+                 style="min-width: 30px; min-height: 30px; width: auto; height: auto; left: 55px; top: 490px;"
                  data-block-id="0c3878e9c0a078ca3ff14b72394c39cc">
-                <div class="sl-block-content notranslate" data-highlight-theme="github-gist" data-code-frame="none"
-                     style="z-index: 17; font-size: 159%; border-style: solid; border-width: 1px; border-color: rgb(0, 135, 116);">
-                    <pre class="none"><code>select * from gp_read_error_log ('table_name');</code></pre>
+                <div class="sl-block-content notranslate"
+                     data-highlight-theme="obsidian" data-code-frame="none"
+                     style="z-index: 17; font-size: 170%;">
+                    <pre class="none"><code>-- To view bad/rejected rows
+SELECT  *  FROM gp_read_error_log ('table_name');</code></pre>
                 </div>
             </div>
         </section>
         <section data-id="beaa530426dd31888ae05ab1411c15fa">
             <aside class="notes">
-Query planning of complex queries involving external tables is not optimal because:<br>
-There are no statistics to help the query planner choose a good plan.<br>
-The data is not in the database.<br>
-External tables are really not meant to be used in frequent, ad-hoc queries.
+                Query planning of complex queries involving external tables is not optimal because:<br>
+                There are no statistics to help the query planner choose a good plan.<br>
+                The data is not in the database.<br>
+                External tables are really not meant to be used in frequent, ad-hoc queries.
             </aside>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
                  data-block-id="4b63773e77e5df4b876f89af4532127d">
@@ -1498,11 +1436,11 @@ External tables are really not meant to be used in frequent, ad-hoc queries.
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 644px; min-width: 4px; min-height: 4px;"
-                 data-block-id="77e4bad3b86a58a5018cd1004ed7dcf7">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
 
@@ -1537,11 +1475,11 @@ External tables are really not meant to be used in frequent, ad-hoc queries.
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="bb813a896336e64585e3212d3be6a562">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -1588,11 +1526,11 @@ External tables are really not meant to be used in frequent, ad-hoc queries.
                 </div>
             </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 121px; height: 50px; left: 0px; top: 670px; min-width: 4px; min-height: 4px;"
-                 data-block-id="80ec58b0fa120a08df065c951cb51cb1">
-                <div class="sl-block-content" style="z-index: 11;"><img style="" data-natural-width="907"
-                                                                        data-natural-height="375" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-light.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
                 </div>
             </div>
             <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
@@ -1631,23 +1569,146 @@ External tables are really not meant to be used in frequent, ad-hoc queries.
                 </div>
             </div>
         </section>
-        <section data-background-image="images/bg-green-pivotal-labs.png"
-                 data-background-position="0% 0%" data-id="d0c0a4ef8442b15b52153a42284a978c">
+        <section data-background-color="#008774"
+                 data-background-position="0% 0%" data-id="appendix-slide" data-menu-title="Appendix">
 
-            <div class="sl-block" data-block-type="text" style="width: 806px; left: 80px; top: 216px; height: auto;"
+            <div class="sl-block" data-block-type="text"
+                 style="width: 806px; left: 80px; top: 300px; height: auto;"
                  data-block-id="f06b03e4f56e61f6cf0bd22aecf8f9aa">
-                <div class="sl-block-content" data-placeholder-tag="h1" data-placeholder-text="Title Text"
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
                      style="z-index: 10;">
-                    <h1>Petabyte Scale Data Warehousing with Greenplum</h1>
+                    <p><span style="color: yellow; font-size: 240%; ">Appendix</span></p>
                 </div>
             </div>
+        </section>
 
+        <section data-id="f64406d5310e5b38478ebb0825818c34">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="578aec8e2a5ec2d4e33e51b29efdbb4d">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>gphdfs example</h2>
+                </div>
+            </div>
             <div class="sl-block" data-block-type="image"
-                 style="width: 300px; height: 124px; left: 0px; top: 0px; min-width: 4px; min-height: 4px;"
-                 data-block-id="d7a8c852e820be726c75fbdc93108635">
-                <div class="sl-block-content" style="z-index: 13;"><img style="" data-natural-width="1814"
-                                                                        data-natural-height="751" data-lazy-loaded=""
-                                                                        data-src="images/logos/logo-pivotal-on-dark.png">
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                 data-block-id="8642a25465e584a69c6fe3a553aca626">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
+                    <h3><span style="color:#000000">Accessing Hadoop data</span></h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" style="width: 890px; height: auto; left: 16px; top: 166px;"
+                 data-block-id="2b54bccb29006bc2e889ef94f03c5cd6">
+                <div class="sl-block-content notranslate"
+                     data-highlight-theme="sunburst" data-code-frame="none"
+                     style="z-index: 14; font-size: 115%;">
+                    <pre>
+<code>DROP EXTERNAL TABLE IF EXISTS wiki_pages_ext;
+
+CREATE EXTERNAL TABLE wiki_pages_ext ( LIKE wiki_pages )
+LOCATION ('gphdfs://hadoop-w-0:8020/user/gpadmin/word_count/out/part-m-*')
+FORMAT 'TEXT' (DELIMITER E'\t' NULL E'')
+ENCODING 'UTF8'
+LOG ERRORS SEGMENT REJECT LIMIT 1 PERCENT;
+
+GRANT SELECT ON wiki_pages_ext TO demo;
+</code>
+                    </pre>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="code" style="width: 890px; height: auto; left: 16px; top: 416px;"
+                 data-block-id="9f10f876e5593d553fbdd5def1ee5898">
+                <div class="sl-block-content notranslate"
+                     data-highlight-theme="obsidian" data-code-frame="none"
+                     style="z-index: 15; font-size: 115%;">
+                    <pre>
+<code>INSERT INTO wiki_pages SELECT * FROM wiki_pages_ext;
+NOTICE: Found 66 data formatting errors (66 or more input rows)
+INSERT 0 15347677
+Time: 9674.557 ms
+
+SELECT COUNT(*) FROM wiki_pages;
+  count
+---------
+15347677
+(1 row)
+</code>
+                    </pre>
+                </div>
+            </div>
+        </section>
+        <section data-id="294f58051e2b821dfc8d7df0e3e78465">
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 0px; height: auto;"
+                 data-block-id="7735d985298d95d10a2a48c49e5171fc">
+                <div class="sl-block-content" data-placeholder-tag="h2" data-placeholder-text="Title Text"
+                     style="z-index: 10; text-align: left; color: rgb(0, 135, 116);">
+                    <h2>gphdfs config parameters</h2>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="image"
+                 style="width: 13%; height: auto; left: 0px; top: 695px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-onlight-horizontal.png">
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="width: 960px; left: 0px; top: 74px; height: auto;"
+                 data-block-id="ce887f1db1113c7fe91257f8d2415071">
+                <div class="sl-block-content" data-placeholder-tag="h3" data-placeholder-text="Subtitle"
+                     style="z-index: 12; text-align: left; color: rgb(0, 135, 116);">
+                    <h3><span style="color:#000000">Accessing Hadoop data</span></h3>
+                </div>
+            </div>
+            <div class="sl-block" data-block-type="text" style="height: auto; width: 943px; left: 9px; top: 178px;"
+                 data-block-id="24241929f7de74ef1e3be7cabf93893b">
+                <div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text"
+                     style="z-index: 14; text-align: left;">
+                    <p style="color:rgb(0, 37, 62)"><span style="color:rgb(77, 77, 77)">One time setup for using gphdfs requires setting a couple of parameters</span>
+                    </p>
+
+                    <ul>
+                        <li style="color:rgb(0, 37, 62)">
+                            <pre><span style="color:#008000">gp_hadoop_target_version</span></pre>
+
+                            <ul>
+                                <li style="color:rgb(0, 37, 62)">
+                                    <p><span style="color:rgb(77, 77, 77)">​corresponds with the version of Hadoop being accessed</span>
+                                    </p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <pre><span style="color:#008000">gp_hadoop_home</span></pre>
+
+                            <ul>
+                                <li>
+                                    <p>​directory containing Hadoop client libraries</p>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section data-background-color="#008774"
+                 data-background-position="0% 0%" data-id="closing-slide"
+                 data-menu-title="Ending Slide">
+            <div class="sl-block" data-block-type="image"
+                 style="width: 100%; height: auto; left: 10px; top: 250px;"
+                 data-block-id="footer-logo">
+                <div class="sl-block-content" style="z-index: 12;">
+                    <img style=max-width:auto height:auto data-lazy-loaded=""
+                         data-src="images/logos/gp-ondark-horizontal.png">
                 </div>
             </div>
         </section>
