@@ -1,4 +1,4 @@
-# Greenplum 5 Workshop
+<h1> VMware has ended active development of this project, this repository will no longer be updated.</h1><br># Greenplum 5 Workshop
 
 This is a set of scripts and utilities to quickly install and configure a workshop/demo environment for the Pivotal Greenplum Analytic database. To highlight a few of Greenplum's strengths as an analytical platform, this setup provides an environment for performing advanced text analytics (GPText), machine learning and statistical analysis (Madlib), running advanced Python analytics with the database (PLContainers for Python), and soon geospatial processing (PostGIS).
 
